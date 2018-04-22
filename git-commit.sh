@@ -5,7 +5,7 @@ if [ -z $1 ]; then
 else
   goal=$1
 fi
-git add src/ -A --ignore-errors 2> /dev/null
+git add include/ src/ -A --ignore-errors 2> /dev/null
 while (test -e .git/index.lock); do 
   sleep 0.1
 done
