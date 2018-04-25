@@ -35,9 +35,9 @@
   #define TRACE_EXIT ((void)0)
 #else
   #define TRACE_ENTRY \
-    printf("\33[1;32m" "[trace] %s:entry" "\33[0m\n" , __func__)
+    printf("\33[1;32m" "[trace] %s: entry" "\33[0m\n" , __func__)
   #define TRACE_EXIT \
-    printf("\33[1;32m" "[trace] %s:exit" "\33[0m\n" , __func__)
+    printf("\33[1;32m" "[trace] %s: exit" "\33[0m\n" , __func__)
 #endif
 
 // panic
