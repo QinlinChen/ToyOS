@@ -3,6 +3,7 @@
 #include <amdev.h>
 #include <amdevutil.h>
 #include <klib.h>
+#include <debug.h>
 
 static _Device *input = NULL;
 static _Device *timer = NULL;

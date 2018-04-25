@@ -1,10 +1,10 @@
 #include <am.h>
 #include <amdev.h>
 #include <amdevutil.h>
-#include <klib.h>
+#include <common.h>
 
 static void input_test() {
-  printf("Enter q to quit\n");
+  printf("Enter q to end input test\n");
   while (1) {
     int key, down;
     read_key(&key, &down);
@@ -62,6 +62,13 @@ static void ata0_test() {
       printf("%04x ", ((uint16_t *)buf)[i * 16 + j] & 0xffff);
     printf("\n");
   }
+}
+
+static void debug_test() {
+  TRACE_ENTRY;
+  log("This is debug test.\n");
+  TRACE_EXIT;
+  panic("debug test panic\n");
 }
 
 void test() {
