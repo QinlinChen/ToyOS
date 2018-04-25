@@ -21,7 +21,9 @@
   #define assert(cond) \
     do { \
       if (!(cond)) { \
-        printf("\33[1;31mAssertion fail at %s:%d\33[0m\n", __FILE__, __LINE__); \
+        printf("\33[1;31m" \
+          "Assertion fail at %s:%d" \
+          "\33[0m\n", __FILE__, __LINE__); \
         _halt(1); \
       } \
     } while (0)
@@ -39,7 +41,7 @@
 // panic
 #define panic(format, ...) \
   do { \
-    printf(format, ## __VA_ARGS__); \
+    printf("\33[1;31m" format "\33[0m\n", ## __VA_ARGS__); \
     assert(0); \
   } while (0)
   
