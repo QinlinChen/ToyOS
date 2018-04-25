@@ -145,7 +145,24 @@ static void *pmm_sbrk(int incr) {
 }
 
 static void *pmm_alloc(size_t size) {
-  return freelist_alloc(size);
+  size_t new_size = 1;
+  while (new_size < size)
+    new_size <<= 1;
+  char *ret = (char *)freelist_alloc(new_size * 2);
+  Assert(((int)ret & (sizeof(Header) - 1)) == 0);
+  char *old_ret = ret;
+  ret = addr_aligned(ret, new_size);
+  if (old_ret != ret) {
+    int gap = ret - old_ret;
+    Assert(gap >= sizeof(Header));
+    Header *old_bp = (Header *)old_ret - 1;
+    Header *bp = (Header *)ret - 1;
+    bp->size = old_bp->size - gap;
+    old_bp->size = gap;
+    insert_free_list(old_ret);
+  }
+  // printf("addr: %p, size: %d\n", ret, size);
+  return ret;
 }
 
 static void pmm_free(void *ptr) {
