@@ -10,6 +10,7 @@
   #define assert(cond) \
     do { \
       if (!(cond)) { \
+        log("asd"); \
         printf("\33[1;31mAssertion fail at %s:%d\33[0m\n", __FILE__, __LINE__); \
         _halt(1); \
       } \
