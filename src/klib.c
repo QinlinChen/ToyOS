@@ -1,5 +1,4 @@
 #include <stdarg.h>
-#include <am.h>
 #include <common.h>
 
 /*------------------------------------------
