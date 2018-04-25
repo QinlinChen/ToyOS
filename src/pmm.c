@@ -159,7 +159,7 @@ static void *pmm_alloc(size_t size) {
     Header *bp = (Header *)ret - 1;
     bp->size = old_bp->size - gap;
     old_bp->size = gap;
-    insert_free_list(old_ret);
+    freelist_free(old_ret);
   }
   // printf("addr: %p, size: %d\n", ret, size);
   return ret;
