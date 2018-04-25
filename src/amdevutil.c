@@ -22,27 +22,27 @@ static _Device *get_device(uint32_t id) {
 
 static inline void init_input() {
   input = get_device(_DEV_INPUT);
-  assert(input != NULL);
+  Assert(input != NULL);
 }
 
 static inline void init_timer() {
   timer = get_device(_DEV_TIMER);
-  assert(timer != NULL);
+  Assert(timer != NULL);
 }
 
 static inline void init_video() {
   video = get_device(_DEV_VIDEO);
-  assert(video != NULL);
+  Assert(video != NULL);
 }
 
 static inline void init_ata0() {
   ata0 = get_device(_DEV_ATA0);
-  assert(ata0 != NULL);
+  Assert(ata0 != NULL);
 }
 
 static inline void init_pciconf() {
   pciconf = get_device(_DEV_PCICONF);
-  assert(pciconf != NULL);
+  Assert(pciconf != NULL);
 }
 
 static inline uint8_t readb(_Device *dev, uint32_t reg) {
@@ -97,7 +97,7 @@ void draw_rect(uint32_t *pixels, int x, int y, int w, int h) {
 }
 
 void draw_sync() {
-  assert(0);
+  Assert(0);
 }
 
 int screen_width() {

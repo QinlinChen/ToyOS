@@ -4,22 +4,22 @@
 #include <am.h>
 #include <klib.h>
 
-// log
+// Log
 #ifdef NLOG
-  #define log(format, ...) ((void)0)
+  #define Log(format, ...) ((void)0)
 #else 
-  #define log(format, ...) \
+  #define Log(format, ...) \
     do { \
       printf("\33[1;34m[%s,%d,%s] " format "\33[0m\n", \
         __FILE__, __LINE__, __func__, ## __VA_ARGS__); \
     } while (0)
 #endif
 
-// assert
+// Assert
 #ifdef NDEBUG
-  #define assert(ignore) ((void)0)
+  #define Assert(ignore) ((void)0)
 #else
-  #define assert(cond) \
+  #define Assert(cond) \
     do { \
       if (!(cond)) { \
         printf("\33[1;31m" "Assertion fail at %s:%d" "\33[0m\n", \
@@ -29,7 +29,7 @@
     } while (0)
 #endif
 
-// trace
+// Trace
 #ifdef NTRACE
   #define TRACE_ENTRY ((void)0)
   #define TRACE_EXIT ((void)0)
@@ -40,11 +40,11 @@
     printf("\33[1;32m" "[trace] %s: exit" "\33[0m\n" , __func__)
 #endif
 
-// panic
-#define panic(format, ...) \
+// Panic
+#define Panic(format, ...) \
   do { \
     printf("\33[1;31m" format "\33[0m\n", ## __VA_ARGS__); \
-    assert(0); \
+    Assert(0); \
   } while (0)
   
 #endif
