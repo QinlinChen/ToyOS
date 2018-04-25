@@ -66,7 +66,8 @@ static void ata0_test() {
 
 static void debug_test() {
   TRACE_ENTRY;
-  log("This is debug test.\n");
+  log("This is debug test log\n");
+  log("This is another debug test log\n");
   TRACE_EXIT;
   panic("debug test panic\n");
 }

@@ -3,20 +3,6 @@
 
 #include <klib.h>
 
-// assert
-#ifdef NDEBUG
-  #define assert(ignore) ((void)0)
-#else
-  #define assert(cond) \
-    do { \
-      if (!(cond)) { \
-        log("asd"); \
-        printf("\33[1;31mAssertion fail at %s:%d\33[0m\n", __FILE__, __LINE__); \
-        _halt(1); \
-      } \
-    } while (0)
-#endif
-
 // log
 #ifdef NLOG
   #define log(format, ...) ((void)0)
@@ -25,6 +11,19 @@
     do { \
       printf("\33[1;34m[%s,%d,%s] " format "\33[0m\n", \
         __FILE__, __LINE__, __func__, ## __VA_ARGS__); \
+    } while (0)
+#endif
+
+// assert
+#ifdef NDEBUG
+  #define assert(ignore) ((void)0)
+#else
+  #define assert(cond) \
+    do { \
+      if (!(cond)) { \
+        printf("\33[1;31mAssertion fail at %s:%d\33[0m\n", __FILE__, __LINE__); \
+        _halt(1); \
+      } \
     } while (0)
 #endif
 
