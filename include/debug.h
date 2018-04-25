@@ -1,6 +1,7 @@
 #ifndef __DEBUG_H__
 #define __DEBUG_H__
 
+#include <am.h>
 #include <klib.h>
 
 // log
@@ -21,8 +22,7 @@
   #define assert(cond) \
     do { \
       if (!(cond)) { \
-        printf("\33[1;31m" \
-          "Assertion fail at %s:%d" \
+        printf("\33[1;31m" "Assertion fail at %s:%d" \
           "\33[0m\n", __FILE__, __LINE__); \
         _halt(1); \
       } \
@@ -34,8 +34,10 @@
   #define TRACE_ENTRY ((void)0)
   #define TRACE_EXIT ((void)0)
 #else
-  #define TRACE_ENTRY printf("[trace] %s:entry\n", __func__)
-  #define TRACE_EXIT printf("[trace] %s:exit\n", __func__)
+  #define TRACE_ENTRY \
+    printf("\33[1;32m" "[trace] %s:entry" "\33[0m\n" , __func__)
+  #define TRACE_EXIT \
+    printf("\33[1;32m" "[trace] %s:exit" "\33[0m\n" , __func__)
 #endif
 
 // panic
