@@ -72,6 +72,8 @@ static void debug_test() {
 }
 
 void test() {
+  debug_test();
+  
   printf("_heap = [%08x, %08x)\n", _heap.start, _heap.end);
 
   _Device *dev;
