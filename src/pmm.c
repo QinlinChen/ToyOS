@@ -140,7 +140,7 @@ static void *pmm_sbrk(int incr) {
     return (void *)-1;
   }
 
-  pmem_brk += incr;
+  pmm_brk += incr;
   return (void *)old_brk;
 }
 
