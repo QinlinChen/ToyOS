@@ -22,8 +22,8 @@
   #define assert(cond) \
     do { \
       if (!(cond)) { \
-        printf("\33[1;31m" "Assertion fail at %s:%d" \
-          "\33[0m\n", __FILE__, __LINE__); \
+        printf("\33[1;31m" "Assertion fail at %s:%d" "\33[0m\n", \
+          __FILE__, __LINE__); \
         _halt(1); \
       } \
     } while (0)

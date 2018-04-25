@@ -69,7 +69,7 @@ static void debug_test() {
   log("This is debug test log");
   log("This is another debug test log");
   TRACE_EXIT;
-  panic("debug test panic\n");
+  panic("debug test panic");
 }
 
 void test() {
