@@ -16,7 +16,10 @@ static void os_init() {
   }
 }
 
+void test();
+
 static void os_run() {
+  test();
   _intr_write(1); // enable interrupt
   while (1) ; // should never return
 }
