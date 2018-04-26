@@ -112,6 +112,7 @@ static thread_t *kmt_schedule() {
     if (scan->thread != current)
       return scan->thread;
   }
+  Panic("IDLE!");
   return &idle;
 }
 
