@@ -29,9 +29,13 @@ extern thread_t *current;
 
 static _RegSet *timer_handle(_RegSet *regs) {
   _putc('*');
-  if (current) 
+  thread_t *next = kmt->schedule();
+  if (current) {
     current->regs = regs;
-  current = kmt->schedule();
+    current->stat = RUNNABLE;
+  }
+  current = next;
+  current = RUNNING;
   return current->regs;
 }
 

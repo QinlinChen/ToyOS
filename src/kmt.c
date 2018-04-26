@@ -29,11 +29,6 @@ MOD_DEF(kmt) {
                 thread list
   ------------------------------------------*/
 
-enum { RUNNABLE, RUNNING, BLOCKED, DEAD };
-
-#define PGSIZE            4096
-#define MAX_KSTACK_SIZE   4 * PGSIZE 
-
 static thread_t *threadlist = NULL;
 
 void threadlist_add(thread_t *thread) {
