@@ -29,7 +29,7 @@ MOD_DEF(kmt) {
                 thread list
   ------------------------------------------*/
 
-enum { RUNNABLEB, RUNNING, BLOCKED, DEAD };
+enum { RUNNABLE, RUNNING, BLOCKED, DEAD };
 
 #define PGSIZE            4096
 #define MAX_KSTACK_SIZE   4 * PGSIZE 
@@ -53,7 +53,7 @@ int threadlist_add(void (*entry)(void *arg), void *arg) {
   Assert(tcb != NULL);
 
   tcb->tid = tid++;
-  tcb->status = RUNNABLE; 
+  tcb->stat = RUNNABLE; 
 
   // allocate stack and prepare regset
   tcb->kstack = (uint8_t *)pmm->alloc(MAX_KSTACK_SIZE);
