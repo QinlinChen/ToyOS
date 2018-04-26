@@ -37,7 +37,8 @@ static _RegSet *timer_handle(_RegSet *regs) {
   }
 
   current->timeslice--;
-  current->stat = RUNNABLE;
+  if (current->stat == RUNNING)
+    current->stat = RUNNABLE;
   thread_t *next = kmt->schedule();
 
   // next is not current
