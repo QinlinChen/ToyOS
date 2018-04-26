@@ -94,8 +94,7 @@ static int kmt_create(thread_t *thread, void (*entry)(void *arg), void *arg) {
   thread->kstack = (uint8_t *)pmm->alloc(MAX_KSTACK_SIZE);
   stackinfo.start = (void *)thread->kstack;
   stackinfo.end = (void*)(thread->kstack + MAX_KSTACK_SIZE);
-  Log("thread (tid: %d), kstack start: %p, end: %p", 
-    thread->tid, stackinfo.start, stackinfo.end);
+  Log("thread (tid: %d), kstack start: %p", thread->tid, stackinfo.start);
   thread->regs = _make(stackinfo, (void (*)(void *))entry, arg);
   threadlist_add(thread);
   
@@ -108,6 +107,7 @@ static void kmt_teardown(thread_t *thread) {
 }
 
 static thread_t *kmt_schedule() {
+  threadlist_print();
   node_t *scan;
   for (scan = threadlist; scan != NULL; scan = scan->next) {
     if (scan->thread != current)
