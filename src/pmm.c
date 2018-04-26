@@ -170,11 +170,11 @@ static void *pmm_sbrk(int incr) {
 
 static void *pmm_alloc(size_t size) {
   void *ret = addr_aligned_alloc(size);
-  Log("addr: %p, size: %d\n", ret, size);
+  Log("addr: %p, size: %d", ret, size);
   return ret;
 }
 
 static void pmm_free(void *ptr) {
   freelist_free(ptr);
-  Log("addr: %p\n", ptr);
+  Log("addr: %p", ptr);
 }
