@@ -138,5 +138,7 @@ void thread_test() {
 }
 
 void test() {
+  threadlist_test();
+  Panic("Stop here");
   thread_test();
 }

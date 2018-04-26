@@ -34,43 +34,19 @@ enum { RUNNABLE, RUNNING, BLOCKED, DEAD };
 #define PGSIZE            4096
 #define MAX_KSTACK_SIZE   4 * PGSIZE 
 
-typedef struct tcb {
-  int tid;
-  int stat;
-  uint8_t *kstack;
-  _RegSet *regs;
-  struct tcb *next;
-} TCB;
+static thread_t *threadlist = NULL;
 
-static TCB *threadlist = NULL;
-
-int threadlist_add(void (*entry)(void *arg), void *arg) {
-  static int tid = 1;
-  _Area stackinfo;
-
+void threadlist_add(thread_t *thread) {
   // allocate node
-  TCB *tcb = pmm->alloc(sizeof(TCB));
-  Assert(tcb != NULL);
-
-  tcb->tid = tid++;
-  tcb->stat = RUNNABLE; 
-
-  // allocate stack and prepare regset
-  tcb->kstack = (uint8_t *)pmm->alloc(MAX_KSTACK_SIZE);
-  stackinfo.start = (void *)thread->kstack;
-  stackinfo.end = (void*)(thread->kstack + MAX_KSTACK_SIZE);
-  Log("thread (tid: %d), kstack start: %p", tcb->tid, stackinfo.start);
-  tcb->regs = _make(stackinfo, (void (*)(void *))entry, arg);
-
-  // insert to list
-  tcb->next = threadlist;
-  threadlist = tcb;
-
-  return tcb->tid;
+  thread_t *node = (thread_t *)pmm->alloc(sizeof(thread_t));
+  Assert(node != NULL);
+  *node = *thread;
+  node->next = threadlist;
+  threadlist = node;
 }
 
 void threadlist_remove(int tid) {
-  TCB *prev, *cur;
+  thread_t *prev, *cur;
 
   prev = NULL;
   for (cur = threadlist; cur != NULL; prev = cur, cur = cur->next) {
@@ -79,7 +55,6 @@ void threadlist_remove(int tid) {
         threadlist = cur->next;
       else
         prev->next = cur->next;
-      pmm->free(cur->kstack);
       pmm->free(cur);
       return;
     }
@@ -88,7 +63,7 @@ void threadlist_remove(int tid) {
 }
 
 void threadlist_print() {
-  TCB *scan;
+  thread_t *scan;
   for (scan = threadlist; scan != NULL; scan = scan->next) {
     const char *stat;
     switch (scan->stat) {
@@ -120,20 +95,40 @@ static void kmt_init() {
 }
 
 static int kmt_create(thread_t *thread, void (*entry)(void *arg), void *arg) {
-  thread->tid = threadlist_add(entry, arg);
+  static int tid = 1;
+  _Area stackinfo;
+
+  // tid and stat
+  thread->tid = tid++;
+  thread->stat = RUNNABLE; 
+
+  // NULL to user
+  thread->next = NULL;  
+
+  // allocate stack and prepare regset
+  thread->kstack = (uint8_t *)pmm->alloc(MAX_KSTACK_SIZE);
+  stackinfo.start = (void *)thread->kstack;
+  stackinfo.end = (void*)(thread->kstack + MAX_KSTACK_SIZE);
+  thread->regs = _make(stackinfo, (void (*)(void *))entry, arg);
+  Log("thread (tid: %d), kstack start: %p", thread->tid, stackinfo.start);
+  
+  // add to threadlist
+  threadlist_add(thread);
+
   return 0;
 }
 
 static void kmt_teardown(thread_t *thread) {
+  pmm->free(thread->kstack);
   threadlist_remove(thread->tid);
 }
 
 static thread_t *kmt_schedule() {
   threadlist_print();
-  TCB *scan;
+  thread_t *scan;
   for (scan = threadlist; scan != NULL; scan = scan->next) {
-    if (scan->thread != current)
-      return scan->thread;
+    if (scan != current)
+      return scan;
   }
   Panic("IDLE!");
   return &idle;
