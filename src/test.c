@@ -97,15 +97,15 @@ void pmm_test() {
 }
 
 static void f(void *arg) {
-
+  while (1) {
     printf("abcdefg");
-  
+  }
 }
 
 static void g(void *arg) {
-
+  while (1) {
     printf("ABCDEFG");
-  
+  }
 }
 
 void thread_test() {
