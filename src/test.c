@@ -96,28 +96,6 @@ void pmm_test() {
   pmm->free(pmm->alloc(4096));
 }
 
-void threadlist_add(thread_t *thread);
-void threadlist_remove(thread_t *thread);
-void threadlist_print();
-
-void threadlist_test() {
-  thread_t a, b, c, d;
-  a.tid = 1; a.stat = 0;
-  b.tid = 2; b.stat = 1;
-  c.tid = 3; c.stat = 2;
-  d.tid = 4; d.stat = 3;
-  threadlist_add(&a);
-  threadlist_add(&b);
-  threadlist_print();
-  threadlist_remove(&b);
-  threadlist_print();
-  threadlist_add(&c);
-  threadlist_add(&d);
-  threadlist_print();
-  threadlist_remove(&a);
-  threadlist_print();
-}
-
 static void f(void *arg) {
   while (1) {
     printf("abcdefg");
