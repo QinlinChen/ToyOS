@@ -56,7 +56,7 @@ void threadlist_remove(thread_t *thread) {
   Panic("Should not reach here");
 }
 
-void threadlist_log() {
+void threadlist_print() {
   thread_t *scan;
   for (scan = threadlist; scan != NULL; scan = scan->next) {
     const char *stat = NULL;
@@ -67,7 +67,7 @@ void threadlist_log() {
       case DEAD: stat = "BLOCKED"; break;
       default: Panic("Should not reach here");
     }
-    Log("(tid: %d, stat: %s)", scan->tid, stat);
+    printf("(tid: %d, stat: %s)", scan->tid, stat);
   }
 }
 
@@ -118,7 +118,7 @@ static void kmt_teardown(thread_t *thread) {
 }
 
 static thread_t *kmt_schedule() {
-  threadlist_log();
+  // threadlist_print();
   thread_t *scan;
   for (scan = threadlist; scan != NULL; scan = scan->next) {
     if (scan->stat == RUNNABLE) {
