@@ -96,6 +96,28 @@ void dev_test() {
   }
 }
 
+void threadlist_add(thread_t *thread);
+void threadlist_remove(thread_t *thread);
+void threadlist_print();
+
+void threadlist_test() {
+  thread_t a, b, c, d;
+  a.tid = 1;
+  b.tid = 2;
+  c.tid = 3;
+  d.tid = 4;
+  threadlist_add(&a);
+  threadlist_add(&b);
+  threadlist_print();
+  threadlist_remove(&b);
+  threadlist_print();
+  threadlist_add(&c);
+  threadlist_add(&d);
+  threadlist_print();
+  threadlist_remove(&a);
+  threadlist_print();
+}
+
 static void f(void *arg) {
   while (1) {
     printf("abcdefg");
@@ -110,8 +132,10 @@ static void g(void *arg) {
 
 void test() {
   pmm_test();
+  threadlist_test();
+  Panic("Stop Here");
   extern thread_t thr[2];
   kmt->create(&thr[0], f, NULL);
   kmt->create(&thr[1], g, NULL);
-  Panic("Stop Here");
+  
 }
