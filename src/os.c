@@ -26,7 +26,7 @@ static void os_run() {
 }
 
 extern thread_t *current;
-extern thread_t *idle;
+extern thread_t idle;
 
 static _RegSet *timer_handle(_RegSet *regs) {
   _putc('*');
