@@ -94,7 +94,8 @@ static int kmt_create(thread_t *thread, void (*entry)(void *arg), void *arg) {
   thread->kstack = (uint8_t *)pmm->alloc(MAX_KSTACK_SIZE);
   stackinfo.start = (void *)thread->kstack;
   stackinfo.end = (void*)(thread->kstack + MAX_KSTACK_SIZE);
-  Log("kstack start: %p, end: %p", stackinfo.start, stackinfo.end);
+  Log("thread (tid: %d), kstack start: %p, end: %p", 
+    thread->tid, stackinfo.start, stackinfo.end);
   thread->regs = _make(stackinfo, (void (*)(void *))entry, arg);
   threadlist_add(thread);
   
