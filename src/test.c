@@ -105,7 +105,7 @@ void dev_test() {
 
 static void f(void *arg) {
   while (1) {
-    _putc((char)arg);
+    _putc((char)(intptr_t)arg);
   }
 }
 

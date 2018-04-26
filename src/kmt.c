@@ -28,20 +28,10 @@ MOD_DEF(kmt) {
 #define PGSIZE            4096
 #define MAX_KSTACK_SIZE   4 * PGSIZE 
 
-struct thread {
-  uint8_t kstack[MAX_KSTACK_SIZE];
-  _RegSet *rs;
-};
+
 
 thread_t thr[2];
 
-struct spinlock {
-  int TODO;
-};
-
-struct semaphore {
-  int TODO;
-};
 
 static void kmt_init() {
   
