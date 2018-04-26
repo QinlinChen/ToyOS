@@ -154,6 +154,7 @@ static void *addr_aligned_alloc(size_t size) {
 static void pmm_init() {
   pmm_brk = addr_aligned((char *)_heap.start, sizeof(Header));
   Log("pmm_brk initialized as %p", pmm_brk);
+  Log("_heap = [%08x, %08x)", _heap.start, _heap.end);
 }
 
 static void *pmm_sbrk(int incr) {

@@ -74,7 +74,6 @@ void debug_test() {
 }
 
 void pmm_test() {
-  printf("_heap = [%08x, %08x)\n", _heap.start, _heap.end);
   pmm->free(pmm->alloc(4));
   pmm->free(pmm->alloc(8));
   pmm->free(pmm->alloc(123));
