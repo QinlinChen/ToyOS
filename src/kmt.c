@@ -58,7 +58,7 @@ void threadlist_remove(thread_t *thread) {
       return;
     }
   }
-  Panic("should not reach here");
+  Panic("Should not reach here");
 }
 
 void threadlist_print() {
@@ -123,14 +123,14 @@ static void kmt_teardown(thread_t *thread) {
 }
 
 static thread_t *kmt_schedule() {
+  return &idle;
   threadlist_print();
   thread_t *scan;
   for (scan = threadlist; scan != NULL; scan = scan->next) {
-    if (scan != current) {
-      printf("schedule tid %d\n", scan->tid);
+    if (scan->stat == RUNNABLE) {
+      Log("Schedule to thread (tid %d)\n", scan->tid);
       return scan;
     }
-      
   }
   Panic("IDLE!");
   return &idle;
