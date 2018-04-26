@@ -80,6 +80,7 @@ static inline void *log_alloc(size_t size) {
 }
 
 void pmm_test() {
+  printf("_heap = [%08x, %08x)\n", _heap.start, _heap.end);
   pmm->free(log_alloc(4));
   pmm->free(log_alloc(8));
   pmm->free(log_alloc(123));
@@ -87,9 +88,7 @@ void pmm_test() {
   pmm->free(log_alloc(4096));
 }
 
-void test() {
-  printf("_heap = [%08x, %08x)\n", _heap.start, _heap.end);
-
+void dev_test() {
   _Device *dev;
   for (int n = 1; (dev = _device(n)); n++) {
     printf("* Device: %s\n", dev->name);
@@ -102,6 +101,8 @@ void test() {
     }
     printf("\n");
   }
+}
 
+void test() {
   pmm_test();
 }
