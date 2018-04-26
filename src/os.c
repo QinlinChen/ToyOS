@@ -25,10 +25,13 @@ static void os_run() {
   while (1) ; // should never return
 }
 
+extern thread_t *current;
+
 static _RegSet *timer_handle(_RegSet *regs) {
   _putc('*');
-  thread_t *thr = kmt->schedule();
-  return thr->regs;
+  current->regs = regs;
+  current = kmt->schedule();
+  return current->regs;
 }
 
 static _RegSet *os_interrupt(_Event ev, _RegSet *regs) {
