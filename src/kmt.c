@@ -127,8 +127,11 @@ static thread_t *kmt_schedule() {
   threadlist_print();
   thread_t *scan;
   for (scan = threadlist; scan != NULL; scan = scan->next) {
-    if (scan != current)
+    if (scan != current) {
+      printf("schedule tid %d\n", scan->tid);
       return scan;
+    }
+      
   }
   Panic("IDLE!");
   return &idle;
