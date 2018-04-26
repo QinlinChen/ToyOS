@@ -21,15 +21,13 @@ MOD_DEF(pmm) {
 
 typedef long Align;
 
-union header {
+typedef union header {
   struct {
     union header *next;
     size_t size;
   };
   Align x;
-};
-
-typedef union header Header;
+} Header;
 
 static Header base;
 static Header *freelistp; // implemented as circular linked list
@@ -136,6 +134,9 @@ static void *addr_aligned_alloc(size_t size) {
   // alloc twice bigger size to ensure
   // enough memory starting from the address to align
   char *addr = (char *)freelist_alloc(new_size * 2);
+  if (addr == NULL)
+    return NULL;
+    
   char *new_addr = addr_aligned(addr, new_size);
   if (new_addr == addr)
     return (void *)addr;
@@ -150,6 +151,10 @@ static void *addr_aligned_alloc(size_t size) {
 
   return new_addr;
 }
+
+/*------------------------------------------
+                    pmm
+  ------------------------------------------*/
 
 static void pmm_init() {
   pmm_brk = addr_aligned((char *)_heap.start, sizeof(Header));

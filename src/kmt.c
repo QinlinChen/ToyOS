@@ -25,6 +25,45 @@ MOD_DEF(kmt) {
   .sem_signal = kmt_sem_signal,
 };
 
+/*------------------------------------------
+                thread list
+  ------------------------------------------*/
+
+typedef struct node {
+  thread_t *thread;
+  struct node *next;
+} node_t;
+
+static node_t *threadlist;
+
+static void threadlist_init() {
+  threadlist =  NULL;
+}
+
+static void threadlist_add(thread_t *thread) {
+  node_t *node = pmm->alloc(sizeof(node_t));
+  Assert(node != NULL);
+  node->thread = thread;
+  node->next = threadlist;
+  threadlist = node;
+}
+
+static void threadlist_remove(thread_t *thread) {
+  node_t *prev, *cur;
+
+  prev = NULL;
+  for (cur = thread_list; cur != NULL; prev = cur, cur = cur->next) {
+    if (cur->thread == thread) {
+      if (prev == NULL)
+        threadlist = cur->next;
+      else
+        prev->next = cur->next;
+      pmm->free(cur);
+      return;
+    }
+  }
+  Panic("should not reach here");
+}
 
 thread_t thr[2];
 thread_t *current = NULL;
