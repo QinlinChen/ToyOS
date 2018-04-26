@@ -105,14 +105,20 @@ void dev_test() {
 
 static void f(void *arg) {
   while (1) {
-    _putc((char)(intptr_t)arg);
+    printf("abcdefg");
+  }
+}
+
+static void g(void *arg) {
+  while (1) {
+    printf("ABCDEFG");
   }
 }
 
 void test() {
   pmm_test();
   extern thread_t thr[2];
-  kmt->create(&thr[0], f, (void *)'a');
-  kmt->create(&thr[1], f, (void *)'b');
+  kmt->create(&thr[0], f, NULL);
+  kmt->create(&thr[1], g, NULL);
   //Panic("Stop Here");
 }
