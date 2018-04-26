@@ -49,8 +49,8 @@ static int kmt_create(thread_t *thread, void (*entry)(void *arg), void *arg) {
   kstack.start = (void *)thread->kstack;
   kstack.end = (void*)(thread->kstack + MAX_KSTACK_SIZE);
   Log("kstack start: %p, end: %p", kstack.start, kstack.end);
-  thread->rs = _make(kstack, (void (*)(void *))entry, arg);
-  print_regset(thread->rs);
+  thread->regs = _make(kstack, (void (*)(void *))entry, arg);
+  print_regset(thread->regs);
   return 0;
 }
 
