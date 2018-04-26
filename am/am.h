@@ -63,14 +63,12 @@ typedef struct _Protect {
   void *ptr;
 } _Protect;
 
-#define PGSIZE            4096
-#define MAX_KSTACK_SIZE   4 * PGSIZE 
-
 struct thread {
+  int tid;
+  int stat;
   uint8_t *kstack;
   _RegSet *regs;
-  int tid;
-  int status;
+  struct thread *next;
 };
 
 struct spinlock {
