@@ -32,21 +32,21 @@ static _RegSet *timer_handle(_RegSet *regs) {
 
   // current is not initialized
   if (current == NULL) {
-    current = kmt->schedule();
+    current = kmt->schedule();  // schedule IDLE
     return current->regs;
   }
 
-  // next is current
   current->timeslice--;
-  thread_t *next = kmt->schedule();
-  if (next == current)
-    return current->regs;
-  
-  // next is not current
-  current->regs = regs;
   current->stat = RUNNABLE;
-  current->timeslice = MAX_TIMESLICE;
-  current = next;
+  thread_t *next = kmt->schedule();
+
+  // next is not current
+  if (next != current) {
+    current->regs = regs;
+    current->timeslice = MAX_TIMESLICE;
+    current = next;
+  }
+
   current->stat = RUNNING;
   return current->regs;
 }
