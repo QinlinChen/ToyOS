@@ -114,5 +114,5 @@ void test() {
   extern thread_t thr[2];
   kmt->create(&thr[0], f, (void *)'a');
   kmt->create(&thr[1], f, (void *)'b');
-  Panic("Stop Here");
+  //Panic("Stop Here");
 }
