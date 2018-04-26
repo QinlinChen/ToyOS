@@ -29,31 +29,57 @@ MOD_DEF(kmt) {
                 thread list
   ------------------------------------------*/
 
-typedef struct node {
-  thread_t *thread;
-  struct node *next;
-} node_t;
+enum { RUNNABLEB, RUNNING, BLOCKED, DEAD };
 
-static node_t *threadlist = NULL;
+#define PGSIZE            4096
+#define MAX_KSTACK_SIZE   4 * PGSIZE 
 
-void threadlist_add(thread_t *thread) {
-  node_t *node = pmm->alloc(sizeof(node_t));
-  Assert(node != NULL);
-  node->thread = thread;
-  node->next = threadlist;
-  threadlist = node;
+typedef struct tcb {
+  int tid;
+  int stat;
+  uint8_t *kstack;
+  _RegSet *regs;
+  struct tcb *next;
+} TCB;
+
+static TCB *threadlist = NULL;
+
+int threadlist_add(void (*entry)(void *arg), void *arg) {
+  static int tid = 1;
+  _Area stackinfo;
+
+  // allocate node
+  TCB *tcb = pmm->alloc(sizeof(TCB));
+  Assert(tcb != NULL);
+
+  tcb->tid = tid++;
+  tcb->status = RUNNABLE; 
+
+  // allocate stack and prepare regset
+  tcb->kstack = (uint8_t *)pmm->alloc(MAX_KSTACK_SIZE);
+  stackinfo.start = (void *)thread->kstack;
+  stackinfo.end = (void*)(thread->kstack + MAX_KSTACK_SIZE);
+  Log("thread (tid: %d), kstack start: %p", tcb->tid, stackinfo.start);
+  tcb->regs = _make(stackinfo, (void (*)(void *))entry, arg);
+
+  // insert to list
+  tcb->next = threadlist;
+  threadlist = tcb;
+
+  return tcb->tid;
 }
 
-void threadlist_remove(thread_t *thread) {
-  node_t *prev, *cur;
+void threadlist_remove(int tid) {
+  TCB *prev, *cur;
 
   prev = NULL;
   for (cur = threadlist; cur != NULL; prev = cur, cur = cur->next) {
-    if (cur->thread == thread) {
+    if (cur->tid == tid) {
       if (prev == NULL)
         threadlist = cur->next;
       else
         prev->next = cur->next;
+      pmm->free(cur->kstack);
       pmm->free(cur);
       return;
     }
@@ -62,9 +88,17 @@ void threadlist_remove(thread_t *thread) {
 }
 
 void threadlist_print() {
-  node_t *scan;
+  TCB *scan;
   for (scan = threadlist; scan != NULL; scan = scan->next) {
-    printf("(tid: %d), ", scan->thread->tid);
+    const char *stat;
+    switch (scan->stat) {
+      case RUNNING: stat = "RUNNING"; break;
+      case RUNNABLE: stat = "RUNNABLE"; break;
+      case BLOCKED: stat = "BLOCKED"; break;
+      case DEAD: stat = "BLOCKED"; break;
+      default:  Panic("Should not reach here");
+    }
+    printf("(tid: %d, stat: %s)", scan->tid, stat);
   }
   printf("\n");
 }
@@ -86,30 +120,17 @@ static void kmt_init() {
 }
 
 static int kmt_create(thread_t *thread, void (*entry)(void *arg), void *arg) {
-  static int tid = 1;
-  _Area stackinfo;
-
-  thread->tid = tid++;
-  thread->status = -1; // TODO
-  thread->kstack = (uint8_t *)pmm->alloc(MAX_KSTACK_SIZE);
-  stackinfo.start = (void *)thread->kstack;
-  stackinfo.end = (void*)(thread->kstack + MAX_KSTACK_SIZE);
-  Log("thread (tid: %d), kstack start: %p", thread->tid, stackinfo.start);
-  thread->regs = _make(stackinfo, (void (*)(void *))entry, arg);
-  threadlist_add(thread);
-  
+  thread->tid = threadlist_add(entry, arg);
   return 0;
 }
 
 static void kmt_teardown(thread_t *thread) {
-  threadlist_remove(thread);
-  pmm->free(thread->kstack);
+  threadlist_remove(thread->tid);
 }
 
 static thread_t *kmt_schedule() {
-  return &idle;
   threadlist_print();
-  node_t *scan;
+  TCB *scan;
   for (scan = threadlist; scan != NULL; scan = scan->next) {
     if (scan->thread != current)
       return scan->thread;
