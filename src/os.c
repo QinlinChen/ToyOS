@@ -26,13 +26,14 @@ static void os_run() {
 }
 
 extern thread_t *current;
+extern thread_t *idle;
 
 static _RegSet *timer_handle(_RegSet *regs) {
   _putc('*');
 
   // current is not initialized
   if (current == NULL) {
-    current = kmt->schedule();  // schedule IDLE
+    current = &idle;  // schedule IDLE
     return current->regs;
   }
 

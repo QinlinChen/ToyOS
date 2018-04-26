@@ -29,8 +29,8 @@ MOD_DEF(kmt) {
                     thread
   ------------------------------------------*/
 
-static thread_t idle;
 static thread_t *threadlist = NULL;
+thread_t idle;
 thread_t *current = NULL;
 
 static void threadlist_add(thread_t *thread);
