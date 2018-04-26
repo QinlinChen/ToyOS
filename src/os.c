@@ -32,9 +32,6 @@ static _RegSet *timer_handle(_RegSet *regs) {
   if (current) 
     current->regs = regs;
   thread_t *next = kmt->schedule();
-  current->stat = RUNNABLE;
-  
-  Log("Schedule to thread (tid %d)", current->tid);
   return current->regs;
 }
 
