@@ -26,12 +26,18 @@ MOD_DEF(kmt) {
 };
 
 /*------------------------------------------
-                thread list
+                    thread
   ------------------------------------------*/
 
 static thread_t idle;
 static thread_t *threadlist = NULL;
 thread_t *current = NULL;
+
+static void threadlist_add(thread_t *thread);
+static void threadlist_remove(thread_t *thread);
+static void make_thread(thread_t *thread, 
+  void (*entry)(void *arg), void *arg);
+void threadlist_print();
 
 static void threadlist_add(thread_t *thread) {
   Assert(threadlist != NULL);
@@ -80,6 +86,29 @@ void threadlist_print() {
   // TODO: unlock()
 }
 
+static void make_thread(thread_t *thread, 
+  void (*entry)(void *arg), void *arg) {
+    
+  static int tid = 0;
+  _Area stackinfo;
+
+  // tid and stat
+  thread->tid = tid++;
+  thread->stat = RUNNABLE; 
+  thread->timeslice = MAX_TIMESLICE;
+
+  // NULL to user
+  thread->next = NULL;  
+
+  // allocate stack and prepare regset
+  thread->kstack = (uint8_t *)pmm->alloc(MAX_KSTACK_SIZE);
+  stackinfo.start = (void *)thread->kstack;
+  stackinfo.end = (void*)(thread->kstack + MAX_KSTACK_SIZE);
+  thread->regs = _make(stackinfo, (void (*)(void *))entry, arg);
+  Log("Create thread (tid: %d), kstack start: %p", 
+    thread->tid, stackinfo.start);
+}
+
 static void IDLE(void *arg) {
   while (1)
     _putc('.');
@@ -110,36 +139,18 @@ static void kmt_init() {
   Panic("Stop");
 }
 
-static int kmt_create(thread_t *thread, void (*entry)(void *arg), void *arg) {
-  static int tid = 0;
-  _Area stackinfo;
-
-  // tid and stat
-  thread->tid = tid++;
-  thread->stat = RUNNABLE; 
-  thread->timeslice = MAX_TIMESLICE;
-
-  // NULL to user
-  thread->next = NULL;  
-
-  // allocate stack and prepare regset
-  thread->kstack = (uint8_t *)pmm->alloc(MAX_KSTACK_SIZE);
-  stackinfo.start = (void *)thread->kstack;
-  stackinfo.end = (void*)(thread->kstack + MAX_KSTACK_SIZE);
-  thread->regs = _make(stackinfo, (void (*)(void *))entry, arg);
-  Log("Create thread (tid: %d), kstack start: %p", 
-    thread->tid, stackinfo.start);
-  
-  // add to threadlist
+static int kmt_create(thread_t *thread,
+  void (*entry)(void *arg), void *arg) {
+  make_thread(thread, entry, arg);
   threadlist_add(thread);
-
   return 0;
 }
 
 static void kmt_teardown(thread_t *thread) {
   thread->stat = DEAD;
-  pmm->free(thread->kstack);
   threadlist_remove(thread);
+  pmm->free(thread->kstack);
+  
 }
 
 static thread_t *kmt_schedule() {
