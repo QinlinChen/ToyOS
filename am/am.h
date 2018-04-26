@@ -63,6 +63,22 @@ typedef struct _Protect {
   void *ptr;
 } _Protect;
 
+#define PGSIZE            4096
+#define MAX_KSTACK_SIZE   4 * PGSIZE 
+
+struct thread {
+  uint8_t kstack[MAX_KSTACK_SIZE];
+  _RegSet *regs;
+};
+
+struct spinlock {
+  int TODO;
+};
+
+struct semaphore {
+  int TODO;
+};
+
 // ========================= Turing Machine ==========================
 
 extern _Area _heap;
