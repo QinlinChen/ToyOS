@@ -138,7 +138,6 @@ static void kmt_teardown(thread_t *thread) {
 }
 
 static thread_t *kmt_schedule() {
-  Assert(RR != NULL);
   threadlist_print(); // REMEMBER TO REMOVE
 
   if (current == NULL) 
