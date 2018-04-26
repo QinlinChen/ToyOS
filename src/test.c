@@ -115,6 +115,8 @@ void print_r(struct _RegSet *r) {
 }
 
 void test() {
+  pmm_test();
+  
   _Area stack;
   stack.start = (void *)0x300000;
   stack.end = (void *)0x500000;
