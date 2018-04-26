@@ -99,7 +99,7 @@ void pmm_test() {
 static void f(void *arg) {
   int count = 0;
   while (1) {
-    if (++count == 1000) {
+    if (++count == 100000) {
       printf("abcdefg");
       count = 0;
     }
@@ -109,7 +109,7 @@ static void f(void *arg) {
 static void g(void *arg) {
   int count = 0;
   while (1) {
-    if (++count == 1000) {
+    if (++count == 100000) {
       printf("ABCDEFG");
       count = 0;
     }
