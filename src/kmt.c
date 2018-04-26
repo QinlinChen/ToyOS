@@ -115,8 +115,8 @@ static void IDLE(void *arg) {
 }
 
 static void kmt_init() {
-  // create IDLE thread
-  kmt_create(&idle, IDLE, NULL);
+  // make IDLE thread
+  make_thread(&idle, IDLE, NULL);
   // avoid to schedule IDLE thread
   idle.stat = BLOCKED;
   // initialize threadlist 
@@ -150,7 +150,6 @@ static void kmt_teardown(thread_t *thread) {
   thread->stat = DEAD;
   threadlist_remove(thread);
   pmm->free(thread->kstack);
-  
 }
 
 static thread_t *kmt_schedule() {
