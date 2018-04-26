@@ -80,11 +80,11 @@ static inline void *log_alloc(size_t size) {
 }
 
 void pmm_test() {
-  log_alloc(4);
-  log_alloc(8);
-  log_alloc(123);
-  log_alloc(1024);
-  log_alloc(4096);
+  pmm->free(log_alloc(4));
+  pmm->free(log_alloc(8));
+  pmm->free(log_alloc(123));
+  pmm->free(log_alloc(1024));
+  pmm->free(log_alloc(4096));
 }
 
 void test() {
