@@ -103,24 +103,16 @@ void dev_test() {
   }
 }
 
-void print_r(struct _RegSet *r) {
-    printf("RegSet: 0x%p\n", r);
-    uint32_t *p = (uint32_t *)r;
-    for (int i = 0; i < 16; ++i) {
-        printf("%x ", p[i]);
-        if ((i % 4) == 3)
-            printf("\n");
-    }
-    printf("\n");
+static void f(void *arg) {
+  while (1) {
+    _putc((char)arg);
+  }
 }
 
 void test() {
   pmm_test();
-  
-  _Area stack;
-  stack.start = (void *)0x300000;
-  stack.end = (void *)0x500000;
-  _RegSet *r = _make(stack, (void (*)(void *))0x500000, (void *)123);
-  print_r(r);
+  extern thread_t thr[2];
+  kmt->create(&thr[0], f, (void *)'a');
+  kmt->create(&thr[1], f, (void *)'b');
   Panic("Stop Here");
 }
