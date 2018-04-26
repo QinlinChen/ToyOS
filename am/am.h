@@ -63,6 +63,12 @@ typedef struct _Protect {
   void *ptr;
 } _Protect;
 
+// Thread 
+#define PGSIZE            4096
+#define MAX_KSTACK_SIZE   4 * PGSIZE 
+
+enum { RUNNABLE, RUNNING, BLOCKED, DEAD };
+
 struct thread {
   int tid;
   int stat;

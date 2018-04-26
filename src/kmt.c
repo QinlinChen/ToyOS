@@ -118,7 +118,7 @@ static void kmt_teardown(thread_t *thread) {
 }
 
 static thread_t *kmt_schedule() {
-  // threadlist_print();
+  threadlist_print();
   thread_t *scan;
   for (scan = threadlist; scan != NULL; scan = scan->next) {
     if (scan->stat == RUNNABLE) {
