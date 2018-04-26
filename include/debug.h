@@ -4,6 +4,7 @@
 #include <am.h>
 #include <klib.h>
 
+#define NLOG
 // Log
 #ifdef NLOG
   #define Log(format, ...) ((void)0)
