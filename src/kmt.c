@@ -72,7 +72,7 @@ void threadlist_log() {
       case DEAD: stat = "BLOCKED"; break;
       default: Panic("Should not reach here");
     }
-    threadlist_log("(tid: %d, stat: %s)\n", scan->tid, stat);
+    Log("(tid: %d, stat: %s)\n", scan->tid, stat);
   }
 }
 
