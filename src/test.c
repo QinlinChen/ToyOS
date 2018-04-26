@@ -4,7 +4,7 @@
 #include <common.h>
 #include <kernel.h>
 
-static void input_test() {
+void input_test() {
   printf("Enter q to end input test\n");
   while (1) {
     int key, down;
@@ -16,7 +16,7 @@ static void input_test() {
   }
 }
 
-static void timer_test() {
+void timer_test() {
   uint32_t t0, t1;
 
   t0 = uptime();
@@ -27,7 +27,7 @@ static void timer_test() {
   printf("Loop 10^7 time elapse: %d ms\n", t1 - t0);
 }
 
-static void video_test() {
+void video_test() {
   int width = screen_width();
   int height = screen_height();
   uint32_t pixel = 0x006a005f;
@@ -39,7 +39,7 @@ static void video_test() {
   printf("You should see a purple square on the screen.\n");
 }
 
-static void pciconf_test() {
+void pciconf_test() {
   for (int bus = 0; bus < 256; bus ++)
     for (int slot = 0; slot < 32; slot ++) {
       uint32_t info = read_pciconf(bus, slot, 0, 0);
@@ -53,7 +53,7 @@ static void pciconf_test() {
     }
 }
 
-static void ata0_test() {
+void ata0_test() {
   uint32_t buf[SECTSZ / sizeof(uint32_t)];
   read_disk((void *)buf, 0);
 
@@ -65,7 +65,7 @@ static void ata0_test() {
   }
 }
 
-static void debug_test() {
+void debug_test() {
   TRACE_ENTRY;
   Log("This is debug test log");
   Log("This is another debug test log");
@@ -79,7 +79,7 @@ static inline void *log_alloc(size_t size) {
   return ret;
 }
 
-static void pmm_test() {
+void pmm_test() {
   log_alloc(4);
   log_alloc(8);
   log_alloc(123);
