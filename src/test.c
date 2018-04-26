@@ -97,14 +97,22 @@ void pmm_test() {
 }
 
 static void f(void *arg) {
+  int count = 0;
   while (1) {
-    printf("abcdefg");
+    if (++count == 1000) {
+      printf("abcdefg");
+      count = 0;
+    }
   }
 }
 
 static void g(void *arg) {
+  int count = 0;
   while (1) {
-    printf("ABCDEFG");
+    if (++count == 1000) {
+      printf("ABCDEFG");
+      count = 0;
+    }
   }
 }
 
