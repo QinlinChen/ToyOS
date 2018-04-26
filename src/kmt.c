@@ -25,8 +25,6 @@ MOD_DEF(kmt) {
   .sem_signal = kmt_sem_signal,
 };
 
-#define PGSIZE            4096
-#define MAX_KSTACK_SIZE   4 * PGSIZE 
 
 
 
