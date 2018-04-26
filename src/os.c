@@ -29,8 +29,10 @@ extern thread_t *current;
 
 static _RegSet *timer_handle(_RegSet *regs) {
   _putc('*');
-  current->regs = regs;
+  if (current)
+    current->regs = regs;
   current = kmt->schedule();
+  Log("Schedule to thread (tid %d)", current->tid);
   return current->regs;
 }
 
