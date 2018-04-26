@@ -73,9 +73,8 @@ void threadlist_print() {
       case DEAD: stat = "BLOCKED"; break;
       default: Panic("Should not reach here");
     }
-    printf("(tid: %d, stat: %s)", scan->tid, stat);
+    printf("(tid: %d, stat: %s)\n", scan->tid, stat);
   }
-  printf("\n");
 }
 
 /*------------------------------------------
@@ -95,7 +94,7 @@ static void kmt_init() {
 }
 
 static int kmt_create(thread_t *thread, void (*entry)(void *arg), void *arg) {
-  static int tid = 1;
+  static int tid = 0;
   _Area stackinfo;
 
   // tid and stat
