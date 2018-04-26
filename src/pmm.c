@@ -136,7 +136,7 @@ static void *pmm_sbrk(int incr) {
   char *old_brk = pmm_brk;
 
   if ((incr < 0) || (pmm_brk + incr > (char *)_heap.end)) {
-    Log("ERROR: pmm_sbrk failed. Ran out of memory.\n");
+    printf("ERROR: pmm_sbrk failed. Ran out of memory.\n");
     return (void *)-1;
   }
 
@@ -144,24 +144,32 @@ static void *pmm_sbrk(int incr) {
   return (void *)old_brk;
 }
 
-static void *pmm_alloc(size_t size) {
+static void *addr_aligned_alloc(size_t size) {
+  // new size to align
   size_t new_size = 1;
   while (new_size < size)
     new_size <<= 1;
-  char *ret = (char *)freelist_alloc(new_size * 2);
-  Assert(((int)ret & (sizeof(Header) - 1)) == 0);
-  char *old_ret = ret;
-  ret = addr_aligned(ret, new_size);
-  if (old_ret != ret) {
-    int gap = ret - old_ret;
-    Assert(gap >= sizeof(Header));
-    Header *old_bp = (Header *)old_ret - 1;
-    Header *bp = (Header *)ret - 1;
-    bp->size = old_bp->size - gap;
-    old_bp->size = gap;
-    freelist_free(old_ret);
-  }
-  // printf("addr: %p, size: %d\n", ret, size);
+  
+  // alloc twice bigger size to ensure
+  // enough memory starting from the address to align
+  char *addr = (char *)freelist_alloc(new_size * 2);
+  char *new_addr = addr_aligned(addr, new_size);
+  if (new_addr == addr)
+    return (void *)addr;
+  
+  int gap = new_addr - addr;
+  Assert(gap >= sizeof(Header));
+  Header *bp = (Header *)addr - 1;
+  Header *new_bp = (Header *)new_addr - 1;
+  new_bp->size = bp->size - gap;
+  bp->size = gap;
+  freelist_free(addr);
+
+  return new_addr;
+}
+
+static void *pmm_alloc(size_t size) {
+  void *ret = addr_aligned_alloc(size);
   return ret;
 }
 

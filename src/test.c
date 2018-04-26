@@ -2,6 +2,7 @@
 #include <amdev.h>
 #include <amdevutil.h>
 #include <common.h>
+#include <kernel.h>
 
 static void input_test() {
   printf("Enter q to end input test\n");
@@ -72,6 +73,20 @@ static void debug_test() {
   Panic("debug test panic");
 }
 
+static inline void *log_alloc(size_t size) {
+  void *ret = pmm->alloc(size);
+  printf("addr: %p, size: %d\n", ret, size);
+  return ret;
+}
+
+static void pmm_test() {
+  log_alloc(4);
+  log_alloc(8);
+  log_alloc(123);
+  log_alloc(1024);
+  log_alloc(4096);
+}
+
 void test() {
   printf("_heap = [%08x, %08x)\n", _heap.start, _heap.end);
 
@@ -88,5 +103,5 @@ void test() {
     printf("\n");
   }
 
-  debug_test();
+  pmm_test();
 }
