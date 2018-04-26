@@ -31,7 +31,7 @@ static _RegSet *timer_handle(_RegSet *regs) {
   _putc('*');
   if (current) 
     current->regs = regs;
-  thread_t *next = kmt->schedule();
+  current = kmt->schedule();
   return current->regs;
 }
 
