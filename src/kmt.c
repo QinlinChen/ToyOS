@@ -29,36 +29,42 @@ MOD_DEF(kmt) {
                 thread list
   ------------------------------------------*/
 
+static thread_t idle;
 static thread_t *threadlist = NULL;
+thread_t *current = NULL;
 
-void threadlist_add(thread_t *thread) {
+static void threadlist_add(thread_t *thread) {
+  Assert(threadlist != NULL);
+  // TODO: lock()
   thread_t *node = (thread_t *)pmm->alloc(sizeof(thread_t));
   Assert(node != NULL);
   *node = *thread;
-  node->next = threadlist;
-  threadlist = node;
+  node->next = threadlist->next;
+  threadlist->next = node;
+  // TODO: unlock()
 }
 
-void threadlist_remove(thread_t *thread) {
+static void threadlist_remove(thread_t *thread) {
+  Assert(threadlist != NULL);
+  // TODO: lock()
   thread_t *prev, *cur;
-
-  prev = NULL;
-  for (cur = threadlist; cur != NULL; prev = cur, cur = cur->next) {
+  
+  prev = threadlist;
+  for (cur = prev->next; ; prev = cur, cur = cur->next) {
     if (cur->tid == thread->tid) {
-      if (prev == NULL)
-        threadlist = cur->next;
-      else
-        prev->next = cur->next;
+      prev->next = cur->next;
       pmm->free(cur);
       return;
     }
   }
   Panic("Should not reach here");
+  // TODO: unlock()
 }
 
 void threadlist_print() {
+  // TODO: unlock()
   thread_t *scan;
-  for (scan = threadlist; scan != NULL; scan = scan->next) {
+  for (scan = threadlist->next; ; scan = scan->next) {
     const char *stat = NULL;
     switch (scan->stat) {
       case RUNNING: stat = "RUNNING"; break;
@@ -68,15 +74,11 @@ void threadlist_print() {
       default: Panic("Should not reach here");
     }
     printf("(tid: %d, stat: %s)", scan->tid, stat);
+    if (scan == threadlist)
+      break;
   }
+  // TODO: unlock()
 }
-
-/*------------------------------------------
-                    thread
-  ------------------------------------------*/
-
-thread_t *current = NULL;
-thread_t idle;
 
 static void IDLE(void *arg) {
   while (1)
@@ -84,7 +86,28 @@ static void IDLE(void *arg) {
 }
 
 static void kmt_init() {
+  // create IDLE thread
   kmt_create(&idle, IDLE, NULL);
+  // avoid to schedule IDLE thread
+  idle.stat = BLOCKED;
+  // initialize threadlist 
+  idle.next = threadlist = &idle;
+
+  thread_t a, b, c, d;
+  a.tid = 1; a.stat = 0;
+  b.tid = 2; b.stat = 0;
+  c.tid = 3; c.stat = 0;
+  d.tid = 4; d.stat = 0;
+  threadlist_add(&a);
+  threadlist_add(&b);
+  threadlist_print();
+  threadlist_remove(&b);
+  threadlist_add(&c);
+  threadlist_add(&d);
+  threadlist_print();
+  threadlist_remove(&a);
+  threadlist_print();
+  Panic("Stop");
 }
 
 static int kmt_create(thread_t *thread, void (*entry)(void *arg), void *arg) {
@@ -94,6 +117,7 @@ static int kmt_create(thread_t *thread, void (*entry)(void *arg), void *arg) {
   // tid and stat
   thread->tid = tid++;
   thread->stat = RUNNABLE; 
+  thread->timeslice = MAX_TIMESLICE;
 
   // NULL to user
   thread->next = NULL;  
@@ -113,6 +137,7 @@ static int kmt_create(thread_t *thread, void (*entry)(void *arg), void *arg) {
 }
 
 static void kmt_teardown(thread_t *thread) {
+  thread->stat = DEAD;
   pmm->free(thread->kstack);
   threadlist_remove(thread);
 }
@@ -120,7 +145,7 @@ static void kmt_teardown(thread_t *thread) {
 static thread_t *kmt_schedule() {
   threadlist_print(); // TO REMOVE
   thread_t *scan;
-  for (scan = threadlist; scan != NULL; scan = scan->next) {
+  for (scan = current; scan != NULL; scan = scan->next) {
     if (scan->stat == RUNNABLE) {
       Log("Schedule to thread (tid %d)", scan->tid);
       return scan;

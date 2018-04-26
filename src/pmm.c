@@ -163,6 +163,7 @@ static void pmm_init() {
 }
 
 static void *pmm_sbrk(int incr) {
+  // TODO: lock() for pmm_brk
   char *old_brk = pmm_brk;
 
   if ((incr < 0) || (pmm_brk + incr > (char *)_heap.end)) {
@@ -172,15 +173,20 @@ static void *pmm_sbrk(int incr) {
 
   pmm_brk += incr;
   return (void *)old_brk;
+  // TODO: unlock()
 }
 
 static void *pmm_alloc(size_t size) {
+  // TODO: lock() for freelist
   void *ret = addr_aligned_alloc(size);
   Log("addr: %p, size: %d", ret, size);
   return ret;
+  // TODO: unlock()
 }
 
 static void pmm_free(void *ptr) {
+  // TODO: lock() for freelist
   freelist_free(ptr);
   Log("addr: %p", ptr);
+  // TODO: unlock()
 }
