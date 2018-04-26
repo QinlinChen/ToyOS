@@ -121,8 +121,6 @@ static void kmt_init() {
   idle.stat = BLOCKED;
   // initialize threadlist 
   idle.next = threadlist = &idle;
-  // initialize current as IDLE
-  current = threadlist
 }
 
 static int kmt_create(thread_t *thread,
@@ -141,12 +139,12 @@ static void kmt_teardown(thread_t *thread) {
 static thread_t *kmt_schedule() {
   threadlist_print(); // REMEMBER TO REMOVE
   thread_t *scan;
-  for (scan = current->next; ; scan = scan->next) {
+  for (scan = threadlist->next; ; scan = scan->next) {
     if (scan->stat == RUNNABLE) {
       Log("Schedule to thread (tid %d)", scan->tid);
       return scan;
     }
-    if (scan == current)
+    if (scan == threadlist)
       return &idle;
   }
   Panic("IDLE!");
