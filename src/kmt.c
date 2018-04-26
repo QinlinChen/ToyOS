@@ -45,12 +45,12 @@ void threadlist_add(thread_t *thread) {
   threadlist = node;
 }
 
-void threadlist_remove(int tid) {
+void threadlist_remove(thread_t *thread) {
   thread_t *prev, *cur;
 
   prev = NULL;
   for (cur = threadlist; cur != NULL; prev = cur, cur = cur->next) {
-    if (cur->tid == tid) {
+    if (cur->tid == thread->tid) {
       if (prev == NULL)
         threadlist = cur->next;
       else
@@ -119,7 +119,7 @@ static int kmt_create(thread_t *thread, void (*entry)(void *arg), void *arg) {
 
 static void kmt_teardown(thread_t *thread) {
   pmm->free(thread->kstack);
-  threadlist_remove(thread->tid);
+  threadlist_remove(thread);
 }
 
 static thread_t *kmt_schedule() {
