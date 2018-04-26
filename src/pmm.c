@@ -176,5 +176,5 @@ static void *pmm_alloc(size_t size) {
 
 static void pmm_free(void *ptr) {
   freelist_free(ptr);
-  Log("addr: %p\n", ret);
+  Log("addr: %p\n", ptr);
 }
