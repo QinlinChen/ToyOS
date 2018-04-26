@@ -121,22 +121,8 @@ static void kmt_init() {
   idle.stat = BLOCKED;
   // initialize threadlist 
   idle.next = threadlist = &idle;
-
-  thread_t a, b, c, d;
-  a.tid = 1; a.stat = 0;
-  b.tid = 2; b.stat = 0;
-  c.tid = 3; c.stat = 0;
-  d.tid = 4; d.stat = 0;
-  threadlist_add(&a);
-  threadlist_add(&b);
-  threadlist_print();
-  threadlist_remove(&b);
-  threadlist_add(&c);
-  threadlist_add(&d);
-  threadlist_print();
-  threadlist_remove(&a);
-  threadlist_print();
-  Panic("Stop");
+  // initialize current as IDLE
+  current = threadlist
 }
 
 static int kmt_create(thread_t *thread,
@@ -153,13 +139,15 @@ static void kmt_teardown(thread_t *thread) {
 }
 
 static thread_t *kmt_schedule() {
-  threadlist_print(); // TO REMOVE
+  threadlist_print(); // REMEMBER TO REMOVE
   thread_t *scan;
-  for (scan = current; scan != NULL; scan = scan->next) {
+  for (scan = current->next; ; scan = scan->next) {
     if (scan->stat == RUNNABLE) {
       Log("Schedule to thread (tid %d)", scan->tid);
       return scan;
     }
+    if (scan == current)
+      return &idle;
   }
   Panic("IDLE!");
   return &idle;
