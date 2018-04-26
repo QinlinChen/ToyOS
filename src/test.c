@@ -103,11 +103,22 @@ void dev_test() {
   }
 }
 
+void print_r(struct _RegSet *r) {
+    printf("RegSet: 0x%p\n", r);
+    uint32_t *p = (uint32_t *)r;
+    for (int i = 0; i < 16; ++i) {
+        printf("%x ", p[i]);
+        if ((i % 4) == 3)
+            printf("\n");
+    }
+    printf("\n");
+}
+
 void test() {
   _Area stack;
   stack.start = (void *)0x300000;
   stack.end = (void *)0x400000;
   _RegSet *r = _make(stack, (void (*)(void *))0x500000, (void *)123);
-  printf("RegSet: 0x%p", r);
+  print_r(r);
   Panic("Stop Here");
 }
