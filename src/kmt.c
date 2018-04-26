@@ -65,7 +65,7 @@ void threadlist_remove(int tid) {
 void threadlist_print() {
   thread_t *scan;
   for (scan = threadlist; scan != NULL; scan = scan->next) {
-    const char *stat;
+    const char *stat = NULL;
     switch (scan->stat) {
       case RUNNING: stat = "RUNNING"; break;
       case RUNNABLE: stat = "RUNNABLE"; break;
