@@ -62,9 +62,9 @@ void threadlist_remove(thread_t *thread) {
 }
 
 void threadlist_print() {
-  node_t *cur;
-  for (cur = threadlist; cur != NULL; cur = cur->next) {
-    printf("(tid: %d), ", cur->thread->tid);
+  node_t *scan;
+  for (scan = threadlist; scan != NULL; scan = scan->next) {
+    printf("(tid: %d), ", scan->thread->tid);
   }
   printf("\n");
 }
@@ -73,11 +73,16 @@ void threadlist_print() {
                     thread
   ------------------------------------------*/
 
-thread_t thr[2];
 thread_t *current = NULL;
+thread_t idle;
+
+static void IDLE(void *arg) {
+  while (1)
+    _putc('.');
+}
 
 static void kmt_init() {
-
+  kmt_create(&idle, IDLE, NULL);
 }
 
 static int kmt_create(thread_t *thread, void (*entry)(void *arg), void *arg) {
@@ -105,7 +110,12 @@ static void kmt_teardown(thread_t *thread) {
 }
 
 static thread_t *kmt_schedule() {
-  return (current == &thr[0]) ? &thr[1] : &thr[0];
+  node_t *scan;
+  for (scan = threadlist; scan != NULL; scan = scan->next) {
+    if (scan != current)
+      return scan;
+  }
+  return &idle;
 }
 
 /*------------------------------------------
