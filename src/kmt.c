@@ -37,7 +37,6 @@ enum { RUNNABLE, RUNNING, BLOCKED, DEAD };
 static thread_t *threadlist = NULL;
 
 void threadlist_add(thread_t *thread) {
-  // allocate node
   thread_t *node = (thread_t *)pmm->alloc(sizeof(thread_t));
   Assert(node != NULL);
   *node = *thread;
