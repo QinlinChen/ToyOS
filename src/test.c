@@ -104,5 +104,10 @@ void dev_test() {
 }
 
 void test() {
-  pmm_test();
+  _Area stack;
+  stack.start = 0x300000;
+  stack.end = 0x400000;
+  _RegSet *r = _make(stack, 0x500000, (void *)123);
+  printf("RegSet: 0x%p", r);
+  Panic("Stop Here");
 }
