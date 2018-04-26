@@ -34,11 +34,7 @@ typedef struct node {
   struct node *next;
 } node_t;
 
-static node_t *threadlist;
-
-static void threadlist_init() {
-  threadlist =  NULL;
-}
+static node_t *threadlist = NULL;
 
 static void threadlist_add(thread_t *thread) {
   node_t *node = pmm->alloc(sizeof(node_t));
@@ -52,7 +48,7 @@ static void threadlist_remove(thread_t *thread) {
   node_t *prev, *cur;
 
   prev = NULL;
-  for (cur = thread_list; cur != NULL; prev = cur, cur = cur->next) {
+  for (cur = threadlist; cur != NULL; prev = cur, cur = cur->next) {
     if (cur->thread == thread) {
       if (prev == NULL)
         threadlist = cur->next;
@@ -65,11 +61,32 @@ static void threadlist_remove(thread_t *thread) {
   Panic("should not reach here");
 }
 
+static void print_threadlist() {
+  node_t *cur;
+  for (cur = threadlist; cur != NULL; cur = cur->next) {
+    printf("(tid: %d), ", cur->thread->tid);
+  }
+}
+
 thread_t thr[2];
 thread_t *current = NULL;
 
 static void kmt_init() {
-  
+  thread_t a, b, c, d;
+  a.tid = 1;
+  b.tid = 2;
+  c.tid = 3;
+  d.tid = 4;
+  threadlist_add(&a);
+  threadlist_add(&b);
+  print_threadlist();
+  threadlist_remove(&b);
+  print_threadlist();
+  threadlist_add(&c);
+  threadlist_add(&d);
+  print_threadlist();
+  threadlist_remove(&a);
+  print_threadlist();
 }
 
 static int kmt_create(thread_t *thread, void (*entry)(void *arg), void *arg) {
