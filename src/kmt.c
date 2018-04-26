@@ -79,7 +79,7 @@ void threadlist_print() {
       case DEAD: stat = "BLOCKED"; break;
       default: Panic("Should not reach here");
     }
-    printf("(tid: %d, stat: %s)", scan->tid, stat);
+    printf("(tid: %d, stat: %s)\n", scan->tid, stat);
     if (scan == threadlist)
       break;
   }
