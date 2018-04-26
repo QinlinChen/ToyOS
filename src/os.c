@@ -35,7 +35,7 @@ static _RegSet *timer_handle(_RegSet *regs) {
     current->stat = RUNNABLE;
   }
   current = next;
-  current = RUNNING;
+  current->stat = RUNNING;
   return current->regs;
 }
 
