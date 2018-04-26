@@ -117,7 +117,7 @@ void print_r(struct _RegSet *r) {
 void test() {
   _Area stack;
   stack.start = (void *)0x300000;
-  stack.end = (void *)0x400000;
+  stack.end = (void *)0x500000;
   _RegSet *r = _make(stack, (void (*)(void *))0x500000, (void *)123);
   print_r(r);
   Panic("Stop Here");
