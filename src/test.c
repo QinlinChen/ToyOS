@@ -102,6 +102,10 @@ void threadlist_print();
 
 void threadlist_test() {
   thread_t a, b, c, d;
+  a.tid = 1; a.stat = 0;
+  b.tid = 2; b.stat = 1;
+  c.tid = 3; c.stat = 2;
+  d.tid = 4; d.stat = 3;
   threadlist_add(&a);
   threadlist_add(&b);
   threadlist_print();
