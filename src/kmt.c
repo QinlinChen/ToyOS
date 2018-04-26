@@ -71,7 +71,7 @@ void threadlist_print() {
       case RUNNABLE: stat = "RUNNABLE"; break;
       case BLOCKED: stat = "BLOCKED"; break;
       case DEAD: stat = "BLOCKED"; break;
-      default:  Panic("Should not reach here");
+      default: Panic("Should not reach here");
     }
     printf("(tid: %d, stat: %s)", scan->tid, stat);
   }
