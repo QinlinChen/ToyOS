@@ -26,9 +26,9 @@ static void os_run() {
 
 static _RegSet *os_interrupt(_Event ev, _RegSet *regs) {
   switch (ev.event) {
-    case: _EVENT_IRQ_TIMER: _putc('*'); break;
-    case: _EVENT_IRQ_IODEV: _putc('I'); break;
-    case: _EVENT_ERROR: _putc('x'); _halt(1);
+    case _EVENT_IRQ_TIMER: _putc('*'); break;
+    case _EVENT_IRQ_IODEV: _putc('I'); break;
+    case _EVENT_ERROR: _putc('x'); _halt(1);
     default: Panic("Not Implemented");
   }
   return NULL; // this is allowed by AM
