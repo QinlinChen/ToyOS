@@ -67,8 +67,10 @@ typedef struct _Protect {
 #define MAX_KSTACK_SIZE   4 * PGSIZE 
 
 struct thread {
-  uint8_t kstack[MAX_KSTACK_SIZE];
+  uint8_t *kstack;
   _RegSet *regs;
+  int tid;
+  int status;
 };
 
 struct spinlock {
