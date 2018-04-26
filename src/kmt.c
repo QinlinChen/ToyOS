@@ -123,11 +123,11 @@ static void kmt_teardown(thread_t *thread) {
 }
 
 static thread_t *kmt_schedule() {
-  //threadlist_log();
+  threadlist_log();
   thread_t *scan;
   for (scan = threadlist; scan != NULL; scan = scan->next) {
     if (scan->stat == RUNNABLE) {
-      Log("Schedule to thread (tid %d)\n", scan->tid);
+      Log("Schedule to thread (tid %d)", scan->tid);
       return scan;
     }
   }
