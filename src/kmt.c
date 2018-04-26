@@ -38,7 +38,7 @@ struct semaphore {
 };
 
 static void kmt_init() {
-  Panic("TODO");
+  
 }
 
 static int kmt_create(thread_t *thread, void (*entry)(void *arg), void *arg) {
