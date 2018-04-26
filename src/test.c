@@ -130,13 +130,13 @@ static void g(void *arg) {
   }
 }
 
-void test() {
+void thread_test() {
   thread_t a, b;
-  
   kmt->create(&a, f, NULL);
   kmt->create(&b, g, NULL);
-  kmt->teardown(&b);
-  kmt->teardown(&a);
 
-  Panic("Stop Here");
+}
+
+void test() {
+  thread_test();
 }
