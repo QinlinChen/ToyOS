@@ -28,7 +28,7 @@ MOD_DEF(kmt) {
 #define PGSIZE            4096
 #define MAX_KSTACK_SIZE   4 * PGSIZE 
 
-int stack[128 * PGSIZE];
+int stack[64 * PGSIZE];
 
 struct thread {
   int TODO;
