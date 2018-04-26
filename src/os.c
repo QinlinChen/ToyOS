@@ -37,7 +37,7 @@ static _RegSet *timer_handle(_RegSet *regs) {
   }
 
   // next is current
-  current->slice--;
+  current->timeslice--;
   thread_t *next = kmt->schedule();
   if (next == current)
     return current->regs;
