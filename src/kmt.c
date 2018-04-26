@@ -79,7 +79,8 @@ void threadlist_print() {
       case DEAD: stat = "BLOCKED"; break;
       default: Panic("Should not reach here");
     }
-    printf("(tid: %d, stat: %s)\n", scan->tid, stat);
+    printf("(tid: %d, stat: %s, slice: %d)\n", 
+      scan->tid, stat, scan->timeslice);
     if (scan == threadlist)
       break;
   }
@@ -137,17 +138,25 @@ static void kmt_teardown(thread_t *thread) {
 }
 
 static thread_t *kmt_schedule() {
+  Assert(RR != NULL);
   threadlist_print(); // REMEMBER TO REMOVE
+
+  if (current == NULL) 
+    return &idle;
+  
+  if (current->stat == RUNNABLE && current->timeslice > 0)
+    return current;
+
   thread_t *scan;
-  for (scan = threadlist->next; ; scan = scan->next) {
+  for (scan = current->next; ; scan = scan->next) {
     if (scan->stat == RUNNABLE) {
       Log("Schedule to thread (tid %d)", scan->tid);
       return scan;
     }
-    if (scan == threadlist)
+    if (scan == current)
       return &idle;
   }
-  Panic("IDLE!");
+  Panic("Should not reach here!");
   return &idle;
 }
 

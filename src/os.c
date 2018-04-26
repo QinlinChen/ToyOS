@@ -29,11 +29,23 @@ extern thread_t *current;
 
 static _RegSet *timer_handle(_RegSet *regs) {
   _putc('*');
-  thread_t *next = kmt->schedule();
-  if (current) {
-    current->regs = regs;
-    current->stat = RUNNABLE;
+
+  // current is not initialized
+  if (current == NULL) {
+    current = kmt->schedule();
+    return current->regs;
   }
+
+  // next is current
+  current->slice--;
+  thread_t *next = kmt->schedule();
+  if (next == current)
+    return current->regs;
+  
+  // next is not current
+  current->regs = regs;
+  current->stat = RUNNABLE;
+  current->timeslice = MAX_TIMESLICE;
   current = next;
   current->stat = RUNNING;
   return current->regs;
