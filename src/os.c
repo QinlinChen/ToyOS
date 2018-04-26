@@ -25,9 +25,15 @@ static void os_run() {
   while (1) ; // should never return
 }
 
+static _RegSet *timer_handle(_RegSet *regs) {
+  _putc('*');
+  thread_t *thr = kmt->schedule();
+  return thr->regs;
+}
+
 static _RegSet *os_interrupt(_Event ev, _RegSet *regs) {
   switch (ev.event) {
-    case _EVENT_IRQ_TIMER: _putc('*'); break;
+    case _EVENT_IRQ_TIMER: return timer_handle(regs);
     case _EVENT_IRQ_IODEV: _putc('I'); break;
     case _EVENT_ERROR: _putc('x'); _halt(1);
     default: Panic("Not Implemented");

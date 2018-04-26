@@ -26,10 +26,8 @@ MOD_DEF(kmt) {
 };
 
 
-
-
 thread_t thr[2];
-
+thread_t *current = NULL;
 
 static void kmt_init() {
   
@@ -61,8 +59,7 @@ static void kmt_teardown(thread_t *thread) {
 }
 
 static thread_t *kmt_schedule() {
-  Panic("TODO");
-  return NULL;
+  return (current == &thr[0]) ? &thr[1] : &thr[0];
 }
 
 static void kmt_spin_init(spinlock_t *lk, const char *name) {
