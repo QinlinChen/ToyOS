@@ -73,14 +73,6 @@ void debug_test() {
   Panic("debug test panic");
 }
 
-void pmm_test() {
-  pmm->free(pmm->alloc(4));
-  pmm->free(pmm->alloc(8));
-  pmm->free(pmm->alloc(123));
-  pmm->free(pmm->alloc(1024));
-  pmm->free(pmm->alloc(4096));
-}
-
 void dev_test() {
   _Device *dev;
   for (int n = 1; (dev = _device(n)); n++) {
@@ -94,6 +86,14 @@ void dev_test() {
     }
     printf("\n");
   }
+}
+
+void pmm_test() {
+  pmm->free(pmm->alloc(4));
+  pmm->free(pmm->alloc(8));
+  pmm->free(pmm->alloc(123));
+  pmm->free(pmm->alloc(1024));
+  pmm->free(pmm->alloc(4096));
 }
 
 void threadlist_add(thread_t *thread);
@@ -131,11 +131,12 @@ static void g(void *arg) {
 }
 
 void test() {
-  pmm_test();
-  threadlist_test();
-  Panic("Stop Here");
-  extern thread_t thr[2];
-  kmt->create(&thr[0], f, NULL);
-  kmt->create(&thr[1], g, NULL);
+  thread_t a, b;
   
+  kmt->create(&a, f, NULL);
+  kmt->create(&b, g, NULL);
+  kmt->teardown(&b);
+  kmt->teardown(&a);
+
+  Panic("Stop Here");
 }

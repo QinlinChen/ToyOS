@@ -69,6 +69,10 @@ void threadlist_print() {
   printf("\n");
 }
 
+/*------------------------------------------
+                    thread
+  ------------------------------------------*/
+
 thread_t thr[2];
 thread_t *current = NULL;
 
@@ -77,21 +81,36 @@ static void kmt_init() {
 }
 
 static int kmt_create(thread_t *thread, void (*entry)(void *arg), void *arg) {
-  _Area kstack;
-  kstack.start = (void *)thread->kstack;
-  kstack.end = (void*)(thread->kstack + MAX_KSTACK_SIZE);
-  Log("kstack start: %p, end: %p", kstack.start, kstack.end);
-  thread->regs = _make(kstack, (void (*)(void *))entry, arg);
+  static int tid = 1;
+  _Area stackinfo;
+
+  thread->tid = tid++;
+  thread->status = -1; // TODO
+
+  thread->kstack = (uint8_t *)pmm->alloc(MAX_KSTACK_SIZE);
+  stackinfo.start = (void *)thread->kstack;
+  stackinfo.end = (void*)(thread->kstack + MAX_KSTACK_SIZE);
+  Log("kstack start: %p, end: %p", stackinfo.start, stackinfo.end);
+
+  thread->regs = _make(stackinfo, (void (*)(void *))entry, arg);
+
+  threadlist_add(thread);
+  
   return 0;
 }
 
 static void kmt_teardown(thread_t *thread) {
-  Panic("TODO");
+  threadlist_remove(thread);
+  pmm->free(thread->kstack);
 }
 
 static thread_t *kmt_schedule() {
   return (current == &thr[0]) ? &thr[1] : &thr[0];
 }
+
+/*------------------------------------------
+              mutex and semaphore
+  ------------------------------------------*/
 
 static void kmt_spin_init(spinlock_t *lk, const char *name) {
   Panic("TODO");
