@@ -32,7 +32,6 @@ static _RegSet *timer_handle(_RegSet *regs) {
   if (current)
     current->regs = regs;
   current = kmt->schedule();
-  printf("current: tid: %d stat: %d", current->tid, current->stat);
   Log("Schedule to thread (tid %d)", current->tid);
   return current->regs;
 }
