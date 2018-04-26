@@ -73,19 +73,13 @@ void debug_test() {
   Panic("debug test panic");
 }
 
-static inline void *log_alloc(size_t size) {
-  void *ret = pmm->alloc(size);
-  printf("addr: %p, size: %d\n", ret, size);
-  return ret;
-}
-
 void pmm_test() {
   printf("_heap = [%08x, %08x)\n", _heap.start, _heap.end);
-  pmm->free(log_alloc(4));
-  pmm->free(log_alloc(8));
-  pmm->free(log_alloc(123));
-  pmm->free(log_alloc(1024));
-  pmm->free(log_alloc(4096));
+  pmm->free(pmm->alloc(4));
+  pmm->free(pmm->alloc(8));
+  pmm->free(pmm->alloc(123));
+  pmm->free(pmm->alloc(1024));
+  pmm->free(pmm->alloc(4096));
 }
 
 void dev_test() {

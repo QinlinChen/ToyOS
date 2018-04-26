@@ -33,24 +33,12 @@ static void kmt_init() {
   
 }
 
-void print_regset(struct _RegSet *r) {
-    printf("RegSet: 0x%p\n", r);
-    uint32_t *p = (uint32_t *)r;
-    for (int i = 0; i < 16; ++i) {
-        printf("%x ", p[i]);
-        if ((i % 4) == 3)
-            printf("\n");
-    }
-    printf("\n");
-}
-
 static int kmt_create(thread_t *thread, void (*entry)(void *arg), void *arg) {
   _Area kstack;
   kstack.start = (void *)thread->kstack;
   kstack.end = (void*)(thread->kstack + MAX_KSTACK_SIZE);
   Log("kstack start: %p, end: %p", kstack.start, kstack.end);
   thread->regs = _make(kstack, (void (*)(void *))entry, arg);
-  print_regset(thread->regs);
   return 0;
 }
 

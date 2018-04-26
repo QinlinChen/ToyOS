@@ -127,23 +127,6 @@ static void *freelist_alloc(size_t size) {
   }
 }
 
-static void pmm_init() {
-  pmm_brk = addr_aligned((char *)_heap.start, sizeof(Header));
-  Log("pmm_brk initialized as %p", pmm_brk);
-}
-
-static void *pmm_sbrk(int incr) {
-  char *old_brk = pmm_brk;
-
-  if ((incr < 0) || (pmm_brk + incr > (char *)_heap.end)) {
-    printf("ERROR: pmm_sbrk failed. Ran out of memory.\n");
-    return (void *)-1;
-  }
-
-  pmm_brk += incr;
-  return (void *)old_brk;
-}
-
 static void *addr_aligned_alloc(size_t size) {
   // new size to align
   size_t new_size = 1;
@@ -168,11 +151,30 @@ static void *addr_aligned_alloc(size_t size) {
   return new_addr;
 }
 
+static void pmm_init() {
+  pmm_brk = addr_aligned((char *)_heap.start, sizeof(Header));
+  Log("pmm_brk initialized as %p", pmm_brk);
+}
+
+static void *pmm_sbrk(int incr) {
+  char *old_brk = pmm_brk;
+
+  if ((incr < 0) || (pmm_brk + incr > (char *)_heap.end)) {
+    printf("ERROR: pmm_sbrk failed. Ran out of memory.\n");
+    return (void *)-1;
+  }
+
+  pmm_brk += incr;
+  return (void *)old_brk;
+}
+
 static void *pmm_alloc(size_t size) {
   void *ret = addr_aligned_alloc(size);
+  Log("addr: %p, size: %d\n", ret, size);
   return ret;
 }
 
 static void pmm_free(void *ptr) {
   freelist_free(ptr);
+  Log("addr: %p\n", ret);
 }
