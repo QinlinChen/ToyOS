@@ -169,7 +169,7 @@ static void *pmm_sbrk(int incr) {
   char *old_brk = pmm_brk;
 
   if ((incr < 0) || (pmm_brk + incr > (char *)_heap.end)) {
-    printf("ERROR: pmm_sbrk failed. Ran out of memory.\n");
+    Panic("ERROR: pmm_sbrk failed. Ran out of memory.\n");
     return (void *)-1;
   }
 
