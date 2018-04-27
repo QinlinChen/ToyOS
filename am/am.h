@@ -84,6 +84,12 @@ struct spinlock {
   const char *name;
 };
 
+#define SPINLOCK_INITIALIZER(NAME) \
+  (struct spinlock) { \
+    .locked = 0, \
+    .name = (NAME), \
+  }
+
 struct semaphore {
   int TODO;
 };
