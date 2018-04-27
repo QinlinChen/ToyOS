@@ -186,12 +186,14 @@ void sem_test(int N) {
 static spinlock_t hellolock = SPINLOCK_INIT("hello_lock");
 
 #define MAXN 5
+int count = 0;
 
 static void hello(void *arg) {
   int N = (int)arg;
   if (N < MAXN) {
     kmt->spin_lock(&hellolock);
-    printf("Hello\n");
+    count++;
+    printf("Hello %d\n", count);
     kmt->spin_unlock(&hellolock);
     thread_t *thr1 = pmm->alloc(sizeof(thread_t));
     thread_t *thr2 = pmm->alloc(sizeof(thread_t));
