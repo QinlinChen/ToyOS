@@ -136,14 +136,17 @@ void schedule_test() {
 int _sum = 0;
 
 void rand_wastetime() {
-  
+  int wastetime = random(0, 100000);
+  for (int volatile i = 0; i < wastetime; ++i)
+    continue;
 }
 
 static void addsum(void *arg) {
   int N = (int)(intptr_t)arg;
-  for (int volatile i = 0; i < N; ++i)
+  for (int volatile i = 0; i < N; ++i) {
+    rand_wastetime();
     _sum++;
-
+  }
   printf("%d ", _sum);
   while (1);
 }
@@ -156,16 +159,6 @@ void lock_test() {
   kmt->create(&c, addsum, (void *)N);
 }
 
-#define LEFT  1000000
-#define RIGHT 1000010
-int ctr[RIGHT - LEFT];
-
 void test() {
-  for (int i = 0; i < 1000; ++i)
-    ctr[random(LEFT, RIGHT) - LEFT]++;
-  for (int i = LEFT; i < RIGHT; ++i) {
-    printf("ctr[%d]: %d\n", i, ctr[i - LEFT]);
-  }
-  Panic("STOP");
   lock_test();
 }
