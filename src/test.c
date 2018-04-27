@@ -134,7 +134,7 @@ void schedule_test() {
 }
 
 int _sum = 0;
-spinlock_t mutex;
+spinlock_t mutex = SPINLOCK_INITIALIZER;
 
 static void addsum(void *arg) {
   kmt->spin_lock(&mutex);
@@ -149,8 +149,6 @@ static void addsum(void *arg) {
 void lock_test() {
   thread_t a, b, c;
   int N = 10000000;
-
-  kmt->spin_init(&mutex, "sum_lock");
   kmt->create(&a, addsum, (void *)N);
   kmt->create(&b, addsum, (void *)N);
   kmt->create(&c, addsum, (void *)N);
