@@ -159,7 +159,7 @@ void lock_test() {
 #define MAXCOUNT 100
 int ctr[MAXCOUNT];
 void test() {
-  int left = 100;
+  int left = 10;
   for (int i = 0; i < 1000; ++i)
     ctr[random(left, MAXCOUNT)]++;
   for (int i = left; i < MAXCOUNT; ++i) {
