@@ -30,7 +30,7 @@ MOD_DEF(kmt) {
   ------------------------------------------*/
 
 // threadlist is THREAD SAFE
-static spinlock_t threadlist_lock = SPINLOCK_INITIALIZER("threadlist_lock");
+static spinlock_t threadlist_lock = SPINLOCK_INIT("threadlist_lock");
 static thread_t *threadlist = NULL;
 thread_t idle;
 thread_t *current = NULL;
@@ -235,8 +235,9 @@ int threadqueue_empty(threadqueue *queue) {
 
 void threadqueue_push(threadqueue *queue, thread_t *thread) {
   threadqueue_node *new_node = (threadqueue_node *)pmm->alloc(
-    sizeof(threadqueue_node *));
+    sizeof(threadqueue_node));
   Assert(new_node != NULL);
+
   new_node->thread = thread;
   new_node->next = NULL;
   if (queue->size == 0)
@@ -249,6 +250,7 @@ void threadqueue_push(threadqueue *queue, thread_t *thread) {
 
 thread_t *threadqueue_pop(threadqueue *queue) {
   Assert(queue->size != 0);
+
   thread_t *ret = queue->head->thread;
   threadqueue_node *save = queue->head;
   queue->head = queue->head->next;
@@ -256,16 +258,9 @@ thread_t *threadqueue_pop(threadqueue *queue) {
   queue->size--;
   if (queue->size == 0)
     queue->tail = NULL;
+
   return ret;
 }
-
-// void threadqueue_print(threadqueue *queue) {
-//   threadqueue_node *scan;
-//   for (scan = queue->head; scan != NULL; scan = scan->next) {
-//     printf("(tid %d), ", scan->thread->tid);
-//   }
-//   printf("\n");
-// }
 
 /*------------------------------------------
         semaphore (only for user thread)
@@ -274,7 +269,7 @@ thread_t *threadqueue_pop(threadqueue *queue) {
 static void kmt_sem_init(sem_t *sem, const char *name, int value) {
   sem->count = value;
   threadqueue_init(&sem->queue);
-  kmt_spin_init(&sem->lock, "sem_lock");
+  kmt_spin_init(&sem->lock, name);
 }
 
 static void kmt_sem_wait(sem_t *sem) {

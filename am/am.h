@@ -84,7 +84,7 @@ struct spinlock {
   const char *name;
 };
 
-#define SPINLOCK_INITIALIZER(NAME) \
+#define SPINLOCK_INIT(NAME) \
   (struct spinlock) { \
     .locked = 0, \
     .name = (NAME), \
@@ -106,6 +106,13 @@ struct semaphore {
   threadqueue queue;
   struct spinlock lock;
 };
+
+#define SEM_INIT(NAME, VALUE) \
+  (struct semaphore) { \
+    .count = (VALUE), \
+    .queue = { NULL, NULL, 0}, \
+    .name = (NAME), \
+  }
 
 // ========================= Turing Machine ==========================
 

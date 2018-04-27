@@ -17,9 +17,8 @@ static void os_init() {
   }
 }
 
-void test();
-
 static void os_run() {
+  extern void test();
   test();
   _intr_write(1); // enable interrupt
   while (1) ; // should never return
@@ -34,8 +33,6 @@ static _RegSet *switch_thread(_RegSet *regs) {
     current = &idle;  // schedule IDLE
     return current->regs;
   }
-  
-  Log("Interrupt (tid %d), eip: %p", current->tid, regs->eip);
   
   // consume timeslice and change current state
   current->timeslice--;
@@ -56,11 +53,20 @@ static _RegSet *switch_thread(_RegSet *regs) {
 
 static _RegSet *os_interrupt(_Event ev, _RegSet *regs) {
   switch (ev.event) {
-    case _EVENT_IRQ_TIMER: _putc('*'); return switch_thread(regs);
-    case _EVENT_YIELD: _putc('Y'); return switch_thread(regs);
-    case _EVENT_IRQ_IODEV: _putc('I'); break;
-    case _EVENT_ERROR: _putc('x'); _halt(1);
-    default: Panic("Not Implemented");
+    case _EVENT_IRQ_TIMER: 
+      Log("TimeInterrupt! current thread (tid %d)", current->tid); 
+      return switch_thread(regs);
+    case _EVENT_YIELD: 
+      Log("Yield! current thread (tid %d)", current->tid);
+      return switch_thread(regs);
+    case _EVENT_IRQ_IODEV:
+      _putc('I');
+      break;
+    case _EVENT_ERROR:
+      _putc('x'); 
+      _halt(1);
+    default: 
+      Panic("Not Implemented");
   }
   return NULL; // this is allowed by AM
 }
