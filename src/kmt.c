@@ -278,9 +278,24 @@ static void kmt_sem_init(sem_t *sem, const char *name, int value) {
 }
 
 static void kmt_sem_wait(sem_t *sem) {
-  Panic("TODO");
+  kmt_spin_lock(&sem->lock);
+  sem->count--;
+  if (sem->count < 0) {
+    current->stat = BLOCKED;
+    threadqueue_push(&sem->queue, current);
+    kmt_spin_unlock(&sem->lock);
+    _yield();
+    kmt_spin_lock(&sem->lock);
+  }
+  kmt_spin_unlock(&sem->lock);
 }
 
 static void kmt_sem_signal(sem_t *sem) {
-  Panic("TODO");
+  kmt_spin_lock(&sem->lock);
+  sem->count++;
+  if (sem->count <= 0) {
+    thread_t *towake = threadqueue_pop(&sem->queue);
+    towake->stat = RUNNABLE;
+  }
+  kmt_spin_unlock(&sem->lock);
 }
