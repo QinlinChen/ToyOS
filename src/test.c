@@ -152,5 +152,5 @@ void lock_test() {
 }
 
 void test() {
-  lock_test();
+  schedule_test();
 }
