@@ -34,7 +34,7 @@ thread_t idle;
 thread_t *current = NULL;
 
 static spinlock_t threadlist_lock = SPINLOCK_INITIALIZER(
-  "threadlist_lock")
+  "threadlist_lock");
 
 static void threadlist_add(thread_t *thread);
 static void threadlist_remove(thread_t *thread);
@@ -44,23 +44,21 @@ void threadlist_print();
 
 static void threadlist_add(thread_t *thread) {
   Assert(threadlist != NULL);
-  kmt->spin_lock(&threadlist_lock);
 
+  kmt->spin_lock(&threadlist_lock);
   thread_t *node = (thread_t *)pmm->alloc(sizeof(thread_t));
   Assert(node != NULL);
   *node = *thread;
   node->next = threadlist->next;
   threadlist->next = node;
-
   kmt->spin_unlock(&threadlist_lock);
 }
 
 static void threadlist_remove(thread_t *thread) {
   Assert(threadlist != NULL);
   thread_t *prev, *cur;
-  
-  kmt->spin_lock(&threadlist_lock);
 
+  kmt->spin_lock(&threadlist_lock);
   prev = threadlist;
   for (cur = prev->next; ; prev = cur, cur = cur->next) {
     if (cur->tid == thread->tid)
@@ -70,13 +68,14 @@ static void threadlist_remove(thread_t *thread) {
   }
   prev->next = cur->next;
   pmm->free(cur);
-
   kmt->spin_unlock(&threadlist_lock);
 }
 
 void threadlist_print() {
-  // TODO: unlock()
+  Assert(threadlist != NULL);
   thread_t *scan;
+
+  kmt->spin_lock(&threadlist_lock);
   for (scan = threadlist->next; ; scan = scan->next) {
     const char *stat = NULL;
     switch (scan->stat) {
@@ -91,7 +90,7 @@ void threadlist_print() {
     if (scan == threadlist)
       break;
   }
-  // TODO: unlock()
+  kmt->spin_unlock(&threadlist_lock);
 }
 
 static void make_thread(thread_t *thread, 
@@ -156,14 +155,18 @@ static thread_t *kmt_schedule() {
 
   // Round-Robin
   thread_t *scan;
+  kmt->spin_lock(&threadlist_lock);
   for (scan = current->next; ; scan = scan->next) {
     if (scan->stat == RUNNABLE) {
       Log("Next thread (tid %d)", scan->tid);
+      kmt->spin_unlock(&threadlist_lock);
       return scan;
     }
     // if no thread can run, schedule to idle
-    if (scan == current)
+    if (scan == current) {
+      kmt->spin_unlock(&threadlist_lock);
       return &idle;
+    }
   }
   Panic("Should not reach here!");
   return &idle;
