@@ -177,5 +177,7 @@ void test() {
   threadqueue_push(&q, &c);
   threadqueue_print(&q);
   threadqueue_pop(&q);
+  threadqueue_pop(&q);
+  threadqueue_print(&q);
   Panic("Stop");
 }
