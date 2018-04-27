@@ -145,12 +145,14 @@ static thread_t *kmt_schedule() {
   if (current->stat == RUNNABLE && current->timeslice > 0)
     return current;
 
+  // Round-Robin
   thread_t *scan;
   for (scan = current->next; ; scan = scan->next) {
     if (scan->stat == RUNNABLE) {
       Log("Schedule to thread (tid %d)", scan->tid);
       return scan;
     }
+    // if no thread can run, schedule to idle
     if (scan == current)
       return &idle;
   }
