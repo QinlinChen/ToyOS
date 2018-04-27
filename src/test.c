@@ -156,9 +156,14 @@ void lock_test() {
   kmt->create(&c, addsum, (void *)N);
 }
 
+#define MAXCOUNT 1000;
+int ctr[MAXCOUNT]
 void test() {
   for (int i = 0; i < 100; ++i)
-    printf("%d\n", random(4, 30));
+    ctr[random(0, MAXCOUNT)]++;
+  for (int i = 0; i < MAXCOUNT; ++i) {
+    printf("ctr[%d]: %d", i, ctr[i]);
+  }
   Panic("STOP");
   lock_test();
 }
