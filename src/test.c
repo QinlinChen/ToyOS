@@ -243,21 +243,21 @@ void hello_test() {
   ------------------------------------------*/
 
 // need -O0 to avoid optimization
-static int fib(int n) {
+static int factor(int n) {
   if (n <= 1)
     return 1;
-  return fib(n - 1) + fib(n - 2);
+  return n * factor(n - 1);
 }
 
-static void fib_calc(void *arg) {
-  int result = fib((int)arg);
+static void factor_calc(void *arg) {
+  int result = factor((int)arg);
   printf("Result %d\n", result);
   while (1);
 }
 
 void stackfence_test() {
   thread_t t;
-  kmt->create(&t, fib_calc, (void *)800);
+  kmt->create(&t, fib_calc, (void *)100);
 } 
 
 void test() {
