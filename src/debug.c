@@ -1,7 +1,6 @@
 #include <debug.h>
 
 void fence_check(uint8_t *fence) {
-  printf("fence %p", fence);
   for (int i = 0; i < FENCESIZE; ++i)
     if (fence[i] != FENCEBYTE) 
       Panic("[ERROR] Stack overflow at %p", fence + i);
