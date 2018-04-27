@@ -51,7 +51,6 @@ static _RegSet *timer_handle(_RegSet *regs) {
 
   // save regs, switch and run
   current->regs = regs;
-  // 
   current = next;
   if (current->timeslice == 0)
     current->timeslice = MAX_TIMESLICE;
