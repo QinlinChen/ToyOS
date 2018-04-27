@@ -9,6 +9,4 @@ static inline void puts(const char *p) {
   }
 }
 
-void threadqueue_init(threadqueue *queue);
-
 #endif
