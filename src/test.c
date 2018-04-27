@@ -257,7 +257,7 @@ static void factor_calc(void *arg) {
 
 void stackfence_test() {
   thread_t *t = pmm->alloc(sizeof(thread_t));
-  kmt->create(t, factor_calc, (void *)540);
+  kmt->create(t, factor_calc, (void *)530);
 } 
 
 void test() {
