@@ -178,8 +178,8 @@ void sem_test(int N) {
   kmt->sem_init(&empty, "sem_empty", N);
   kmt->sem_init(&fill, "sem_fill", 0);
   kmt->create(&a, producer, NULL);
-  kmt->create(&b, producer, NULL);
-  kmt->create(&c, producer, NULL);
+  kmt->create(&b, consumer, NULL);
+  kmt->create(&c, consumer, NULL);
   kmt->create(&d, consumer, NULL);
 }
 
