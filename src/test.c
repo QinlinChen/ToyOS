@@ -142,7 +142,7 @@ static void addsum(void *arg) {
 
   int volatile count = 0;  
   while (1) {
-    if (++count == 100000) {
+    if (++count == 10000000) {
       printf("%d ", _sum);
       count = 0;
     }
@@ -151,7 +151,7 @@ static void addsum(void *arg) {
 
 void lock_test() {
   thread_t a, b;
-  int N = 1000000;
+  int N = 10000000;
   kmt->create(&a, addsum, (void *)N);
   kmt->create(&b, addsum, (void *)N);
 }
