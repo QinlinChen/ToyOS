@@ -257,7 +257,7 @@ static void factor_calc(void *arg) {
 
 void stackfence_test() {
   thread_t t;
-  kmt->create(&t, factor_calc, (void *)500);
+  kmt->create(&t, factor_calc, (void *)800);
 } 
 
 void test() {
