@@ -249,13 +249,14 @@ void threadqueue_push(threadqueue *queue, thread_t *thread) {
 
 thread_t *threadqueue_pop(threadqueue *queue) {
   Assert(queue->size != 0);
-  thread_t *thread = queue->head->thread;
+  thread_t *ret = queue->head->thread;
   threadqueue_node *save = queue->head;
   queue->head = queue->head->next;
   pmm->free(save);
   queue->size--;
   if (queue->size == 0)
     queue->tail = NULL;
+  return ret;
 }
 
 void threadqueue_print(threadqueue *queue) {
