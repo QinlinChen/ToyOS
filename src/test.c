@@ -116,12 +116,23 @@ static void print_uppercase(void *arg) {
   }
 }
 
+static void print_number(void *arg) {
+  int volatile count = 0;
+  while (1) {
+    if (++count == 100000) {
+      printf("1234567");
+      count = 0;
+    }
+  }
+}
+
 void schedule_test() {
-  thread_t a, b;
+  thread_t a, b, c;
   kmt->create(&a, print_lowercase, NULL);
   kmt->create(&b, print_uppercase, NULL);
-
+  kmt->create(&c, print_number, NULL);
 }
+
 
 void test() {
   schedule_test();
