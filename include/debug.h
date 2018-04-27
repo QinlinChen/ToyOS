@@ -5,7 +5,7 @@
 #include <klib.h>
 
 #define LOG
-// #define DEBUG
+#define DEBUG
 // #define TRACE
 
 // Log
