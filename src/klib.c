@@ -183,7 +183,7 @@ int printf(const char *fmt, ...) {
   const char *mark;
 
   va_list ap;
-  kmt->lock(printf_lock);
+  kmt->spin_lock(printf_lock);
   va_start(ap, fmt);
 
   while (*fmt) {
@@ -245,7 +245,7 @@ int printf(const char *fmt, ...) {
   }
 
   va_end(ap);
-  kmt->unlock(printf_lock);
+  kmt->spin_unlock(printf_lock);
   return 0;
 }
 
