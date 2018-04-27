@@ -261,5 +261,5 @@ void stackfence_test() {
 } 
 
 void test() {
-  
+  stackfence_test();
 }
