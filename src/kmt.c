@@ -169,19 +169,40 @@ static void kmt_spin_init(spinlock_t *lk, const char *name) {
   lk->name = name;
 }
 
-static void kmt_spin_lock(spinlock_t *lk) {
-  Assert(_intr_read() == 1);
+static void nintr = 0;
+static void intr_save;
+
+static void push_intr() {
+  int intr_state = _intr_read();
   _intr_write(0);
+  if (nintr == 0)
+    intr_save = intr_state;
+  nintr++;
+}
+
+static void pop_intr() {
+  Assert(_intr_read() == 0);
+  --nintr;
+  Assert(nintr >= 0);
+  if (nintr == 0 && intr_save == 1)
+    _intr_write(1);
+}
+
+static void kmt_spin_lock(spinlock_t *lk) {
+  push_intr();
+
   while (_atomic_xchg(&lk->locked, 1) == 1)
     continue;
+
   Log("%s is locked", lk->name);
 }
 
 static void kmt_spin_unlock(spinlock_t *lk) {
   Log("%s is unlocked", lk->name);
-  Assert(_intr_read() == 0);
+  
   lk->locked = 0;
-  _intr_write(1);
+
+  pop_intr();
 }
 
 static void kmt_sem_init(sem_t *sem, const char *name, int value) {
