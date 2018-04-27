@@ -37,7 +37,8 @@ static _RegSet *timer_handle(_RegSet *regs) {
     return current->regs;
   }
   
-  Log("Interrupt eip: %p", regs->eip);
+  Log("Interrupt (tid %d), eip: %p", 
+    current->tid, regs->eip);
   extern int _sum;
   printf("sum = %d\n", _sum);
 
