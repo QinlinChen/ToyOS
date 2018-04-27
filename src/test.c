@@ -197,18 +197,9 @@ static void hello(void *arg) {
     kmt->spin_unlock(&hellolock);
     thread_t *thr1 = pmm->alloc(sizeof(thread_t));
     thread_t *thr2 = pmm->alloc(sizeof(thread_t));
-    kmt->create(thr, hello, (void *)(N + 1));
-    kmt->create(thr, hello, (void *)(N + 1));
+    kmt->create(thr1, hello, (void *)(N + 1));
+    kmt->create(thr2, hello, (void *)(N + 1));
   }
-  while (1);
-}
-
-static void forkhello(void *arg) {
-  int N = (int)arg + 1;
-  thread_t *thr1 = pmm->alloc(sizeof(thread_t));
-  thread_t *thr2 = pmm->alloc(sizeof(thread_t));
-  kmt->create(thr, hello, (void *)N);
-  kmt->create(thr, hello, (void *)N);
   while (1);
 }
 
