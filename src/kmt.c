@@ -111,7 +111,7 @@ static void make_thread(thread_t *thread,
 
 #ifdef DEBUG
   // set fence to protect stack
-  // we will check fence in irqhandle
+  // we will check fence in os_interrupt
   stackinfo.end = (void*)(thread->kstack + MAX_KSTACK_SIZE);
   fence_set(thread->kstack);
   thread->kstack += FENCESIZE;

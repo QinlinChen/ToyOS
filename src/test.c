@@ -209,5 +209,5 @@ void hello_test() {
 }
 
 void test() {
-  schedule_test();
+  hello_test();
 }
