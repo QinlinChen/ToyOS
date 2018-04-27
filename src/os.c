@@ -29,7 +29,7 @@ extern thread_t *current;
 extern thread_t idle;
 
 static _RegSet *timer_handle(_RegSet *regs) {
-  /*
+  
   _putc('*');
 
   // current is not initialized
@@ -42,26 +42,24 @@ static _RegSet *timer_handle(_RegSet *regs) {
   if (current->stat == RUNNING)
     current->stat = RUNNABLE;
   thread_t *next = kmt->schedule();
-
-  // next is not current
-  if (next != current) {
-    current->regs = regs;
+  current->regs = regs;
+  if (next != current)
     current->timeslice = MAX_TIMESLICE;
-    current = next;
-  }
-
-  current->stat = RUNNING;
-  return current->regs;
-  */
-   _putc('*');
-  thread_t *next = kmt->schedule();
-  if (current) {
-    current->regs = regs;
-    current->stat = RUNNABLE;
-  }
   current = next;
   current->stat = RUNNING;
   return current->regs;
+  
+  //  _putc('*');
+  // if (current == NULL) {
+  //   current = &idle;  // schedule IDLE
+  //   return current->regs;
+  // }
+  // thread_t *next = kmt->schedule();
+  // current->regs = regs;
+  // current->stat = RUNNABLE;
+  // current = next;
+  // current->stat = RUNNING;
+  // return current->regs;
 }
 
 static _RegSet *os_interrupt(_Event ev, _RegSet *regs) {
