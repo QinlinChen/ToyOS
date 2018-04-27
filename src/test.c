@@ -191,7 +191,7 @@ static void hello(void *arg) {
   int N = (int)arg;
   if (N < MAXN) {
     kmt->spin_lock(&hellolock);
-    printf("Hello");
+    printf("Hello\n");
     kmt->spin_unlock(&hellolock);
     thread_t *thr1 = pmm->alloc(sizeof(thread_t));
     thread_t *thr2 = pmm->alloc(sizeof(thread_t));
