@@ -33,6 +33,7 @@ static thread_t *threadlist = NULL;
 thread_t idle;
 thread_t *current = NULL;
 
+// threadlist is THREAD SAFE
 static spinlock_t threadlist_lock = SPINLOCK_INITIALIZER(
   "threadlist_lock");
 
@@ -112,7 +113,7 @@ static void make_thread(thread_t *thread,
   stackinfo.start = (void *)thread->kstack;
   stackinfo.end = (void*)(thread->kstack + MAX_KSTACK_SIZE);
   thread->regs = _make(stackinfo, (void (*)(void *))entry, arg);
-  Log("Create thread (tid: %d), kstack start: %p", 
+  Log("Created thread (tid: %d), kstack start: %p", 
     thread->tid, stackinfo.start);
 }
 
