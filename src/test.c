@@ -174,11 +174,13 @@ static void consumer(void *arg) {
 }
 
 void sem_test(int N) {
-  thread_t a, b;
+  thread_t a, b, c, d;
   kmt->sem_init(&empty, "sem_empty", N);
   kmt->sem_init(&fill, "sem_fill", 0);
   kmt->create(&a, producer, NULL);
-  kmt->create(&b, consumer, NULL);
+  kmt->create(&b, producer, NULL);
+  kmt->create(&c, producer, NULL);
+  kmt->create(&d, consumer, NULL);
 }
 
 void test() {
