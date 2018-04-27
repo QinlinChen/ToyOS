@@ -208,6 +208,23 @@ void hello_test() {
   kmt->create(&t, hello, (void *)0);
 }
 
+static int fib(int n) {
+  if (n <= 1)
+    return 1;
+  return fib(n - 1) + fib(n - 2);
+}
+
+static void fib_calc(void *arg) {
+  int result = fib((int)arg);
+  printf("Result %d\n", result);
+  while (1);
+}
+
+void stackfence_test(int N) {
+  thread_t t;
+  kmt->create(&t, fib_calc, (void *)N);
+} 
+
 void test() {
-  hello_test();
+  stackfence_test();
 }
