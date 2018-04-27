@@ -135,6 +135,10 @@ void schedule_test() {
 
 int _sum = 0;
 
+void rand_wastetime() {
+  
+}
+
 static void addsum(void *arg) {
   int N = (int)(intptr_t)arg;
   for (int volatile i = 0; i < N; ++i)
@@ -153,5 +157,8 @@ void lock_test() {
 }
 
 void test() {
+  for (int i = 0; i < 100; ++i)
+    printf("%d\n", random(4, 30));
+  Panic("STOP");
   lock_test();
 }

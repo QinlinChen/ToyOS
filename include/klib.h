@@ -15,6 +15,7 @@ char *strchr(const char *s, int c);
 // stdlib.h
 void srand(unsigned int seed);
 int rand();
+int random(int left, int right);
 
 // stdio.h
 int printf(const char* fmt, ...);
