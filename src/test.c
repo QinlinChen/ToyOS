@@ -263,7 +263,7 @@ void stackfence_test() {
 void test() {
   // schedule_test();
   // lock_test();
-  sem_test(3);
-  //hello_test();
+  // sem_test(3);
+  hello_test();
   //stackfence_test();
 }
