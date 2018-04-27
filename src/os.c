@@ -29,7 +29,7 @@ extern thread_t *current;
 extern thread_t idle;
 
 static _RegSet *timer_handle(_RegSet *regs) {
-  _putc("*");
+  _putc('*');
 
   // current is not initialized
   if (current == NULL) {
