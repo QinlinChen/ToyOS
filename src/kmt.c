@@ -259,20 +259,22 @@ thread_t *threadqueue_pop(threadqueue *queue) {
   return ret;
 }
 
-void threadqueue_print(threadqueue *queue) {
-  threadqueue_node *scan;
-  for (scan = queue->head; scan != NULL; scan = scan->next) {
-    printf("(tid %d), ", scan->thread->tid);
-  }
-  printf("\n");
-}
+// void threadqueue_print(threadqueue *queue) {
+//   threadqueue_node *scan;
+//   for (scan = queue->head; scan != NULL; scan = scan->next) {
+//     printf("(tid %d), ", scan->thread->tid);
+//   }
+//   printf("\n");
+// }
 
 /*------------------------------------------
         semaphore (only for user thread)
   ------------------------------------------*/
 
 static void kmt_sem_init(sem_t *sem, const char *name, int value) {
-  Panic("TODO");
+  sem->count = value;
+  threadqueue_init(&sem->queue);
+  kmt_spin_init(&sem->lock, "sem_lock");
 }
 
 static void kmt_sem_wait(sem_t *sem) {
