@@ -136,7 +136,7 @@ void schedule_test() {
 int _sum = 0;
 
 void rand_wastetime() {
-  int wastetime = random(0, 100000);
+  int wastetime = random(0, 100);
   for (int volatile i = 0; i < wastetime; ++i)
     continue;
 }
