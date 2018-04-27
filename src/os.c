@@ -52,6 +52,12 @@ static _RegSet *switch_thread(_RegSet *regs) {
 }
 
 static _RegSet *os_interrupt(_Event ev, _RegSet *regs) {
+
+#ifdef DEBUG
+  if (current)
+    fence_check(current->kstack - FENCESIZE);
+#endif
+
   switch (ev.event) {
     case _EVENT_IRQ_TIMER: 
       Log("TimeInterrupt! current thread (tid %d)", current->tid); 

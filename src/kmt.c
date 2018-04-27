@@ -108,8 +108,19 @@ static void make_thread(thread_t *thread,
 
   // allocate stack and prepare regset
   thread->kstack = (uint8_t *)pmm->alloc(MAX_KSTACK_SIZE);
+
+#ifdef DEBUG
+  // set fence to protect stack
+  // we will check fence in irqhandle
+  stackinfo.end = (void*)(thread->kstack + MAX_KSTACK_SIZE);
+  fence_set(thread->kstack);
+  thread->kstack += FENCESIZE;
+  stackinfo.start = (void *)thread->kstack;
+#else
   stackinfo.start = (void *)thread->kstack;
   stackinfo.end = (void*)(thread->kstack + MAX_KSTACK_SIZE);
+#endif
+
   thread->regs = _make(stackinfo, (void (*)(void *))entry, arg);
   Log("Created thread (tid: %d), kstack start: %p", 
     thread->tid, stackinfo.start);

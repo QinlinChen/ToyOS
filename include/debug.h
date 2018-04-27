@@ -6,7 +6,7 @@
 
 // #define LOG
 #define DEBUG
-#define TRACE
+// #define TRACE
 
 // Log
 #ifdef LOG
@@ -31,6 +31,14 @@
     } while (0)
 #else
   #define Assert(ignore) ((void)0)
+#endif
+
+// Fence
+#ifdef DEBUG
+  #define FENCEBYTE  0xfd
+  #define FENCESIZE  32
+  void fence_check(uint8_t *fence);
+  void fence_set(uint8_t *target);
 #endif
 
 // Trace
