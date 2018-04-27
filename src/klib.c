@@ -81,7 +81,7 @@ int rand() {
 // right <= 0x3fffffff
 int random(int left, int right) {
   Assert(left < right);
-  Asertt(right < 0x40000000);
+  Assett(right < 0x40000000);
   int r = rand() << 15 | rand();
   return (r % (right - left)) + left;
 }
