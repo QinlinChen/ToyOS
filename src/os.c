@@ -29,14 +29,18 @@ extern thread_t *current;
 extern thread_t idle;
 
 static _RegSet *timer_handle(_RegSet *regs) {
-  _putc('*');
+  Log("*");
 
   // current is not initialized
   if (current == NULL) {
     current = &idle;  // schedule IDLE
     return current->regs;
   }
-  printf("Interrupt eip: %p", regs->eip);
+  
+  Log("Interrupt eip: %p", regs->eip);
+  extern int _sum;
+  printf("sum = %d\n", _sum);
+  
   // consume timeslice and change state
   current->timeslice--;
   if (current->stat == RUNNING)
