@@ -187,8 +187,6 @@ static spinlock_t hellolock = SPINLOCK_INIT("hello_lock");
 
 #define MAXN 5
 
-static void forkhello(void *arg);
-
 static void hello(void *arg) {
   int N = (int)arg;
   if (N < MAXN) {
