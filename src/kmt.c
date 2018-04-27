@@ -112,7 +112,7 @@ static void make_thread(thread_t *thread,
 
 static void IDLE(void *arg) {
   while (1)
-    _putc('.');
+    continue;
 }
 
 static void kmt_init() {
