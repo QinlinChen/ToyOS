@@ -156,14 +156,16 @@ static void *addr_aligned_alloc(size_t size) {
                     pmm
   ------------------------------------------*/
 
+static spinlock_t lock = SPINLOCK_INITIALIZER("freelist_lock");
+
 static void pmm_init() {
   pmm_brk = addr_aligned((char *)_heap.start, sizeof(Header));
   Log("pmm_brk initialized as %p", pmm_brk);
   Log("_heap = [%08x, %08x)", _heap.start, _heap.end);
 }
 
+// Thread unsafe
 static void *pmm_sbrk(int incr) {
-  // TODO: lock() for pmm_brk
   char *old_brk = pmm_brk;
 
   if ((incr < 0) || (pmm_brk + incr > (char *)_heap.end)) {
@@ -173,20 +175,21 @@ static void *pmm_sbrk(int incr) {
 
   pmm_brk += incr;
   return (void *)old_brk;
-  // TODO: unlock()
+  
 }
 
 static void *pmm_alloc(size_t size) {
-  // TODO: lock() for freelist
+  kmt->spin_lock(&lock);
   void *ret = addr_aligned_alloc(size);
   Log("addr: %p, size: %d", ret, size);
+  kmt->spin_unlock(&lock);
   return ret;
-  // TODO: unlock()
+  
 }
 
 static void pmm_free(void *ptr) {
-  // TODO: lock() for freelist
+  kmt->spin_lock(&lock);
   freelist_free(ptr);
   Log("addr: %p", ptr);
-  // TODO: unlock()
+  kmt->spin_unlock(&lock);
 }
