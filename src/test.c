@@ -157,7 +157,7 @@ void lock_test() {
 }
 
 #define MAXCOUNT 1000
-int ctr[MAXCOUNT]
+int ctr[MAXCOUNT];
 void test() {
   for (int i = 0; i < 100; ++i)
     ctr[random(0, MAXCOUNT)]++;
