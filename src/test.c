@@ -133,8 +133,8 @@ void schedule_test() {
   kmt->create(&c, print_number, NULL);
 }
 
-int _sum = 0;
-spinlock_t mutex = SPINLOCK_INIT("sum_lock");
+static int _sum = 0;
+static spinlock_t mutex = SPINLOCK_INIT("sum_lock");
 
 static void addsum(void *arg) {
   kmt->spin_lock(&mutex);
@@ -183,6 +183,40 @@ void sem_test(int N) {
   kmt->create(&d, consumer, NULL);
 }
 
+static spinlock_t hellolock = SPINLOCK_INIT("hello_lock");
+
+#define MAXN 5
+
+static void forkhello(void *arg);
+
+static void hello(void *arg) {
+  int N = (int)arg;
+  if (N < MAXN) {
+    kmt->spin_lock(&hellolock);
+    printf("Hello");
+    kmt->spin_unlock(&hellolock);
+    thread_t *thr1 = pmm->alloc(sizeof(thread_t));
+    thread_t *thr2 = pmm->alloc(sizeof(thread_t));
+    kmt->create(thr, hello, (void *)(N + 1));
+    kmt->create(thr, hello, (void *)(N + 1));
+  }
+  while (1);
+}
+
+static void forkhello(void *arg) {
+  int N = (int)arg + 1;
+  thread_t *thr1 = pmm->alloc(sizeof(thread_t));
+  thread_t *thr2 = pmm->alloc(sizeof(thread_t));
+  kmt->create(thr, hello, (void *)N);
+  kmt->create(thr, hello, (void *)N);
+  while (1);
+}
+
+void hello_test() {
+  thread_t t;
+  kmt->create(&t, hello, (void *)0);
+}
+
 void test() {
-  sem_test(3);
+  hello_test();
 }
