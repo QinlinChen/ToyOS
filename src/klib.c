@@ -182,8 +182,8 @@ int printf(const char *fmt, ...) {
   int width, prec, error;
   const char *mark;
 
-  va_list ap;
   kmt->spin_lock(&printf_lock);
+  va_list ap;
   va_start(ap, fmt);
 
   while (*fmt) {
