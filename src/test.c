@@ -144,7 +144,10 @@ void rand_wastetime() {
 static void addsum(void *arg) {
   int N = (int)(intptr_t)arg;
   for (int volatile i = 0; i < N; ++i) {
-    rand_wastetime();
+    // rand_wastetime();
+    _sum++;
+    _sum++;
+    _sum++;
     _sum++;
   }
   printf("%d ", _sum);
