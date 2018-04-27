@@ -154,6 +154,28 @@ void lock_test() {
   kmt->create(&c, addsum, (void *)N);
 }
 
+void threadqueue_init(threadqueue *queue);
+int threadqueue_empty(threadqueue *queue);
+void threadqueue_push(threadqueue *queue, thread_t *thread);
+thread_t *threadqueue_pop(threadqueue *queue);
+void threadqueue_print(threadqueue *queue);
+
 void test() {
-  lock_test();
+  thread_t a, b, c, d;
+  a.tid = 1;
+  b.tid = 2;
+  c.tid = 3;
+  d.tid = 4;
+  threadqueue q;
+  threadqueue_init(&q);
+  threadqueue_push(&q, &a);
+  threadqueue_push(&q, &b);
+  threadqueue_print(&q);
+  threadqueue_pop(&q);
+  threadqueue_print(&q);
+  threadqueue_push(&q, &d);
+  threadqueue_push(&q, &c);
+  threadqueue_print(&q);
+  threadqueue_pop(&q);
+  Panic("Stop");
 }

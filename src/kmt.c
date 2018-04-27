@@ -145,7 +145,7 @@ static void kmt_teardown(thread_t *thread) {
 }
 
 static thread_t *kmt_schedule() {
-  threadlist_print();
+  // threadlist_print();
   Assert(current != NULL);
 
   // current can continue
@@ -172,7 +172,7 @@ static thread_t *kmt_schedule() {
 }
 
 /*------------------------------------------
-              mutex and semaphore
+                  spin lock
   ------------------------------------------*/
 
 static void kmt_spin_init(spinlock_t *lk, const char *name) {
@@ -219,6 +219,56 @@ static void kmt_spin_unlock(spinlock_t *lk) {
 
   pop_intr();
 }
+
+/*------------------------------------------
+                threadqueue
+  ------------------------------------------*/
+
+void threadqueue_init(threadqueue *queue) {
+  queue->head = queue->tail = NULL;
+  queue->size = 0;
+}
+
+int threadqueue_empty(threadqueue *queue) {
+  return queue->size == 0;
+}
+
+void threadqueue_push(threadqueue *queue, thread_t *thread) {
+  threadqueue_node *new_node = (threadqueue_node *)pmm->alloc(
+    sizeof(threadqueue_node *));
+  Assert(new_node != NULL);
+  new_node->thread = thread;
+  new_node->next = NULL;
+  if (queue->size == 0)
+    queue->head = new_node;
+  else
+    queue->tail->next = new_node;
+  queue->tail = new_node;
+  queue->size++;
+}
+
+thread_t *threadqueue_pop(threadqueue *queue) {
+  Assert(queue->size != 0);
+  thread_t *thread = queue->head->thread;
+  threadqueue_node *save = queue->head;
+  queue->head = queue->head->next;
+  pmm->free(save);
+  queue->size--;
+  if (queue->size == 0)
+    queue->tail = NULL;
+}
+
+void threadqueue_print(threadqueue *queue) {
+  threadqueue_node *scan;
+  for (scan = queue->head; scan != NULL; scan = scan->next) {
+    printf("(tid %d), ", scan->thread->tid);
+  }
+  printf("\n");
+}
+
+/*------------------------------------------
+        semaphore (only for user thread)
+  ------------------------------------------*/
 
 static void kmt_sem_init(sem_t *sem, const char *name, int value) {
   Panic("TODO");

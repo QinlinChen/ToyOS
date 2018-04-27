@@ -25,11 +25,9 @@ static void os_run() {
   while (1) ; // should never return
 }
 
-extern thread_t *current;
-extern thread_t idle;
-
-static _RegSet *timer_handle(_RegSet *regs) {
-  _putc('*');
+static _RegSet *switch_thread(_RegSet *regs) {
+  extern thread_t *current;
+  extern thread_t idle;
 
   // current is not initialized
   if (current == NULL) {
@@ -37,16 +35,16 @@ static _RegSet *timer_handle(_RegSet *regs) {
     return current->regs;
   }
   
-  Log("Interrupt (tid %d), eip: %p", 
-    current->tid, regs->eip);
+  Log("Interrupt (tid %d), eip: %p", current->tid, regs->eip);
   extern int _sum;
   printf("sum = %d\n", _sum);
 
-  // consume timeslice and change state
+  // consume timeslice and change current state
   current->timeslice--;
   if (current->stat == RUNNING)
     current->stat = RUNNABLE;
 
+  // decide next thread
   thread_t *next = kmt->schedule();
 
   // save regs, switch and run
@@ -60,7 +58,8 @@ static _RegSet *timer_handle(_RegSet *regs) {
 
 static _RegSet *os_interrupt(_Event ev, _RegSet *regs) {
   switch (ev.event) {
-    case _EVENT_IRQ_TIMER: return timer_handle(regs);
+    case _EVENT_IRQ_TIMER: _putc('*'); return switch_thread(regs);
+    case _EVENT_YIELD: _putc('Y'); return switch_thread(regs);
     case _EVENT_IRQ_IODEV: _putc('I'); break;
     case _EVENT_ERROR: _putc('x'); _halt(1);
     default: Panic("Not Implemented");
