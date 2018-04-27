@@ -150,6 +150,8 @@ static thread_t *kmt_schedule() {
   for (scan = current->next; ; scan = scan->next) {
     if (scan->stat == RUNNABLE) {
       Log("Schedule to thread (tid %d)", scan->tid);
+      extern int _sum;
+      printf("sum = %d\n", sum);
       return scan;
     }
     // if no thread can run, schedule to idle

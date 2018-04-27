@@ -133,7 +133,7 @@ void schedule_test() {
   kmt->create(&c, print_number, NULL);
 }
 
-static int _sum = 0;
+int _sum = 0;
 
 static void addsum(void *arg) {
   int N = (int)(intptr_t)arg;
