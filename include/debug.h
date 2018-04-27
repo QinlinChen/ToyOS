@@ -34,12 +34,10 @@
 #endif
 
 // Fence
-#ifdef DEBUG
-  #define FENCEBYTE  0xfd
-  #define FENCESIZE  32
-  void fence_check(uint8_t *fence);
-  void fence_set(uint8_t *target);
-#endif
+#define FENCEBYTE  0xfd
+#define FENCESIZE  32
+void fence_check(uint8_t *fence);
+void fence_set(uint8_t *target);
 
 // Trace
 #ifdef TRACE
