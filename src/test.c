@@ -134,10 +134,11 @@ void schedule_test() {
 }
 
 int _sum = 0;
-spinlock_t mutex = SPINLOCK_INITIALIZER;
+spinlock_t mutex = SPINLOCK_INITIALIZER("sum_lock");
 
 static void addsum(void *arg) {
   kmt->spin_lock(&mutex);
+  printf("%s\n", mutex->name);
   int N = (int)(intptr_t)arg;
   for (int volatile i = 0; i < N; ++i) {
     _sum++;

@@ -170,16 +170,16 @@ static void kmt_spin_init(spinlock_t *lk, const char *name) {
 }
 
 static void kmt_spin_lock(spinlock_t *lk) {
-  //Assert(_intr_read() == 1);
-  //_intr_write(0);
+  Assert(_intr_read() == 1);
+  _intr_write(0);
   while (_atomic_xchg(&lk->locked, 1) == 1)
     continue;
 }
 
 static void kmt_spin_unlock(spinlock_t *lk) {
-  //Assert(_intr_read() == 0);
+  Assert(_intr_read() == 0);
   lk->locked = 0;
-  //_intr_write(1);
+  _intr_write(1);
 }
 
 static void kmt_sem_init(sem_t *sem, const char *name, int value) {
