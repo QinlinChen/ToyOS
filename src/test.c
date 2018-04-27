@@ -257,7 +257,7 @@ static void fib_calc(void *arg) {
 
 void stackfence_test() {
   thread_t t;
-  kmt->create(&t, fib_calc, (void *)500);
+  kmt->create(&t, fib_calc, (void *)1000);
 } 
 
 void test() {
