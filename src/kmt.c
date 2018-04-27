@@ -33,6 +33,9 @@ static thread_t *threadlist = NULL;
 thread_t idle;
 thread_t *current = NULL;
 
+static spinlock_t threadlist_lock = SPINLOCK_INITIALIZER(
+  "threadlist_lock")
+
 static void threadlist_add(thread_t *thread);
 static void threadlist_remove(thread_t *thread);
 static void make_thread(thread_t *thread, 
@@ -41,30 +44,34 @@ void threadlist_print();
 
 static void threadlist_add(thread_t *thread) {
   Assert(threadlist != NULL);
-  // TODO: lock()
+  kmt->spin_lock(&threadlist_lock);
+
   thread_t *node = (thread_t *)pmm->alloc(sizeof(thread_t));
   Assert(node != NULL);
   *node = *thread;
   node->next = threadlist->next;
   threadlist->next = node;
-  // TODO: unlock()
+
+  kmt->spin_unlock(&threadlist_lock);
 }
 
 static void threadlist_remove(thread_t *thread) {
   Assert(threadlist != NULL);
-  // TODO: lock()
   thread_t *prev, *cur;
   
+  kmt->spin_lock(&threadlist_lock);
+
   prev = threadlist;
   for (cur = prev->next; ; prev = cur, cur = cur->next) {
-    if (cur->tid == thread->tid) {
-      prev->next = cur->next;
-      pmm->free(cur);
-      return;
-    }
+    if (cur->tid == thread->tid)
+      break;
+    if (cur == threadlist)
+      Panic("No thread in list to remove!");
   }
-  Panic("Should not reach here");
-  // TODO: unlock()
+  prev->next = cur->next;
+  pmm->free(cur);
+
+  kmt->spin_unlock(&threadlist_lock);
 }
 
 void threadlist_print() {
@@ -126,8 +133,10 @@ static void kmt_init() {
 
 static int kmt_create(thread_t *thread,
   void (*entry)(void *arg), void *arg) {
+
   make_thread(thread, entry, arg);
   threadlist_add(thread);
+
   return 0;
 }
 
@@ -138,7 +147,7 @@ static void kmt_teardown(thread_t *thread) {
 }
 
 static thread_t *kmt_schedule() {
-  // threadlist_print(); // REMEMBER TO REMOVE
+  // threadlist_print();
   Assert(current != NULL);
 
   // current can continue
@@ -173,6 +182,10 @@ static int nintr = 0;
 static int intr_save;
 
 static void push_intr() {
+  // It can be the case that we use a lock when
+  // interruption is closed, or lock is nested.
+  // Therefore, we use a stack to save the state
+  // of interruption and handle nested lock.
   int intr_state = _intr_read();
   _intr_write(0);
   if (nintr == 0)
