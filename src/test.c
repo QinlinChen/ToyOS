@@ -135,16 +135,9 @@ void schedule_test() {
 
 int _sum = 0;
 
-void rand_wastetime() {
-  int wastetime = random(0, 100);
-  for (int volatile i = 0; i < wastetime; ++i)
-    continue;
-}
-
 static void addsum(void *arg) {
   int N = (int)(intptr_t)arg;
   for (int volatile i = 0; i < N; ++i) {
-    // rand_wastetime();
     _sum++;
     _sum++;
     _sum++;
