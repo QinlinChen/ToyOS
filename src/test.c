@@ -4,6 +4,10 @@
 #include <common.h>
 #include <kernel.h>
 
+/*------------------------------------------
+                  device test
+  ------------------------------------------*/
+
 void input_test() {
   printf("Enter q to end input test\n");
   while (1) {
@@ -65,14 +69,6 @@ void ata0_test() {
   }
 }
 
-void debug_test() {
-  TRACE_ENTRY;
-  Log("This is debug test log");
-  Log("This is another debug test log");
-  TRACE_EXIT;
-  Panic("debug test panic");
-}
-
 void dev_test() {
   _Device *dev;
   for (int n = 1; (dev = _device(n)); n++) {
@@ -88,6 +84,22 @@ void dev_test() {
   }
 }
 
+/*------------------------------------------
+                debug utils test
+  ------------------------------------------*/
+
+void debug_test() {
+  TRACE_ENTRY;
+  Log("This is debug test log");
+  Log("This is another debug test log");
+  TRACE_EXIT;
+  Panic("debug test panic");
+}
+
+/*------------------------------------------
+                  pmm test
+  ------------------------------------------*/
+
 void pmm_test() {
   pmm->free(pmm->alloc(4));
   pmm->free(pmm->alloc(8));
@@ -95,6 +107,10 @@ void pmm_test() {
   pmm->free(pmm->alloc(1024));
   pmm->free(pmm->alloc(4096));
 }
+
+/*------------------------------------------
+                schedule test
+  ------------------------------------------*/
 
 static void print_lowercase(void *arg) {
   int volatile count = 0;
@@ -126,12 +142,18 @@ static void print_number(void *arg) {
   }
 }
 
+// You can see the stack is not destroyed 
+// when schedule returns.
 void schedule_test() {
   thread_t a, b, c;
   kmt->create(&a, print_lowercase, NULL);
   kmt->create(&b, print_uppercase, NULL);
   kmt->create(&c, print_number, NULL);
 }
+
+/*------------------------------------------
+                  lock test
+  ------------------------------------------*/
 
 static int _sum = 0;
 static spinlock_t mutex = SPINLOCK_INIT("sum_lock");
@@ -153,6 +175,10 @@ void lock_test() {
   kmt->create(&b, addsum, (void *)N);
   kmt->create(&c, addsum, (void *)N);
 }
+
+/*------------------------------------------
+                  sem test
+  ------------------------------------------*/
 
 sem_t empty;
 sem_t fill;
@@ -183,6 +209,10 @@ void sem_test(int N) {
   kmt->create(&d, consumer, NULL);
 }
 
+/*------------------------------------------
+      allocate thread concurrently test
+  ------------------------------------------*/
+
 static spinlock_t hellolock = SPINLOCK_INIT("hello_lock");
 
 #define MAXN 8
@@ -208,6 +238,10 @@ void hello_test() {
   kmt->create(&t, hello, (void *)0);
 }
 
+/*------------------------------------------
+              stackfence test
+  ------------------------------------------*/
+
 // need -O0 to avoid optimization
 static int fib(int n) {
   if (n <= 1)
@@ -221,11 +255,11 @@ static void fib_calc(void *arg) {
   while (1);
 }
 
-void stackfence_test(int N) {
+void stackfence_test() {
   thread_t t;
-  kmt->create(&t, fib_calc, (void *)N);
+  kmt->create(&t, fib_calc, (void *)500);
 } 
 
 void test() {
-  stackfence_test(500);
+  
 }

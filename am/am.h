@@ -110,8 +110,8 @@ struct semaphore {
 #define SEM_INIT(NAME, VALUE) \
   (struct semaphore) { \
     .count = (VALUE), \
-    .queue = { NULL, NULL, 0}, \
-    .name = (NAME), \
+    .queue = { NULL, NULL, 0 }, \
+    .lock = { 0, (NAME) }, \
   }
 
 // ========================= Turing Machine ==========================
