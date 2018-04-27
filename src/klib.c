@@ -1,6 +1,6 @@
 #include <stdarg.h>
 #include <common.h>
-#include <kernal.h>
+#include <kernel.h>
 
 /*------------------------------------------
                   string.c
