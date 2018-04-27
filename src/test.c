@@ -226,5 +226,5 @@ void stackfence_test(int N) {
 } 
 
 void test() {
-  stackfence_test();
+  stackfence_test(5);
 }
