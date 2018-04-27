@@ -29,13 +29,11 @@ MOD_DEF(kmt) {
                     thread
   ------------------------------------------*/
 
+// threadlist is THREAD SAFE
+static spinlock_t threadlist_lock = SPINLOCK_INITIALIZER("threadlist_lock");
 static thread_t *threadlist = NULL;
 thread_t idle;
 thread_t *current = NULL;
-
-// threadlist is THREAD SAFE
-static spinlock_t threadlist_lock = SPINLOCK_INITIALIZER(
-  "threadlist_lock");
 
 static void threadlist_add(thread_t *thread);
 static void threadlist_remove(thread_t *thread);
