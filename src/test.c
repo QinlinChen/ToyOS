@@ -134,18 +134,23 @@ void schedule_test() {
 }
 
 int _sum = 0;
+spinlock_t mutex;
 
 static void addsum(void *arg) {
+  kmt->spin_lock(&mutex);
   int N = (int)(intptr_t)arg;
   for (int volatile i = 0; i < N; ++i) {
     _sum++;
   }
+  kmt->spin_unlock(&mutex);
   while (1);
 }
 
 void lock_test() {
   thread_t a, b, c;
   int N = 10000000;
+
+  kmt->spin_init(&mutex, "sum_lock");
   kmt->create(&a, addsum, (void *)N);
   kmt->create(&b, addsum, (void *)N);
   kmt->create(&c, addsum, (void *)N);
