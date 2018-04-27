@@ -295,6 +295,7 @@ static void kmt_sem_signal(sem_t *sem) {
   sem->count++;
   if (sem->count <= 0) {
     thread_t *towake = threadqueue_pop(&sem->queue);
+    Assert(towake->stat == BLOCKED);
     towake->stat = RUNNABLE;
   }
   kmt_spin_unlock(&sem->lock);
