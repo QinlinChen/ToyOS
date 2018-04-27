@@ -133,6 +133,29 @@ void schedule_test() {
   kmt->create(&c, print_number, NULL);
 }
 
+static int _sum = 0;
+
+static void addsum(void *arg) {
+  int N = (int)(intptr_t)arg;
+  for (int volatile i = 0; i < N; ++i)
+    _sum++;
+
+  int volatile count = 0;  
+  while (1) {
+    if (++count == 100000) {
+      printf("%d ", _sum);
+      count = 0;
+    }
+  }
+}
+
+void lock_test() {
+  thread_t a, b;
+  int N = 1000000;
+  kmt->create(&a, print_lowercase, (void *)N);
+  kmt->create(&b, print_uppercase, (void *)N);
+}
+
 void test() {
-  schedule_test();
+  lock_test();
 }
