@@ -260,10 +260,14 @@ void stackfence_test() {
   kmt->create(t, factor_calc, (void *)520);
 } 
 
-void test() {
+/*------------------------------------------
+                test run
+  ------------------------------------------*/
+
+void test_run() {
   // schedule_test();
   // lock_test();
   // sem_test(3);
-  hello_test();
+  // hello_test();
   //stackfence_test();
 }
