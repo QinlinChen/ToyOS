@@ -140,13 +140,8 @@ static void addsum(void *arg) {
   for (int volatile i = 0; i < N; ++i)
     _sum++;
 
-  int volatile count = 0;  
-  while (1) {
-    if (++count == 10000000) {
-      printf("%d ", _sum);
-      count = 0;
-    }
-  }
+  printf("%d ", _sum);
+  while (1);
 }
 
 void lock_test() {
