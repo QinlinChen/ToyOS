@@ -36,7 +36,7 @@ static _RegSet *timer_handle(_RegSet *regs) {
     current = &idle;  // schedule IDLE
     return current->regs;
   }
-
+  printf("Interrupt eip: %p", regs->eip);
   // consume timeslice and change state
   current->timeslice--;
   if (current->stat == RUNNING)
