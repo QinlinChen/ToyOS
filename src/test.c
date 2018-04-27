@@ -142,6 +142,12 @@ static void addsum(void *arg) {
     _sum++;
     _sum++;
     _sum++;
+    _sum++;
+    _sum++;
+    _sum++;
+    _sum++;
+    _sum++;
+    _sum++;
   }
   printf("%d ", _sum);
   while (1);
