@@ -49,16 +49,12 @@ static _RegSet *timer_handle(_RegSet *regs) {
 
   thread_t *next = kmt->schedule();
 
-  // save regs
+  // save regs, switch and run
   current->regs = regs;
-
-  // if current is yield, we give it bonus TIMESLICE
-  // regardless current->timeslice is not 0
-  if (next != current) 
-    current->timeslice = MAX_TIMESLICE;
-  
-  // switch and run
+  // 
   current = next;
+  if (current->timeslice == 0)
+    current->timeslice = MAX_TIMESLICE;
   current->stat = RUNNING;
   return current->regs;
 }
