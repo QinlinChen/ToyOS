@@ -139,17 +139,7 @@ static void addsum(void *arg) {
   int N = (int)(intptr_t)arg;
   for (int volatile i = 0; i < N; ++i) {
     _sum++;
-    _sum++;
-    _sum++;
-    _sum++;
-    _sum++;
-    _sum++;
-    _sum++;
-    _sum++;
-    _sum++;
-    _sum++;
   }
-  printf("%d ", _sum);
   while (1);
 }
 
