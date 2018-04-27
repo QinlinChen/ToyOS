@@ -36,9 +36,7 @@ static _RegSet *switch_thread(_RegSet *regs) {
   }
   
   Log("Interrupt (tid %d), eip: %p", current->tid, regs->eip);
-  extern int _sum;
-  printf("sum = %d\n", _sum);
-
+  
   // consume timeslice and change current state
   current->timeslice--;
   if (current->stat == RUNNING)
