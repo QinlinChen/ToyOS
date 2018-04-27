@@ -146,7 +146,7 @@ static void addsum(void *arg) {
 
 void lock_test() {
   thread_t a, b;
-  int N = 10000000;
+  int N = 100000000;
   kmt->create(&a, addsum, (void *)N);
   kmt->create(&b, addsum, (void *)N);
 }
