@@ -138,12 +138,10 @@ static void kmt_teardown(thread_t *thread) {
 }
 
 static thread_t *kmt_schedule() {
-  
   threadlist_print(); // REMEMBER TO REMOVE
+  Assert(current != NULL);
 
-  if (current == NULL) 
-    return &idle;
-  
+  // current can continue
   if (current->stat == RUNNABLE && current->timeslice > 0)
     return current;
 
@@ -158,17 +156,6 @@ static thread_t *kmt_schedule() {
   }
   Panic("Should not reach here!");
   return &idle;
-  
-  // threadlist_print();
-  // thread_t *scan;
-  // for (scan = threadlist; scan != NULL; scan = scan->next) {
-  //   if (scan->stat == RUNNABLE) {
-  //     Log("Schedule to thread (tid %d)", scan->tid);
-  //     return scan;
-  //   }
-  // }
-  // Panic("IDLE!");
-  // return &idle;
 }
 
 /*------------------------------------------

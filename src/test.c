@@ -97,14 +97,22 @@ void pmm_test() {
 }
 
 static void f(void *arg) {
+  int volatile count = 0;
   while (1) {
-    printf("abcdefg");
+    if (++count == 100000) {
+      printf("abcdefg");
+      count = 0;
+    }
   }
 }
 
 static void g(void *arg) {
+  int volatile count = 0;
   while (1) {
-    printf("ABCDEFG");
+    if (++count == 100000) {
+      printf("ABCDEFG");
+      count = 0;
+    }
   }
 }
 
