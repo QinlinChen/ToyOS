@@ -156,7 +156,7 @@ void lock_test() {
   kmt->create(&c, addsum, (void *)N);
 }
 
-#define MAXCOUNT 1000;
+#define MAXCOUNT 1000
 int ctr[MAXCOUNT]
 void test() {
   for (int i = 0; i < 100; ++i)
