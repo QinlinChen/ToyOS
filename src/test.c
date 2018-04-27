@@ -96,7 +96,7 @@ void pmm_test() {
   pmm->free(pmm->alloc(4096));
 }
 
-static void f(void *arg) {
+static void print_lowercase(void *arg) {
   int volatile count = 0;
   while (1) {
     if (++count == 100000) {
@@ -106,7 +106,7 @@ static void f(void *arg) {
   }
 }
 
-static void g(void *arg) {
+static void print_uppercase(void *arg) {
   int volatile count = 0;
   while (1) {
     if (++count == 100000) {
@@ -116,13 +116,13 @@ static void g(void *arg) {
   }
 }
 
-void thread_test() {
+void schedule_test() {
   thread_t a, b;
-  kmt->create(&a, f, NULL);
-  kmt->create(&b, g, NULL);
+  kmt->create(&a, print_lowercase, NULL);
+  kmt->create(&b, print_uppercase, NULL);
 
 }
 
 void test() {
-  thread_test();
+  schedule_test();
 }
