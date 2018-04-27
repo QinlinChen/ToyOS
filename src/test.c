@@ -133,7 +133,6 @@ void schedule_test() {
   kmt->create(&c, print_number, NULL);
 }
 
-
 void test() {
   schedule_test();
 }
