@@ -208,6 +208,7 @@ void hello_test() {
   kmt->create(&t, hello, (void *)0);
 }
 
+// need -O0 to avoid optimization
 static int fib(int n) {
   if (n <= 1)
     return 1;
