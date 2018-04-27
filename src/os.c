@@ -24,10 +24,10 @@ static void os_run() {
   while (1) ; // should never return
 }
 
-static _RegSet *switch_thread(_RegSet *regs) {
-  extern thread_t *current;
-  extern thread_t idle;
+extern thread_t *current;
+extern thread_t idle;
 
+static _RegSet *switch_thread(_RegSet *regs) {
   // current is not initialized
   if (current == NULL) {
     current = &idle;  // schedule IDLE
