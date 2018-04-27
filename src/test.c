@@ -154,6 +154,34 @@ void lock_test() {
   kmt->create(&c, addsum, (void *)N);
 }
 
-void test() {
+sem_t empty;
+sem_t fill;
 
+static void producer(void *arg) {
+  while (1) {
+    kmt->sem_wait(&empty);
+    printf("(");
+    kmt->sem_signal(&fill);
+  }
+}
+
+static void consumer(void *arg) {
+  while (1) {
+    kmt->sem_wait(&fill);
+    printf(")");
+    kmt->sem_signal(&empty);
+  }
+}
+
+void sem_test() {
+  int N = 1;
+  thread_t a, b;
+  kmt->sem_init(&empty, "sem_empty", N);
+  kmt->sem_init(&fill, "sem_fill", 0);
+  kmt->create(&a, producer, NULL);
+  kmt->create(&b, consumer, NULL);
+}
+
+void test() {
+  sem_test();
 }

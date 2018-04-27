@@ -281,6 +281,7 @@ static void kmt_sem_wait(sem_t *sem) {
   kmt_spin_lock(&sem->lock);
   sem->count--;
   if (sem->count < 0) {
+    Assert(current != NULL);
     current->stat = BLOCKED;
     threadqueue_push(&sem->queue, current);
     kmt_spin_unlock(&sem->lock);
