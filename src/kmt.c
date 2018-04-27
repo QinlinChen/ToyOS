@@ -169,8 +169,8 @@ static void kmt_spin_init(spinlock_t *lk, const char *name) {
   lk->name = name;
 }
 
-static void nintr = 0;
-static void intr_save;
+static int nintr = 0;
+static int intr_save;
 
 static void push_intr() {
   int intr_state = _intr_read();
