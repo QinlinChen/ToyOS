@@ -135,14 +135,10 @@ void schedule_test() {
 
 int _sum = 0;
 
-static void incsum() {
-  _sum++;
-}
-
 static void addsum(void *arg) {
   int N = (int)(intptr_t)arg;
   for (int volatile i = 0; i < N; ++i) {
-    incsum();
+    _sum++;
   }
   while (1);
 }

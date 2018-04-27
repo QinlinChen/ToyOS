@@ -80,7 +80,8 @@ struct thread {
 };
 
 struct spinlock {
-  int TODO;
+  int locked;
+  const char *name;
 };
 
 struct semaphore {
