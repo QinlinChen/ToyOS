@@ -265,6 +265,7 @@ void stackfence_test() {
   ------------------------------------------*/
 
 void test_run() {
+  debug_test();
   // schedule_test();
   // lock_test();
   // sem_test(3);
