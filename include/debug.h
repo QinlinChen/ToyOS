@@ -53,8 +53,9 @@ void fence_set(uint8_t *target);
 // Panic
 #define Panic(format, ...) \
   do { \
-    printf("\33[1;31m" format "\33[0m\n", ## __VA_ARGS__); \
-    Assert(0); \
+    printf("\33[1;31m[%s,%d,%s] " format "\33[0m\n", \
+      __FILE__, __LINE__, __func__, ## __VA_ARGS__); \
+     _halt(1); \
   } while (0)
   
 #endif
