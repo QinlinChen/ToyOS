@@ -18,8 +18,8 @@ static void os_init() {
 }
 
 static void os_run() {
-  extern void test();
-  test();
+  extern void test_run();
+  test_run();
   _intr_write(1); // enable interrupt
   while (1) ; // should never return
 }
