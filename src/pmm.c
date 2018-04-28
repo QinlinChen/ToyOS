@@ -160,7 +160,6 @@ static spinlock_t pmm_lock = SPINLOCK_INIT("freelist_lock");
 
 static void pmm_init() {
   pmm_brk = addr_aligned((char *)_heap.start, sizeof(Header));
-  _putc('h');
   Log("pmm_brk initialized as %p", pmm_brk);
   Log("_heap = [%08x, %08x)", _heap.start, _heap.end);
 }
