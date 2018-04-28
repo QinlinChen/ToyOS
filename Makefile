@@ -1,4 +1,4 @@
-CFLAGS  = -std=c99 -O0 -MMD -Wall -Werror -ggdb -fno-builtin \
+CFLAGS  = -std=c99 -O2 -MMD -Wall -Werror -ggdb -fno-builtin \
           -fno-pic -fno-stack-protector -fno-omit-frame-pointer \
           -m32 -march=i386 -I./am -I./framework -I./include
 LDFLAGS = -melf_i386 -Ttext 0x00100000 
