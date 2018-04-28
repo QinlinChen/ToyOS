@@ -175,13 +175,10 @@ static int print_char(char ch,
     return 0;
 }
 
-spinlock_t lock = SPINLOCK_INIT("print_lock");
-
 int printf(const char *fmt, ...) {
   char flag, length;
   int width, prec, error;
   const char *mark;
-  kmt->spin_lock(&lock);
   va_list ap;
   va_start(ap, fmt);
 
@@ -244,7 +241,6 @@ int printf(const char *fmt, ...) {
   }
 
   va_end(ap);
-  kmt->spin_lock(&lock);
   return 0;
 }
 
