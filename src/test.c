@@ -215,7 +215,7 @@ void sem_test(int N) {
 
 static spinlock_t hellolock = SPINLOCK_INIT("hello_lock");
 
-#define MAXN 8
+#define MAXN 10
 int count = 0;
 
 static void hello(void *arg) {
