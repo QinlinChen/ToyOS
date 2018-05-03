@@ -215,7 +215,7 @@ void sem_test(int N) {
 
 static spinlock_t hellolock = SPINLOCK_INIT("hello_lock");
 
-#define MAXN 10
+#define MAXN 8
 int count = 0;
 
 static void hello(void *arg) {
@@ -269,6 +269,6 @@ void test_run() {
   // schedule_test();
   // lock_test();
   // sem_test(3);
-  hello_test();
+  // hello_test();
   //stackfence_test();
 }
