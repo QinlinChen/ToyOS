@@ -2,7 +2,7 @@
 #include <amdev.h>
 #include <amdevutil.h>
 #include <common.h>
-#include <kernel.h>
+#include <os.h>
 
 /*------------------------------------------
                   device test
