@@ -29,6 +29,9 @@ MOD_DEF(kmt) {
                     thread
   ------------------------------------------*/
 
+thread_t *new_thread(void (*entry)(void *), void *arg);
+void delete_thread(thread_t *thread);
+
 thread_t *new_thread(void (*entry)(void *), void *arg) {
   static int tid = 0;
   
@@ -144,7 +147,6 @@ void threadlist_print() {
 
 static void IDLE(void *arg) {
   while (1) {
-    printf(".");
     continue;
   }
 }
