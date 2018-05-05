@@ -182,7 +182,7 @@ static void kmt_teardown(thread_t *thread) {
 }
 
 static thread_t *kmt_schedule() {
-  threadlist_print();
+  // threadlist_print();
   Assert(current != NULL);
   thread_t *scan;
 
