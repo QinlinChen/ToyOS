@@ -204,11 +204,11 @@ static thread_t *kmt_schedule() {
     // if no thread can run, schedule to idle
     if (scan == current) {
       kmt->spin_unlock(&threadlist_lock);
-      return &idle;
+      return idle;
     }
   }
   Panic("Should not reach here!");
-  return &idle;
+  return idle;
 }
 
 /*------------------------------------------
