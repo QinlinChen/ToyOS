@@ -182,10 +182,10 @@ static void kmt_teardown(thread_t *thread) {
 }
 
 static thread_t *kmt_schedule() {
-  threadlist_print();
   if (threadlist == NULL) 
     return idle;
 
+  threadlist_print();
   Assert(current != NULL);
   // current can continue
   if (current->stat == RUNNABLE && current->timeslice > 0)
