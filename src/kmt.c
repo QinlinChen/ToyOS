@@ -182,17 +182,35 @@ static void kmt_teardown(thread_t *thread) {
 }
 
 static thread_t *kmt_schedule() {
+  threadlist_print();
   if (threadlist == NULL) 
     return idle;
 
-  threadlist_print();
   Assert(current != NULL);
+
+  // current is idle thread
+  thread_t *scan;
+  if (current == idle) {
+    kmt->spin_lock(&threadlist_lock);
+    for (scan = threadlist->next; ; scan = scan->next) {
+      if (scan->stat == RUNNABLE) {
+        Log("Next thread (tid %d)", scan->tid);
+        kmt->spin_unlock(&threadlist_lock);
+        return scan;
+      }
+      if (scan == threadlist->next) {
+        kmt->spin_unlock(&threadlist_lock);
+        return idle;
+      }
+    }
+    kmt->spin_unlock(&threadlist_lock);
+  }
+  
   // current can continue
   if (current->stat == RUNNABLE && current->timeslice > 0)
     return current;
 
   // Round-Robin
-  thread_t *scan;
   kmt->spin_lock(&threadlist_lock);
   for (scan = current->next; ; scan = scan->next) {
     if (scan->stat == RUNNABLE) {
