@@ -214,6 +214,7 @@ static thread_t *kmt_schedule() {
   // Round-Robin
   kmt->spin_lock(&threadlist_lock);
   for (scan = current->next; ; scan = scan->next) {
+    Assert(scan != NULL);
     if (scan->stat == RUNNABLE) {
       Log("Next thread (tid %d)", scan->tid);
       kmt->spin_unlock(&threadlist_lock);
