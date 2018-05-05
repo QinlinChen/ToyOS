@@ -127,8 +127,11 @@ static void make_thread(thread_t *thread,
 }
 
 static void IDLE(void *arg) {
-  while (1)
+  while (1) {
+    printf(".");
     continue;
+  }
+    
 }
 
 static void kmt_init() {
