@@ -94,8 +94,6 @@ void threadlist_add(thread_t *thread) {
     threadlist->next = thread;
   }
   kmt->spin_unlock(&threadlist_lock);
-
-  threadlist_print();
 }
 
 thread_t *threadlist_remove(int tid) {
@@ -113,7 +111,6 @@ thread_t *threadlist_remove(int tid) {
   prev->next = cur->next;
   kmt->spin_unlock(&threadlist_lock);
 
-  threadlist_print();
   return cur;
 }
 
@@ -185,7 +182,7 @@ static void kmt_teardown(thread_t *thread) {
 }
 
 static thread_t *kmt_schedule() {
-  // threadlist_print();
+  threadlist_print();
   if (threadlist == NULL) 
     return idle;
 
