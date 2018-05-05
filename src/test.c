@@ -271,11 +271,4 @@ void test_run() {
   // sem_test(3);
   // hello_test();
   //stackfence_test();
-  thread_t a, b, c;
-  int N = 10000000;
-  kmt->create(&a, addsum, (void *)N);
-  kmt->create(&b, addsum, (void *)N);
-  kmt->create(&c, addsum, (void *)N);
-  kmt->teardown(&b);
-  Panic("Stop");
 }
