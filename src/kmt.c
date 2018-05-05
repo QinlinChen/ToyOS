@@ -29,53 +29,98 @@ MOD_DEF(kmt) {
                     thread
   ------------------------------------------*/
 
+thread_t *new_thread(void (*entry)(void *), void *arg) {
+  static int tid = 0;
+  
+  thread_t *thread = (thread_t *)pmm->alloc(sizeof(thread_t));
+
+  // tid, stat, timeslice, next
+  thread->tid = tid++;
+  thread->stat = RUNNABLE; 
+  thread->timeslice = MAX_TIMESLICE;
+  thread->next = NULL;  
+
+  // allocate stack and prepare RegSet
+  thread->kstack = (uint8_t *)pmm->alloc(MAX_KSTACK_SIZE);
+
+  _Area stackinfo;
+#ifdef DEBUG
+  // set fence to protect stack
+  // we will check fence in os_interrupt
+  stackinfo.end = (void *)(thread->kstack + MAX_KSTACK_SIZE);
+  fence_set(thread->kstack);
+  thread->kstack += FENCESIZE;
+  stackinfo.start = (void *)thread->kstack;
+#else
+  stackinfo.start = (void *)thread->kstack;
+  stackinfo.end = (void*)(thread->kstack + MAX_KSTACK_SIZE);
+#endif
+
+  thread->regs = _make(stackinfo, (void (*)(void *))entry, arg);
+
+  Log("Created thread (tid: %d), kstack start: %p", 
+    thread->tid, stackinfo.start);
+  return thread;
+}
+
+void delete_thread(thread_t *thread) {
+  thread->stat = DEAD;
+  pmm->free(thread->kstack);
+  pmm->free(thread);
+}
+
+/*------------------------------------------
+                  threadlist
+  ------------------------------------------*/
+
 // threadlist is THREAD SAFE
 static spinlock_t threadlist_lock = SPINLOCK_INIT("threadlist_lock");
 static thread_t *threadlist = NULL;
-thread_t idle;
+thread_t *idle = NULL;
 thread_t *current = NULL;
 
-static void threadlist_add(thread_t *thread);
-static void threadlist_remove(thread_t *thread);
-static void make_thread(thread_t *thread, 
-  void (*entry)(void *arg), void *arg);
-void threadlist_print();
-
 static void threadlist_add(thread_t *thread) {
-  Assert(threadlist != NULL);
+  Assert(thread != NULL);
 
   kmt->spin_lock(&threadlist_lock);
-  thread_t *node = (thread_t *)pmm->alloc(sizeof(thread_t));
-  Assert(node != NULL);
-  *node = *thread;
-  node->next = threadlist->next;
-  threadlist->next = node;
+  if (threadlist == NULL) {
+    thread->next = threadlist = thread;
+  } else {
+    thread->next = threadlist->next;
+    threadlist->next = thread;
+  }
   kmt->spin_unlock(&threadlist_lock);
+
+  threadlist_print();
 }
 
-static void threadlist_remove(thread_t *thread) {
+static thread_t *threadlist_remove(int tid) {
   Assert(threadlist != NULL);
   thread_t *prev, *cur;
 
   kmt->spin_lock(&threadlist_lock);
   prev = threadlist;
   for (cur = prev->next; ; prev = cur, cur = cur->next) {
-    if (cur->tid == thread->tid)
+    if (cur->tid == tid)
       break;
     if (cur == threadlist)
       Panic("No thread in list to remove!");
   }
   prev->next = cur->next;
-  pmm->free(cur);
   kmt->spin_unlock(&threadlist_lock);
+
+  threadlist_print();
+  return cur;
 }
 
 void threadlist_print() {
-  Assert(threadlist != NULL);
-  thread_t *scan;
+  if (threadlist == NULL) {
+    printf("Threadlist: (null)");
+    return;
+  }
 
   kmt->spin_lock(&threadlist_lock);
-  for (scan = threadlist->next; ; scan = scan->next) {
+  for (thread_t *scan = threadlist->next; ; scan = scan->next) {
     const char *stat = NULL;
     switch (scan->stat) {
       case RUNNING: stat = "RUNNING"; break;
@@ -92,70 +137,47 @@ void threadlist_print() {
   kmt->spin_unlock(&threadlist_lock);
 }
 
-static void make_thread(thread_t *thread, 
-  void (*entry)(void *arg), void *arg) {
-    
-  static int tid = 0;
-  _Area stackinfo;
-
-  // tid and stat
-  thread->tid = tid++;
-  thread->stat = RUNNABLE; 
-  thread->timeslice = MAX_TIMESLICE;
-
-  // NULL to user
-  thread->next = NULL;  
-
-  // allocate stack and prepare regset
-  thread->kstack = (uint8_t *)pmm->alloc(MAX_KSTACK_SIZE);
-
-#ifdef DEBUG
-  // set fence to protect stack
-  // we will check fence in os_interrupt
-  stackinfo.end = (void *)(thread->kstack + MAX_KSTACK_SIZE);
-  fence_set(thread->kstack);
-  thread->kstack += FENCESIZE;
-  stackinfo.start = (void *)thread->kstack;
-#else
-  stackinfo.start = (void *)thread->kstack;
-  stackinfo.end = (void*)(thread->kstack + MAX_KSTACK_SIZE);
-#endif
-
-  thread->regs = _make(stackinfo, (void (*)(void *))entry, arg);
-  Log("Created thread (tid: %d), kstack start: %p", 
-    thread->tid, stackinfo.start);
-}
+/*------------------------------------------
+               thread manager
+  ------------------------------------------*/
 
 static void IDLE(void *arg) {
   while (1) {
     printf(".");
     continue;
   }
-    
 }
 
 static void kmt_init() {
-  // make IDLE thread
-  make_thread(&idle, IDLE, NULL);
-  // avoid to schedule IDLE thread
-  idle.stat = BLOCKED;
-  // initialize threadlist 
-  idle.next = threadlist = &idle;
+  // create IDLE thread
+  // we will not add idle to threadlist
+  idle = new_thread(IDLE, NULL);
 }
 
 static int kmt_create(thread_t *thread,
   void (*entry)(void *arg), void *arg) {
 
-  make_thread(thread, entry, arg);
-  threadlist_add(thread);
+  thread_t *new_thr = new_thread(entry, arg);
+  threadlist_add(new_thr);
+
+  // only return tid to user
+  memset(thread, 0, sizeof(thread_t));
+  thread->tid = new_thr->tid;
 
   return 0;
 }
 
 static void kmt_teardown(thread_t *thread) {
-  thread->stat = DEAD;
-  threadlist_remove(thread);
-  pmm->free(thread->kstack);
+  // make sure that user didn't modify
+  // member variables that was previously set ZERO
+  Assert(thread->stat == 0);
+  Assert(thread->timeslice == 0);
+  Assert(thread->regs == NULL);
+  Assert(thread->kstack == NULL);
+  Assert(thread->next == NULL);
+
+  thread_t *thr = threadlist_remove(thread->tid);
+  delete_thread(thr);
 }
 
 static thread_t *kmt_schedule() {
