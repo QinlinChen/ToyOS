@@ -79,7 +79,11 @@ static thread_t *threadlist = NULL;
 thread_t *idle = NULL;
 thread_t *current = NULL;
 
-static void threadlist_add(thread_t *thread) {
+void threadlist_add(thread_t *thread);
+thread_t *threadlist_remove(int tid);
+void threadlist_print();
+
+void threadlist_add(thread_t *thread) {
   Assert(thread != NULL);
 
   kmt->spin_lock(&threadlist_lock);
@@ -94,7 +98,7 @@ static void threadlist_add(thread_t *thread) {
   threadlist_print();
 }
 
-static thread_t *threadlist_remove(int tid) {
+thread_t *threadlist_remove(int tid) {
   Assert(threadlist != NULL);
   thread_t *prev, *cur;
 
