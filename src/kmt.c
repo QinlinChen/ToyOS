@@ -147,7 +147,7 @@ void threadlist_print() {
 
 static void IDLE(void *arg) {
   while (1) {
-    printf(".");
+    //printf(".");
     continue;
   }
 }
