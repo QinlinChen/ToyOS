@@ -188,8 +188,8 @@ static thread_t *kmt_schedule() {
 
   Assert(current != NULL);
 
-  // // current is idle thread
-  // thread_t *scan;
+  // current is idle thread
+  thread_t *scan;
   // if (current == idle) {
   //   kmt->spin_lock(&threadlist_lock);
   //   for (scan = threadlist->next; ; scan = scan->next) {
