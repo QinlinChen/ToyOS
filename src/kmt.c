@@ -183,30 +183,34 @@ static void kmt_teardown(thread_t *thread) {
 
 static thread_t *kmt_schedule() {
   threadlist_print();
-  if (threadlist == NULL) 
-    return idle;
-
   Assert(current != NULL);
-
-  // current is idle thread
   thread_t *scan;
-  // if (current == idle) {
-  //   kmt->spin_lock(&threadlist_lock);
-  //   for (scan = threadlist->next; ; scan = scan->next) {
-  //     if (scan->stat == RUNNABLE) {
-  //       Log("Next thread (tid %d)", scan->tid);
-  //       kmt->spin_unlock(&threadlist_lock);
-  //       return scan;
-  //     }
-  //     if (scan == threadlist->next) {
-  //       kmt->spin_unlock(&threadlist_lock);
-  //       return idle;
-  //     }
-  //   }
-  //   Panic("Should not reach here!");
-  //   kmt->spin_unlock(&threadlist_lock);
-  // }
+
+  // Case 1: current is idle thread
+  if (current == idle) {
+
+    if (threadlist == NULL) 
+      return idle;
+
+    kmt->spin_lock(&threadlist_lock);
+    for (scan = threadlist->next; ; scan = scan->next) {
+      Assert(scan != NULL);
+      if (scan->stat == RUNNABLE) {
+        Log("Next thread (tid %d)", scan->tid);
+        kmt->spin_unlock(&threadlist_lock);
+        return scan;
+      }
+      if (scan == threadlist->next) {
+        kmt->spin_unlock(&threadlist_lock);
+        return idle;
+      }
+    }
+    Panic("Should not reach here!");
+    kmt->spin_unlock(&threadlist_lock);
+  }
   
+  // Case 2: current is in threadlist
+
   // current can continue
   if (current->stat == RUNNABLE && current->timeslice > 0)
     return current;
