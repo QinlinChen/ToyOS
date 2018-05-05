@@ -276,5 +276,6 @@ void test_run() {
   kmt->create(&a, addsum, (void *)N);
   kmt->create(&b, addsum, (void *)N);
   kmt->create(&c, addsum, (void *)N);
+  kmt->teardown(&b);
   Panic("Stop");
 }
