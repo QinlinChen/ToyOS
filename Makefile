@@ -21,7 +21,7 @@ clean:
 	rm -rf build
 
 submit:
-	cd .. && tar cj oslab0 > submission.tar.bz2
+	cd .. && tar cj oslab1 > submission.tar.bz2
 	curl -F "task=L1" -F "id=$(STUID)" -F "name=$(STUNAME)" -F "submission=@../submission.tar.bz2" 114.212.81.90:5000/upload
 
 build/kernel: $(OBJS)
