@@ -261,10 +261,10 @@ void stackfence_test() {
 } 
 
 /*------------------------------------------
-          filesystem_manager test
+              fs_manager test
   ------------------------------------------*/
 
-void filesystem_manager_test() {
+static void fs_manager_test() {
   filesystem_t procfs, kvfs, devfs;
   procfs.name = "procfs";
   kvfs.name = "kvfs";
@@ -279,6 +279,12 @@ void filesystem_manager_test() {
   filesystem_t *fs = fs_manager_get("/proc/123", subpath);
   Assert(strcmp(fs->name, "procfs") == 0);
   Assert(strcmp(subpath, "/123") == 0);
+  fs = fs_manager_get("/proc/", subpath);
+  Assert(strcmp(fs->name, "procfs") == 0);
+  Assert(strcmp(subpath, "/") == 0);
+  fs = fs_manager_get("/proc", subpath);
+  Assert(strcmp(fs->name, "procfs") == 0);
+  Assert(strcmp(subpath, "\0") == 0);
 }
 
 /*------------------------------------------
@@ -292,6 +298,6 @@ void test_run() {
   // sem_test(3);
   // hello_test();
   // stackfence_test();
-  filesystem_manager_test();
+  fs_manager_test();
   Panic("Stop");
 }
