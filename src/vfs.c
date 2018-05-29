@@ -28,7 +28,7 @@ MOD_DEF(vfs) {
   ------------------------------------------*/
 
 static void vfs_init() {
-  filesystem_manager_init();
+  fs_manager_init();
   TODO;
 }
 
