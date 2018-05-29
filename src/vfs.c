@@ -38,16 +38,23 @@ static int vfs_access(const char *path, int mode) {
 }
 
 static int vfs_mount(const char *path, filesystem_t *fs) {
-  TODO;
-  return 0;
+  return fs_manager_add(path, fs);
 }
 
 static int vfs_unmount(const char *path) {
-  TODO;
-  return 0;
+  return fs_manager_remove(path);
 }
 
 static int vfs_open(const char *path, int flags) {
+  char subpath[MAXPATHLEN];
+  filesystem_t *fs = fs_manager_get(path, subpath);
+  if (fs == NULL) {
+    Panic("Illegal path");
+    return -1;
+  }
+  Assert(fs->lookup != NULL);
+  
+  inode_t *inode = fs->lookup(fs, subpath, flags);
   TODO;
   return 0;
 }

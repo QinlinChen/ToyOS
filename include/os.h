@@ -89,19 +89,39 @@ struct semaphore {
   }
 
 /*------------------------------------------
+                    inode.h
+  ------------------------------------------*/
+
+enum {
+  INODE_FILE,
+  INODE_DIR
+};
+
+struct inode {
+  char name[MAXPATHLEN];
+  int type;
+  int mode;
+  size_t size;
+  struct inode *parent;
+  struct inode *child;
+  struct inode *sibling;
+};
+
+/*------------------------------------------
                   filesystem.h
   ------------------------------------------*/
 
 struct filesystem {
   const char *name;
+  inode_t root;
   void (*init)(filesystem_t *fs, const char *name, inode_t *dev);
   inode_t *(*lookup)(filesystem_t *fs, const char *path, int flags);
   int (*close)(inode_t *inode);
 };
 
-filesystem_t *new_kvfs();
-filesystem_t *new_procfs();
-filesystem_t *new_devfs();
+filesystem_t *new_kvfs(const char *name);
+filesystem_t *new_procfs(const char *name);
+filesystem_t *new_devfs(const char *name);
 
 /*------------------------------------------
                   fs_manager.h
@@ -112,14 +132,6 @@ int fs_manager_add(const char *path, filesystem_t *fs);
 filesystem_t *fs_manager_get(const char *path, char *subpath);
 int fs_manager_remove(const char *path);
 void fs_manager_print();
-
-/*------------------------------------------
-                    inode.h
-  ------------------------------------------*/
-
-struct inode {
-  size_t filesize;
-};
 
 /*------------------------------------------
                     file.h

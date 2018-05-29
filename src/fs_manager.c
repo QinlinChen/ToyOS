@@ -23,9 +23,11 @@ void fs_manager_init() {
 
 int fs_manager_add(const char *path, filesystem_t *fs) {
   fs_manager_node_t *node = pmm->alloc(sizeof(fs_manager_node_t));
-  if (node == NULL)
+  if (node == NULL) {
+    Panic("Fail to add file system");
     return -1;
-  
+  }
+
   strcpy(node->path, path);
   node->fs = fs;
   node->next = fs_manager.head;
