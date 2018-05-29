@@ -27,7 +27,7 @@ MOD_DEF(vfs) {
               filesystem_manager
   ------------------------------------------*/
 
-#define NR_FS 2
+#define NR_FS 16
 
 typedef struct filesystem_manager {
   char path[MAXPATHLEN][NR_FS];
