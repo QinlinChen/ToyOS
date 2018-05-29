@@ -276,15 +276,18 @@ static void fs_manager_test() {
   Assert(fs_manager_remove("/") == 0);
   Assert(fs_manager_remove("/dev") == 0);
   char subpath[MAXPATHLEN];
-  filesystem_t *fs = fs_manager_get("/proc/123", subpath);
+  filesystem_t *fs;
+  Assert((fs = fs_manager_get("/proc/123/stat", subpath)) != NULL);
   Assert(strcmp(fs->name, "procfs") == 0);
-  Assert(strcmp(subpath, "/123") == 0);
-  fs = fs_manager_get("/proc/", subpath);
+  Assert(strcmp(subpath, "/123/stat") == 0);
+  Assert((fs = fs_manager_get("/proc/", subpath)) != NULL);
   Assert(strcmp(fs->name, "procfs") == 0);
   Assert(strcmp(subpath, "/") == 0);
-  fs = fs_manager_get("/proc", subpath);
+  Assert((fs = fs_manager_get("/proc/", subpath)) != NULL);
   Assert(strcmp(fs->name, "procfs") == 0);
-  Assert(strcmp(subpath, "12323") == 0);
+  Assert(strcmp(subpath, "\0") == 0);
+  Assert(fs_manager_get("/pro", subpath) == NULL);
+  
 }
 
 /*------------------------------------------
