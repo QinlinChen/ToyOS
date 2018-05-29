@@ -271,6 +271,7 @@ static void fs_manager_test() {
   devfs.name = "devfs";
   
   fs_manager_init();
+  // sequence matters
   Assert(fs_manager_add("/dev", &devfs) == 0);
   Assert(fs_manager_add("/", &kvfs) == 0);
   Assert(fs_manager_add("/proc", &procfs) == 0);
