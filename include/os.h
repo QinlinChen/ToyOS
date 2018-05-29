@@ -104,14 +104,14 @@ filesystem_t *new_procfs();
 filesystem_t *new_devfs();
 
 /*------------------------------------------
-              filesystem_manager.h
+                  fs_manager.h
   ------------------------------------------*/
 
-void filesystem_manager_init();
-int filesystem_manager_add(const char *path, filesystem_t *fs);
-filesystem_t *filesystem_manager_get(const char *path, char *newpath);
-int filesystem_manager_remove(const char *path);
-void filesystem_manager_print();
+void fs_manager_init();
+int fs_manager_add(const char *path, filesystem_t *fs);
+filesystem_t *fs_manager_get(const char *path, char *newpath);
+int fs_manager_remove(const char *path);
+void fs_manager_print();
 
 /*------------------------------------------
                     inode.h
