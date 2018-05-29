@@ -288,10 +288,17 @@ static void fs_manager_test() {
 
   Assert((fs = fs_manager_get("/proc", subpath)) != NULL);
   Assert(strcmp(fs->name, "procfs") == 0);
-  Assert(strcmp(subpath, "\0") == 0);
+  Assert(strcmp(subpath, "/") == 0);
 
   Assert(fs_manager_get("/pro", subpath) == NULL);
-  Assert(fs_manager_get("/", subpath) == NULL);
+
+  Assert((fs = fs_manager_get("/", subpath)) != NULL);
+  Assert(strcmp(fs->name, "kvfs") == 0);
+  Assert(strcmp(subpath, "/") == 0);
+
+  Assert((fs = fs_manager_get("/abc", subpath)) != NULL);
+  Assert(strcmp(fs->name, "kvfs") == 0);
+  Assert(strcmp(subpath, "/abc") == 0);
 }
 
 /*------------------------------------------
