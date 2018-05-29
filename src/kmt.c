@@ -79,10 +79,6 @@ static thread_t *threadlist = NULL;
 thread_t *idle = NULL;
 thread_t *current = NULL;
 
-void threadlist_add(thread_t *thread);
-thread_t *threadlist_remove(int tid);
-void threadlist_print();
-
 void threadlist_add(thread_t *thread) {
   Assert(thread != NULL);
 

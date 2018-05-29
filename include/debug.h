@@ -58,4 +58,6 @@ void fence_set(uint8_t *target);
      _halt(1); \
   } while (0)
   
+#define TODO  Panic("TODO")
+
 #endif
