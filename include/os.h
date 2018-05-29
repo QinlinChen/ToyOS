@@ -109,7 +109,7 @@ filesystem_t *new_devfs();
 
 void fs_manager_init();
 int fs_manager_add(const char *path, filesystem_t *fs);
-filesystem_t *fs_manager_get(const char *path, char *newpath);
+filesystem_t *fs_manager_get(const char *path, char *subpath);
 int fs_manager_remove(const char *path);
 void fs_manager_print();
 
