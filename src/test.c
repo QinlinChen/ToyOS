@@ -269,25 +269,29 @@ static void fs_manager_test() {
   procfs.name = "procfs";
   kvfs.name = "kvfs";
   devfs.name = "devfs";
+  
   fs_manager_init();
+  Assert(fs_manager_add("/dev", &devfs) == 0);
   Assert(fs_manager_add("/", &kvfs) == 0);
   Assert(fs_manager_add("/proc", &procfs) == 0);
-  Assert(fs_manager_add("/dev", &devfs) == 0);
-  Assert(fs_manager_remove("/") == 0);
   Assert(fs_manager_remove("/dev") == 0);
+
   char subpath[MAXPATHLEN];
   filesystem_t *fs;
   Assert((fs = fs_manager_get("/proc/123/stat", subpath)) != NULL);
   Assert(strcmp(fs->name, "procfs") == 0);
   Assert(strcmp(subpath, "/123/stat") == 0);
+
   Assert((fs = fs_manager_get("/proc/", subpath)) != NULL);
   Assert(strcmp(fs->name, "procfs") == 0);
   Assert(strcmp(subpath, "/") == 0);
+
   Assert((fs = fs_manager_get("/proc", subpath)) != NULL);
   Assert(strcmp(fs->name, "procfs") == 0);
   Assert(strcmp(subpath, "\0") == 0);
-  Assert(fs_manager_get("/pro", subpath) == NULL);
 
+  Assert(fs_manager_get("/pro", subpath) == NULL);
+  Assert(fs_manager_get("/", subpath) == NULL);
 }
 
 /*------------------------------------------

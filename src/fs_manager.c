@@ -47,6 +47,8 @@ filesystem_t *fs_manager_get(const char *path, char *subpath) {
       }
     if (is_found) {
       j = 0;
+      if (path[i] != '/')
+        subpath[j++] = '/';
       for (; path[i] != '\0'; ++i, ++j)
         subpath[j] = path[i];
       subpath[j] = '\0';
