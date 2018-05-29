@@ -1,5 +1,6 @@
 #include "os.h"
 #include "common.h"
+#include "klib.h"
 
 #define NR_FS 16
 
@@ -49,9 +50,7 @@ filesystem_t *fs_manager_get(const char *path, char *subpath) {
       j = 0;
       if (path[i] != '/')
         subpath[j++] = '/';
-      for (; path[i] != '\0'; ++i, ++j)
-        subpath[j] = path[i];
-      subpath[j] = '\0';
+      strcpy(subpath + j, path + i);
       return cur->fs;
     }
   }
