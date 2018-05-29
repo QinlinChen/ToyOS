@@ -89,10 +89,11 @@ struct semaphore {
   }
 
 /*------------------------------------------
-                  vfs.h
+                  filesystem.h
   ------------------------------------------*/
 
 struct filesystem {
+  const char *name;
   void (*init)(filesystem_t *fs, const char *name, inode_t *dev);
   inode_t *(*lookup)(filesystem_t *fs, const char *path, int flags);
   int (*close)(inode_t *inode);
@@ -102,12 +103,30 @@ filesystem_t *new_kvfs();
 filesystem_t *new_procfs();
 filesystem_t *new_devfs();
 
+/*------------------------------------------
+              filesystem_manager.h
+  ------------------------------------------*/
+
+void filesystem_manager_init();
+int filesystem_manager_add(const char *path, filesystem_t *fs);
+filesystem_t *filesystem_manager_get(const char *path, char *newpath);
+int filesystem_manager_remove(const char *path);
+
+/*------------------------------------------
+                    inode.h
+  ------------------------------------------*/
+
 struct inode {
   size_t filesize;
 };
 
+/*------------------------------------------
+                    file.h
+  ------------------------------------------*/
+
 struct file {
   off_t offset;
+  inode_t *inode;
   int (*open)(inode_t *inode, file_t *file, int flags);
   ssize_t (*read)(inode_t *inode, file_t *file, char *buf, size_t size);
   ssize_t (*write)(inode_t *inode, file_t *file, const char *buf, size_t size);

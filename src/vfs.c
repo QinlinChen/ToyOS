@@ -23,6 +23,51 @@ MOD_DEF(vfs) {
   .close = vfs_close,
 };
 
+/*------------------------------------------
+              filesystem_manager
+  ------------------------------------------*/
+
+#define NR_FS 20
+
+typedef struct filesystem_manager {
+  char path[MAXPATHLEN][NR_FS];
+  filesystem_t *fs[NR_FS];
+  int is_free[NR_FS];
+} filesystem_manager_t;
+
+static filesystem_manager_t fs_manager;
+
+void filesystem_manager_init() {
+  for (int i = 0; i < NR_FS; ++i) {
+    fs_manager.fs[i] = NULL;
+    fs_manager.is_free[i] = 1;
+  }
+}
+
+int filesystem_manager_add(const char *path, filesystem_t *fs) {
+  for (int i = 0; i < NR_FS; ++i) {
+    if (fs_manager.is_free[i]) {
+      strcpy(fs_manager.path[i], path);
+      fs_manager.fs[i] = fs;
+      fs_manager.is_free[i] = 0;
+      return 1;
+    }
+  }
+  return 0;
+}
+
+filesystem_t *filesystem_manager_get(const char *path, char *newpath) {
+
+}
+
+int filesystem_manager_remove(const char *path) {
+
+}
+
+/*------------------------------------------
+                    vfs
+  ------------------------------------------*/
+
 static void vfs_init() {
   TODO;
 }
