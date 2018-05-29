@@ -71,11 +71,11 @@ filesystem_t *filesystem_manager_get(const char *path, char *subpath) {
         for (; path[i] != '\0'; ++i, ++j)
           subpath[j] = path[i];
         subpath[j] = '\0';
-        return 0;
+        return fs_manager.fs[n];
       }
     }
   Panic("filesystem manager can't match the path with a mounted fs");
-  return 1;
+  return NULL;
 }
 
 int filesystem_manager_remove(const char *path) {
