@@ -90,10 +90,10 @@ int filesystem_manager_remove(const char *path) {
 }
 
 void filesystem_manager_print() {
-  for (int i = 0; i < NR_FS; ++i) {
-    printf("fs: %s, mounted path: %s\n", 
-      fs_manager.fs[i]->name, fs_manager.path[i]);
-  }
+  for (int i = 0; i < NR_FS; ++i)
+    if (!fs_manager.is_free[i])
+      printf("fs: %s, mounted path: %s\n", 
+        fs_manager.fs[i]->name, fs_manager.path[i]);
 }
 
 /*------------------------------------------
