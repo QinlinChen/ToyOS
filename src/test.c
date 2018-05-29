@@ -284,7 +284,7 @@ static void fs_manager_test() {
   Assert(strcmp(subpath, "/") == 0);
   fs = fs_manager_get("/proc", subpath);
   Assert(strcmp(fs->name, "procfs") == 0);
-  Assert(strcmp(subpath, "\0") == 0);
+  Assert(strcmp(subpath, "12323") == 0);
 }
 
 /*------------------------------------------
