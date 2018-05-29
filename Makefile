@@ -21,8 +21,8 @@ clean:
 	rm -rf build
 
 submit:
-	cd .. && tar cj oslab1 > submission.tar.bz2
-	curl -F "task=L1" -F "id=$(STUID)" -F "name=$(STUNAME)" -F "submission=@../submission.tar.bz2" 114.212.81.90:5000/upload
+	cd .. && tar cj oslab2 > submission.tar.bz2
+	curl -F "task=L2" -F "id=$(STUID)" -F "name=$(STUNAME)" -F "submission=@../submission.tar.bz2" 114.212.81.90:5000/upload
 
 build/kernel: $(OBJS)
 	ld $(LDFLAGS) -o $@ $(OBJS) am/am-x86-qemu.a
