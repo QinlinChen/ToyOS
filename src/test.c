@@ -261,6 +261,24 @@ void stackfence_test() {
 } 
 
 /*------------------------------------------
+          filesystem_manager test
+  ------------------------------------------*/
+
+void filesystem_manager_test() {
+  filesystem_t procfs, kvfs, devfs;
+  procfs.name = "procfs";
+  kvfs.name = "kvfs";
+  devfs.name = "devfs";
+  filesystem_manager_init();
+  filesystem_manager_add("/", &procfs);
+  filesystem_manager_add("/proc", &kvfs);
+  filesystem_manager_add("/dev", &devfs);
+  filesystem_manager_print();
+  filesystem_manager_remove(&procfs);
+  filesystem_manager_remove(&devfs);
+  filesystem_manager_print();
+}
+/*------------------------------------------
                 test run
   ------------------------------------------*/
 
@@ -271,4 +289,6 @@ void test_run() {
   // sem_test(3);
   // hello_test();
   // stackfence_test();
+  filesystem_manager_test();
+  Panic("Stop");
 }

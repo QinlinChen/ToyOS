@@ -111,6 +111,7 @@ void filesystem_manager_init();
 int filesystem_manager_add(const char *path, filesystem_t *fs);
 filesystem_t *filesystem_manager_get(const char *path, char *newpath);
 int filesystem_manager_remove(const char *path);
+void filesystem_manager_print();
 
 /*------------------------------------------
                     inode.h

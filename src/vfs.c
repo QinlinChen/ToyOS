@@ -27,7 +27,7 @@ MOD_DEF(vfs) {
               filesystem_manager
   ------------------------------------------*/
 
-#define NR_FS 20
+#define NR_FS 2
 
 typedef struct filesystem_manager {
   char path[MAXPATHLEN][NR_FS];
@@ -45,23 +45,56 @@ void filesystem_manager_init() {
 }
 
 int filesystem_manager_add(const char *path, filesystem_t *fs) {
-  for (int i = 0; i < NR_FS; ++i) {
+  for (int i = 0; i < NR_FS; ++i)
     if (fs_manager.is_free[i]) {
       strcpy(fs_manager.path[i], path);
       fs_manager.fs[i] = fs;
       fs_manager.is_free[i] = 0;
       return 1;
-    }
-  }
+    } 
+  Panic("filesystem manager overflows");
   return 0;
 }
 
-filesystem_t *filesystem_manager_get(const char *path, char *newpath) {
-
+filesystem_t *filesystem_manager_get(const char *path, char *subpath) {
+  for (int n = 0; n < NR_FS; ++n)
+    if (!fs_manager.is_free[n]) {
+      int is_found = 1;
+      int i, j;
+      for (i = 0; fs_manager.path[n][i] != '\0'; ++i)
+        if (fs_manager.path[n][i] != path[i]) {
+          is_found = 0;
+          break;
+        }
+      if (is_found) {
+        j = 0;
+        for (; path[i] != '\0'; ++i, ++j)
+          subpath[j] = path[i];
+        subpath[j] = '\0';
+        return 0;
+      }
+    }
+  Panic("filesystem manager can't match the path with a mounted fs");
+  return 1;
 }
 
 int filesystem_manager_remove(const char *path) {
+  for (int i = 0; i < NR_FS; ++i)
+    if (!fs_manager.is_free[i] && strcmp(fs_manager.path[i], path) == 0) {
+      fs_manager.fs[i] = NULL;
+      fs_manager.is_free[i] = 1;
+      return 1;
+    }
+  Panic("filesystem manager underflows");
+  return 0;
+}
 
+void filesystem_manager_print() {
+  for (int i = 0; i < NR_FS; ++i) {
+    printf("fs: %s, mounted path: %s\n", 
+      fs_manager.fs[i]->name, fs_manager.path[i]);
+  }
+  return 0;
 }
 
 /*------------------------------------------
