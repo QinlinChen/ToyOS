@@ -279,7 +279,7 @@ void filesystem_manager_test() {
   fs_manager_print();
   char subpath[MAXPATHLEN];
   filesystem_t *fs = fs_manager_get("/proc/123", subpath);
-  Assert(strcmp(fs->name, "/proc") == 0);
+  Assert(strcmp(fs->name, "procfs") == 0);
   printf("subpath: %s\n", subpath);
 
 }
