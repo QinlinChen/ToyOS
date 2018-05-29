@@ -282,27 +282,22 @@ static void fs_manager_test() {
   Assert((fs = fs_manager_get("/proc/123/stat", subpath)) != NULL);
   Assert(strcmp(fs->name, "procfs") == 0);
   Assert(strcmp(subpath, "/123/stat") == 0);
-  printf("subpath: %s\n", subpath);
-
+  
   Assert((fs = fs_manager_get("/proc/", subpath)) != NULL);
   Assert(strcmp(fs->name, "procfs") == 0);
   Assert(strcmp(subpath, "/") == 0);
-  printf("subpath: %s\n", subpath);
 
   Assert((fs = fs_manager_get("/proc", subpath)) != NULL);
   Assert(strcmp(fs->name, "procfs") == 0);
   Assert(strcmp(subpath, "/") == 0);
-  printf("subpath: %s\n", subpath);
 
   Assert((fs = fs_manager_get("/", subpath)) != NULL);
   Assert(strcmp(fs->name, "kvfs") == 0);
   Assert(strcmp(subpath, "/") == 0);
-  printf("subpath: %s\n", subpath);
 
   Assert((fs = fs_manager_get("/pro", subpath)) != NULL);
   Assert(strcmp(fs->name, "kvfs") == 0);
   Assert(strcmp(subpath, "/pro") == 0);
-  printf("subpath: %s\n", subpath);
 }
 
 /*------------------------------------------
