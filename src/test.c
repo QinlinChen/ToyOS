@@ -270,19 +270,17 @@ void filesystem_manager_test() {
   kvfs.name = "kvfs";
   devfs.name = "devfs";
   fs_manager_init();
-  fs_manager_add("/", &kvfs);
-  fs_manager_add("/proc", &procfs);
-  fs_manager_add("/dev", &devfs);
-  fs_manager_print();
-  fs_manager_remove("/");
-  fs_manager_remove("/dev");
-  fs_manager_print();
+  Assert(fs_manager_add("/", &kvfs) == 0);
+  Assert(fs_manager_add("/proc", &procfs) == 0);
+  Assert(fs_manager_add("/dev", &devfs) == 0);
+  Assert(fs_manager_remove("/") == 0);
+  Assert(fs_manager_remove("/dev") == 0);
   char subpath[MAXPATHLEN];
   filesystem_t *fs = fs_manager_get("/proc/123", subpath);
   Assert(strcmp(fs->name, "procfs") == 0);
-  printf("subpath: %s\n", subpath);
-
+  Assert(strcmp(subpath, "/123") == 0);
 }
+
 /*------------------------------------------
                 test run
   ------------------------------------------*/

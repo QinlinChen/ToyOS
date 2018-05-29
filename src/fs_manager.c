@@ -22,10 +22,9 @@ void fs_manager_init() {
 
 int fs_manager_add(const char *path, filesystem_t *fs) {
   fs_manager_node_t *node = pmm->alloc(sizeof(fs_manager_node_t));
-  if (node == NULL) {
-    Panic("Fail to allocate fs_manager_node");
+  if (node == NULL)
     return -1;
-  }
+  
   strcpy(node->path, path);
   node->fs = fs;
   node->next = fs_manager.head;
@@ -54,7 +53,6 @@ filesystem_t *fs_manager_get(const char *path, char *subpath) {
       return cur->fs;
     }
   }
-  Panic("filesystem manager can't match the path with a mounted fs");
   return NULL;
 }
 
@@ -69,7 +67,6 @@ int fs_manager_remove(const char *path) {
         cur->next->prev = cur->prev;
       return 0;
     }
-  Panic("filesystem manager underflows");
   return -1;
 }
 
