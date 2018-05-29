@@ -87,5 +87,39 @@ struct semaphore {
     .queue = { NULL, NULL, 0 }, \
     .lock = { 0, (NAME) }, \
   }
-  
+
+/*------------------------------------------
+                  vfs.h
+  ------------------------------------------*/
+
+struct filesystem {
+  void (*init)(filesystem_t *fs, const char *name, inode_t *dev);
+  inode_t *(*lookup)(filesystem_t *fs, const char *path, int flags);
+  int (*close)(inode_t *inode);
+};
+
+filesystem_t *new_kvfs();
+filesystem_t *new_procfs();
+filesystem_t *new_devfs();
+
+struct inode {
+  size_t filesize;
+};
+
+struct file {
+  off_t offset;
+  int (*open)(inode_t *inode, file_t *file, int flags);
+  ssize_t (*read)(inode_t *inode, file_t *file, char *buf, size_t size);
+  ssize_t (*write)(inode_t *inode, file_t *file, const char *buf, size_t size);
+  off_t (*lseek)(inode_t *inode, file_t *file, off_t offset, int whence);
+};
+
+int new_kvfs_file();
+int new_procfs_file();
+int new_devfs_file();
+
+void delete_kvfs_file(int fd);
+void delete_procfs_file(int fd);
+void delete_devfs_file(int fd);
+
 #endif
