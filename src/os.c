@@ -24,9 +24,6 @@ static void os_run() {
   while (1) ; // should never return
 }
 
-extern thread_t *current;
-extern thread_t *idle;
-
 static _RegSet *switch_thread(_RegSet *regs) {
   // current is not initialized
   if (current == NULL) {

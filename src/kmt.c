@@ -29,9 +29,6 @@ MOD_DEF(kmt) {
                     thread
   ------------------------------------------*/
 
-thread_t *new_thread(void (*entry)(void *), void *arg);
-void delete_thread(thread_t *thread);
-
 thread_t *new_thread(void (*entry)(void *), void *arg) {
   static int tid = 0;
   
