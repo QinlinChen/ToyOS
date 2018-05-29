@@ -274,8 +274,8 @@ void filesystem_manager_test() {
   filesystem_manager_add("/proc", &kvfs);
   filesystem_manager_add("/dev", &devfs);
   filesystem_manager_print();
-  filesystem_manager_remove(&procfs);
-  filesystem_manager_remove(&devfs);
+  filesystem_manager_remove("/");
+  filesystem_manager_remove("/dev");
   filesystem_manager_print();
 }
 /*------------------------------------------
