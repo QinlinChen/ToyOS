@@ -94,7 +94,6 @@ void filesystem_manager_print() {
     printf("fs: %s, mounted path: %s\n", 
       fs_manager.fs[i]->name, fs_manager.path[i]);
   }
-  return 0;
 }
 
 /*------------------------------------------
