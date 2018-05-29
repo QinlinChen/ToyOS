@@ -77,7 +77,7 @@ void delete_thread(thread_t *thread) {
 static spinlock_t threadlist_lock = SPINLOCK_INIT("threadlist_lock");
 static thread_t *threadlist = NULL;
 thread_t *idle = NULL;
-thread_t *current = NULL;
+thread_t *cur_thread = NULL;
 
 void threadlist_add(thread_t *thread) {
   Assert(thread != NULL);
@@ -178,11 +178,11 @@ static void kmt_teardown(thread_t *thread) {
 
 static thread_t *kmt_schedule() {
   // threadlist_print();
-  Assert(current != NULL);
+  Assert(cur_thread != NULL);
   thread_t *scan;
 
-  // Case 1: current is idle thread
-  if (current == idle) {
+  // Case 1: cur_thread is idle thread
+  if (cur_thread == idle) {
 
     if (threadlist == NULL) 
       return idle;
@@ -204,15 +204,15 @@ static thread_t *kmt_schedule() {
     kmt->spin_unlock(&threadlist_lock);
   }
   
-  // Case 2: current is in threadlist
+  // Case 2: cur_thread is in threadlist
 
-  // current can continue
-  if (current->stat == RUNNABLE && current->timeslice > 0)
-    return current;
+  // cur_thread can continue
+  if (cur_thread->stat == RUNNABLE && cur_thread->timeslice > 0)
+    return cur_thread;
 
   // Round-Robin
   kmt->spin_lock(&threadlist_lock);
-  for (scan = current->next; ; scan = scan->next) {
+  for (scan = cur_thread->next; ; scan = scan->next) {
     Assert(scan != NULL);
     if (scan->stat == RUNNABLE) {
       Log("Next thread (tid %d)", scan->tid);
@@ -220,7 +220,7 @@ static thread_t *kmt_schedule() {
       return scan;
     }
     // if no thread can run, schedule to idle
-    if (scan == current) {
+    if (scan == cur_thread) {
       kmt->spin_unlock(&threadlist_lock);
       return idle;
     }
@@ -334,9 +334,9 @@ static void kmt_sem_wait(sem_t *sem) {
   kmt_spin_lock(&sem->lock);
   sem->count--;
   if (sem->count < 0) {
-    Assert(current != NULL);
-    current->stat = BLOCKED;
-    threadqueue_push(&sem->queue, current);
+    Assert(cur_thread != NULL);
+    cur_thread->stat = BLOCKED;
+    threadqueue_push(&sem->queue, cur_thread);
     kmt_spin_unlock(&sem->lock);
     _yield();
     kmt_spin_lock(&sem->lock);

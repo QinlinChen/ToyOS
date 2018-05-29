@@ -25,42 +25,42 @@ static void os_run() {
 }
 
 static _RegSet *switch_thread(_RegSet *regs) {
-  // current is not initialized
-  if (current == NULL) {
-    current = idle;  // schedule IDLE
-    return current->regs;
+  // cur_thread is not initialized
+  if (cur_thread == NULL) {
+    cur_thread = idle;  // schedule IDLE
+    return cur_thread->regs;
   }
   
-  // consume timeslice and change current state
-  current->timeslice--;
-  if (current->stat == RUNNING)
-    current->stat = RUNNABLE;
+  // consume timeslice and change cur_thread state
+  cur_thread->timeslice--;
+  if (cur_thread->stat == RUNNING)
+    cur_thread->stat = RUNNABLE;
 
   // decide next thread
   thread_t *next = kmt->schedule();
 
   // save regs, switch and run
-  current->regs = regs;
-  current = next;
-  if (current->timeslice == 0)
-    current->timeslice = MAX_TIMESLICE;
-  current->stat = RUNNING;
-  return current->regs;
+  cur_thread->regs = regs;
+  cur_thread = next;
+  if (cur_thread->timeslice == 0)
+    cur_thread->timeslice = MAX_TIMESLICE;
+  cur_thread->stat = RUNNING;
+  return cur_thread->regs;
 }
 
 static _RegSet *os_interrupt(_Event ev, _RegSet *regs) {
 
 #ifdef DEBUG
-  if (current)
-    fence_check(current->kstack - FENCESIZE);
+  if (cur_thread)
+    fence_check(cur_thread->kstack - FENCESIZE);
 #endif
 
   switch (ev.event) {
     case _EVENT_IRQ_TIMER: 
-      Log("TimeInterrupt! current thread (tid %d)", current->tid); 
+      Log("TimeInterrupt! cur_thread thread (tid %d)", cur_thread->tid); 
       return switch_thread(regs);
     case _EVENT_YIELD: 
-      Log("Yield! current thread (tid %d)", current->tid);
+      Log("Yield! cur_thread thread (tid %d)", cur_thread->tid);
       return switch_thread(regs);
     case _EVENT_IRQ_IODEV:
       _putc('I');

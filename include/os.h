@@ -30,7 +30,7 @@ void delete_thread(thread_t *thread);
   ------------------------------------------*/
 
 extern thread_t *idle;
-extern thread_t *current;
+extern thread_t *cur_thread;
 
 void threadlist_add(thread_t *thread);
 thread_t *threadlist_remove(int tid);
