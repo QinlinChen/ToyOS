@@ -112,6 +112,7 @@ typedef struct inode_manager {
 } inode_manage_t;
 
 inode_t *inode_manager_lookup(inode_manage_t *inode_manager, const char *path, int flags);
+void inode_manager_print(inode_manage_t *inode_manager);
 
 /*------------------------------------------
                   filesystem.h

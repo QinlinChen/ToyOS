@@ -66,8 +66,23 @@ static inode_t *inode_recursive_lookup(inode_t *node, const char *path, int flag
   return NULL;
 }
 
+static void inode_recursive_print(inode_t *node, int depth) {
+  char r = ((node->mode & S_IRUSR) ? 'r' : '-');
+  char w = ((node->mode & S_IWUSR) ? 'w' : '-');
+  char x = ((node->mode & S_IXUSR) ? 'x' : '-');
+  for (int i = 0; i < depth; ++i)
+    printf("    ");
+  printf("%s[%c%c%c]\n", node->name, x, w, r);
+  for (inode_t *scan = node->child; scan != NULL; scan = scan->sibling)
+    inode_recursive_print(scan, depth + 1);
+}
+
 inode_t *inode_manager_lookup(inode_manage_t *inode_manager, const char *path, int flags) {
   if (strcmp(path, "/") == 0)
     return &inode_manager->root;
   return inode_recursive_lookup(&inode_manager->root, path, flags);
+}
+
+void inode_manager_print(inode_manage_t *inode_manager) {
+  inode_recursive_print(&inode_manager->root, 0);
 }
