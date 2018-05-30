@@ -28,7 +28,6 @@ static inode_t *inode_find_child(inode_t *node, const char *name) {
 
 // path is not allowed to be root '/'
 static inode_t *inode_recursive_lookup(inode_t *node, const char *path, int flags) {
-  printf("path %s\n", path);
   // if then exit
   char name[MAXPATHLEN];
   int i = 0;
@@ -39,12 +38,11 @@ static inode_t *inode_recursive_lookup(inode_t *node, const char *path, int flag
   path++;
   Assert(*path != '\0');
   while (*path != '\0' && *path != '/')
-    name[i++] = *path;
+    name[i++] = *path++;
   name[i++] = '\0';
   if  (*path == '\0')
     is_file = 1;
 
-  printf("name %s\n", name);
   inode_t *child = inode_find_child(node, name);
   // if found
   if (child != NULL) {
