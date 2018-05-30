@@ -11,6 +11,7 @@ typedef struct fs_manager_node {
   struct fs_manager_node *next;
 } fs_manager_node_t;
 
+// implemented as list
 typedef struct fs_manager {
   fs_manager_node_t *head;
 } fs_manager_t;
@@ -31,7 +32,7 @@ int fs_manager_add(const char *path, filesystem_t *fs) {
   strcpy(node->path, path);
   size_t len = strlen(node->path);
   if (strcmp(node->path, "/") != 0 && node->path[len - 1] == '/')
-    node->path[len - 1] = '\0';
+    node->path[len - 1] = '\0';   // trim the tail '/' if exists
   node->fs = fs;
   node->next = fs_manager.head;
   if (fs_manager.head != NULL)

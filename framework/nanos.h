@@ -13,6 +13,14 @@
 #define STDOUT_FILENO 1
 #define STDERR_FILENO 2
 #define MAXPATHLEN 128
+#define O_RONLY   1
+#define O_WRONLY  2
+#define O_RDWR    4
+#define O_CREAT   8
+#define S_IRUSR   1
+#define S_IWUSR   2
+#define S_IXUSR   4
+#define DEFAULT_MODE  S_IRUSR | S_IWUSR
 
 // Kernel Panic
 #define panic(msg...) \

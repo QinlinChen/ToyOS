@@ -89,7 +89,7 @@ struct semaphore {
   }
 
 /*------------------------------------------
-                    inode.h
+                inode_manager.h
   ------------------------------------------*/
 
 enum {
@@ -106,10 +106,6 @@ struct inode {
   struct inode *child;
   struct inode *sibling;
 };
-
-/*------------------------------------------
-                  inode_manager.h
-  ------------------------------------------*/
 
 typedef struct inode_manager {
   inode_t root;
