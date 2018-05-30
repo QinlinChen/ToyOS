@@ -38,10 +38,12 @@ static int vfs_access(const char *path, int mode) {
 }
 
 static int vfs_mount(const char *path, filesystem_t *fs) {
+  TODO;
   return fs_manager_add(path, fs);
 }
 
 static int vfs_unmount(const char *path) {
+  TODO;
   return fs_manager_remove(path);
 }
 

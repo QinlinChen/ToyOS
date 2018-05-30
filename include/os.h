@@ -112,7 +112,9 @@ typedef struct inode_manager {
 } inode_manager_t;
 
 void inode_manager_init(inode_manager_t *inode_manager);
-inode_t *inode_manager_lookup(inode_manager_t *inode_manager, const char *path, int flags);
+void inode_manager_destroy(inode_manager_t *inode_manager);
+inode_t *inode_manager_lookup(inode_manager_t *inode_manager,
+                              const char *path, int create, int type);
 void inode_manager_print(inode_manager_t *inode_manager);
 
 /*------------------------------------------
