@@ -19,7 +19,7 @@ static void delete_inode(inode_t *node) {
     delete_inode(scan);
     scan = save;
   }
-  free(node);
+  pmm->free(node);
   node->parent = node->child = node->sibling = NULL;
   // for (inode_t *scan = node->child; scan != NULL; scan = scan->sibling) 
   //   delete_inode(scan);
