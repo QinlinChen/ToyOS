@@ -67,12 +67,13 @@ static inode_t *inode_recursive_lookup(inode_t *node, const char *path, int flag
 }
 
 static void inode_recursive_print(inode_t *node, int depth) {
+  char d = ((node->type == INODE_DIR) ? 'd' : '-');
   char r = ((node->mode & S_IRUSR) ? 'r' : '-');
   char w = ((node->mode & S_IWUSR) ? 'w' : '-');
   char x = ((node->mode & S_IXUSR) ? 'x' : '-');
   for (int i = 0; i < depth; ++i)
     printf("    ");
-  printf("%s[%c%c%c]\n", node->name, x, w, r);
+  printf("%s[%c%c%c%c]\n", node->name, d, x, w, r);
   for (inode_t *scan = node->child; scan != NULL; scan = scan->sibling)
     inode_recursive_print(scan, depth + 1);
 }
