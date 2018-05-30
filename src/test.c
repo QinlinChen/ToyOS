@@ -337,5 +337,6 @@ void test_run() {
   // hello_test();
   // stackfence_test();
   TEST(fs_manager_test);
+  TEST(inode_manager_test);
   Panic("Stop");
 }
