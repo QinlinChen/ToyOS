@@ -4,6 +4,15 @@
 #include <common.h>
 #include <os.h>
 
+#define TEST(func) \
+  do { \
+    if (func() == 1) \
+      printf(#func "\t\33[1;32mOK\33[0m\n"); \
+    else \
+      printf(#func "\t\33[1;32mERROR\33[0m\n"); \
+  } while (0)
+
+
 /*------------------------------------------
                   device test
   ------------------------------------------*/
@@ -264,7 +273,7 @@ void stackfence_test() {
               fs_manager test
   ------------------------------------------*/
 
-static void fs_manager_test() {
+static int fs_manager_test() {
   filesystem_t procfs, kvfs, devfs;
   procfs.name = "procfs";
   kvfs.name = "kvfs";
@@ -273,7 +282,7 @@ static void fs_manager_test() {
   fs_manager_init();
   // sequence matters
   Assert(fs_manager_add("/dev", &devfs) == 0);
-  Assert(fs_manager_add("//", &kvfs) == 0);
+  Assert(fs_manager_add("/", &kvfs) == 0);
   Assert(fs_manager_add("/proc/", &procfs) == 0);
   Assert(fs_manager_remove("/dev") == 0);
 
@@ -298,6 +307,7 @@ static void fs_manager_test() {
   Assert((fs = fs_manager_get("/pro", subpath)) != NULL);
   Assert(strcmp(fs->name, "kvfs") == 0);
   Assert(strcmp(subpath, "/pro") == 0);
+  return 1;
 }
 
 /*------------------------------------------
@@ -311,7 +321,6 @@ void test_run() {
   // sem_test(3);
   // hello_test();
   // stackfence_test();
-  fs_manager_test();
-  printf("fs_manager_test     success\n");
+  TEST(fs_manager_test);
   Panic("Stop");
 }
