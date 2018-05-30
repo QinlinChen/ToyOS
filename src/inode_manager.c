@@ -28,6 +28,7 @@ static inode_t *inode_find_child(inode_t *node, const char *name) {
 
 // path is not allowed to be root '/'
 static inode_t *inode_recursive_lookup(inode_t *node, const char *path, int flags) {
+  printf("path %s\n", path);
   // if then exit
   char name[MAXPATHLEN];
   int i = 0;
@@ -78,9 +79,7 @@ static void inode_recursive_print(inode_t *node, int depth) {
 }
 
 void inode_manager_init(inode_manager_t *inode_manager) {
-  TRACE_ENTRY;
   inode_manager->root = new_inode("/", INODE_DIR, DEFAULT_MODE);
-  TRACE_EXIT;
 }
 
 inode_t *inode_manager_lookup(inode_manager_t *inode_manager, const char *path, int flags) {
