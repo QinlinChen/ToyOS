@@ -4,7 +4,7 @@
 
 #define NR_FS 16
 
-typedef struct fs_manager_node {
+typedef struct filesystem_manager_node {
   char path[MAXPATHLEN];
   filesystem_t *fs;
   struct fs_manager_node *prev;
