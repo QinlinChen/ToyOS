@@ -44,6 +44,7 @@ static inode_t *inode_recursive_lookup(inode_t *node, const char *path, int flag
   if  (*path == '\0')
     is_file = 1;
 
+  printf("name %s\n", name);
   inode_t *child = inode_find_child(node, name);
   // if found
   if (child != NULL) {
