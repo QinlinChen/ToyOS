@@ -108,11 +108,12 @@ struct inode {
 };
 
 typedef struct inode_manager {
-  inode_t root;
-} inode_manage_t;
+  inode_t *root;
+} inode_manager_t;
 
-inode_t *inode_manager_lookup(inode_manage_t *inode_manager, const char *path, int flags);
-void inode_manager_print(inode_manage_t *inode_manager);
+void inode_manager_init(inode_manager_t *inode_manager);
+inode_t *inode_manager_lookup(inode_manager_t *inode_manager, const char *path, int flags);
+void inode_manager_print(inode_manager_t *inode_manager);
 
 /*------------------------------------------
                   filesystem.h
@@ -120,7 +121,7 @@ void inode_manager_print(inode_manage_t *inode_manager);
 
 struct filesystem {
   const char *name;
-  inode_manage_t inode_manager;
+  inode_manager_t inode_manager;
 
   void (*init)(filesystem_t *fs, const char *name, inode_t *dev);
   inode_t *(*lookup)(filesystem_t *fs, const char *path, int flags);

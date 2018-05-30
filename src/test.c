@@ -311,6 +311,21 @@ static int fs_manager_test() {
 }
 
 /*------------------------------------------
+              inode_manager test
+  ------------------------------------------*/
+
+int inode_manager_test() {
+  inode_manager_t manager;
+  inode_manager_init(&manager);
+  inode_manager_lookup(&manager, "/usr/jyy/fuck/you", O_CREAT);
+  inode_manager_lookup(&manager, "/usr/jyy/fuck/me", O_CREAT);
+  inode_manager_lookup(&manager, "/usr/jyy/loveyou", O_CREAT);
+  inode_manager_lookup(&manager, "/bin", O_CREAT);
+  inode_manager_print(&manager);
+  return 1;
+}
+
+/*------------------------------------------
                 test run
   ------------------------------------------*/
 
