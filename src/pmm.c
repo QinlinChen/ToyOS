@@ -186,6 +186,7 @@ static void *pmm_alloc(size_t size) {
 }
 
 static void pmm_free(void *ptr) {
+  Assert(ptr != NULL);
   kmt->spin_lock(&pmm_lock);
   freelist_free(ptr);
   Log("addr: %p", ptr);
