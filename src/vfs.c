@@ -53,8 +53,8 @@ static int vfs_open(const char *path, int flags) {
     return -1;
   }
 
-  Assert(fs->lookup != NULL);
-  inode_t *inode = fs->lookup(fs, subpath, flags);
+  // Assert(fs->lookup != NULL);
+  // inode_t *inode = fs->lookup(fs, subpath, flags);
   TODO;
   return 0;
 }

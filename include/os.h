@@ -108,12 +108,23 @@ struct inode {
 };
 
 /*------------------------------------------
+                  inode_manager.h
+  ------------------------------------------*/
+
+typedef struct inode_manager {
+  inode_t root;
+} inode_manage_t;
+
+inode_t *inode_manager_lookup(inode_manage_t *inode_manager, const char *path, int flags);
+
+/*------------------------------------------
                   filesystem.h
   ------------------------------------------*/
 
 struct filesystem {
   const char *name;
-  inode_t root;
+  inode_manage_t inode_manager;
+
   void (*init)(filesystem_t *fs, const char *name, inode_t *dev);
   inode_t *(*lookup)(filesystem_t *fs, const char *path, int flags);
   int (*close)(inode_t *inode);

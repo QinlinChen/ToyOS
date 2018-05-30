@@ -29,6 +29,9 @@ int fs_manager_add(const char *path, filesystem_t *fs) {
   }
 
   strcpy(node->path, path);
+  size_t len = strlen(node->path);
+  if (strcmp(node->path, "/") != 0 && node->path[len - 1] == '/')
+    node->path[len - 1] = '\0';
   node->fs = fs;
   node->next = fs_manager.head;
   if (fs_manager.head != NULL)

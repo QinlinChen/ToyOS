@@ -274,7 +274,7 @@ static void fs_manager_test() {
   // sequence matters
   Assert(fs_manager_add("/dev", &devfs) == 0);
   Assert(fs_manager_add("/", &kvfs) == 0);
-  Assert(fs_manager_add("/proc", &procfs) == 0);
+  Assert(fs_manager_add("/proc/", &procfs) == 0);
   Assert(fs_manager_remove("/dev") == 0);
 
   char subpath[MAXPATHLEN];
@@ -312,5 +312,6 @@ void test_run() {
   // hello_test();
   // stackfence_test();
   fs_manager_test();
+  printf("fs_manager_test     success\n");
   Panic("Stop");
 }
