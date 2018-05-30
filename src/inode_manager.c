@@ -12,7 +12,7 @@ static inode_t *new_inode(const char *name, int type, int mode) {
   return inode;
 }
 
-static inode_t *inode_add_child(inode_t *parent, inode_t *node) {
+static void inode_add_child(inode_t *parent, inode_t *node) {
   node->sibling = parent->child;
   node->child = NULL;
   node->parent = parent;
