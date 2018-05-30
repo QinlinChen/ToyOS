@@ -13,14 +13,12 @@ static inode_t *new_inode(const char *name, int type, int mode) {
 }
 
 static void delete_inode(inode_t *node) {
-  //inode_t *scan = node->child;
-  // while (scan != NULL) {
-  //   inode_t *save = scan->sibling;
-  //   delete_inode(scan);
-  //   scan = save;
-  // }
-  for (inode_t *scan = node->child; scan != NULL; scan = scan->sibling) 
+  inode_t *scan = node->child;
+  while (scan != NULL) {
+    inode_t *save = scan->sibling;
     delete_inode(scan);
+    scan = save;
+  }
   pmm->free(node);
   node->parent = node->child = node->sibling = NULL;
 }
