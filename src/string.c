@@ -6,7 +6,7 @@ static void string_resize(string_t *s, size_t capacity) {
   char *temp = pmm->alloc(capacity);
   for (size_t i = 0; i < s->size; ++i)
     temp[i] = s->data[i];
-  free(s->data);
+  pmm->free(s->data);
   s->data = temp;
   s->capacity = capacity;
 }
@@ -33,7 +33,7 @@ void string_push_back(string_t *s, char ch) {
 }
 
 void string_destroy(string_t *s) {
-  free(s->data);
+  pmm->free(s->data);
   s->size = 0;
   s->capacity = 0;
 }
