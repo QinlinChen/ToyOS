@@ -70,6 +70,12 @@ static inode_t *inode_recursive_lookup(inode_t *node, const char *path, int crea
   return NULL;
 }
 
+static inode_t *inode_lookup(inode_t *root, const char *path, int create, int type) {
+  if (strcmp(path, "/") == 0)
+    return type == INODE_DIR ? root : NULL;
+  return inode_recursive_lookup(root, path, create, type);
+}
+
 static void inode_recursive_print(inode_t *node, int depth) {
   char d = ((node->type == INODE_DIR) ? 'd' : '-');
   char r = ((node->mode & S_IRUSR) ? 'r' : '-');
@@ -93,12 +99,7 @@ void inode_manager_destroy(inode_manager_t *inode_manager) {
 
 inode_t *inode_manager_lookup(inode_manager_t *inode_manager,
                               const char *path, int create, int type) {
-  if (strcmp(path, "/") == 0) {
-    if (type == INODE_DIR)
-      return inode_manager->root;
-    return NULL;
-  }
-  return inode_recursive_lookup(inode_manager->root, path, create, type);
+  return inode_lookup(inode_manager->root, path, create, type);
 }
 
 void inode_manager_print(inode_manager_t *inode_manager) {
