@@ -394,8 +394,6 @@ int file_table_test() {
 int kv_access_test() {
   filesystem_t *kvfs = fs_manager_get("/", NULL);
   inode_manager_t *manager = &kvfs->inode_manager;
-  inode_manager_lookup(manager, "/bin", INODE_DIR, 1, DEFAULT_MODE);
-  inode_manager_lookup(manager, "/bin", INODE_FILE, 1, DEFAULT_MODE);
   inode_manager_lookup(manager, "/usr/cql/ws/oslab", INODE_FILE, 1, DEFAULT_MODE);
   inode_manager_lookup(manager, "/usr/cql/ws/minilab", INODE_FILE, 1, S_IRUSR);
   inode_manager_lookup(manager, "/lib/libc.so", INODE_FILE, 1, DEFAULT_MODE | S_IXUSR);
