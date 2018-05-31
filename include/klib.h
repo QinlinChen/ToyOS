@@ -5,6 +5,19 @@
 #include <stddef.h>
 
 // string.h
+typedef struct string {
+  char *data;
+  size_t capacity;
+  size_t size;
+} string_t;
+
+void string_init(string_t *s);
+int string_empty(string_t *s);
+size_t string_length(string_t *s);
+void string_push_back(string_t *s, char ch);
+void string_destroy(string_t *s);
+void string_print(string_t *s);
+
 void *memset(void *s, int c, size_t n);
 void *memcpy(void *dst, const void *src, size_t n);
 size_t strlen(const char* s);

@@ -344,6 +344,19 @@ int inode_manager_test() {
 }
 
 /*------------------------------------------
+                string test
+  ------------------------------------------*/
+
+int string_test() {
+  string_t s;
+  string_init(&s);
+  string_push_back(&s, 'a');
+  string_push_back(&s, 'c');
+  string_push_back(&s, 'b');
+  string_print(&s);
+}
+
+/*------------------------------------------
                 test run
   ------------------------------------------*/
 

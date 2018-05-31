@@ -152,7 +152,7 @@ void fs_manager_print();
 struct file {
   off_t offset;
   inode_t *inode;
-  int (*open)(inode_t *inode, file_t *file, int flags);
+  // int (*open)(inode_t *inode, file_t *file, int flags);
   ssize_t (*read)(inode_t *inode, file_t *file, char *buf, size_t size);
   ssize_t (*write)(inode_t *inode, file_t *file, const char *buf, size_t size);
   off_t (*lseek)(inode_t *inode, file_t *file, off_t offset, int whence);

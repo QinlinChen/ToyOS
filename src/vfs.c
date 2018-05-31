@@ -33,6 +33,11 @@ static void vfs_init() {
 }
 
 static int vfs_access(const char *path, int mode) {
+  char subpath[MAXPATHLEN];
+  filesystem_t *fs = fs_manager_get(path, subpath);
+  if (fs == NULL)
+    TODO;
+  fs->lookup(fs, subpath, 0);
   TODO;
   return 0;
 }
