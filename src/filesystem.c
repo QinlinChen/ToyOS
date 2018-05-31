@@ -67,7 +67,7 @@ static int kvfs_open(filesystem_t *this, const char *path, int flags) {
     return -1;
   }
 
-  // int fd = file_table_alloc(inode, kvfs_read, kvfs_write, kvfs_lseek, kvfs_close);
+  file_table_alloc(inode, kvfs_read, kvfs_write, kvfs_lseek, kvfs_close);
   TODO;
   return 0;
 }
