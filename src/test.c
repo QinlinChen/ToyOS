@@ -317,13 +317,13 @@ static int fs_manager_test() {
 int inode_manager_test() {
   inode_manager_t manager;
   inode_manager_init(&manager);
-  inode_manager_lookup(&manager, "/bin", 1, INODE_DIR, DEFAULT_MODE);
-  inode_manager_lookup(&manager, "/usr/jss/lv/you", 1, INODE_FILE, DEFAULT_MODE);
-  inode_manager_lookup(&manager, "/usr/jss/lv/me", 1, INODE_FILE, DEFAULT_MODE);
-  inode_manager_lookup(&manager, "/usr/jss/ds", 1, INODE_FILE, DEFAULT_MODE);
-  Assert(inode_manager_lookup(&manager, "/lib/libc.so", 0, INODE_FILE, 0) == NULL);
-  inode_manager_lookup(&manager, "/lib/libc.so", 1, INODE_FILE, DEFAULT_MODE);
-  Assert(inode_manager_lookup(&manager, "/lib/libc.so", 0, INODE_DIR, 0) == NULL);
+  inode_manager_lookup(&manager, "/bin", INODE_DIR, 1, DEFAULT_MODE);
+  inode_manager_lookup(&manager, "/usr/cql/lv/you", INODE_FILE, 1, DEFAULT_MODE);
+  inode_manager_lookup(&manager, "/usr/jss/lv/me", INODE_FILE, 1, DEFAULT_MODE);
+  inode_manager_lookup(&manager, "/usr/jss/ds", INODE_FILE, 1, DEFAULT_MODE);
+  Assert(inode_manager_lookup(&manager, "/lib/libc.so", INODE_FILE, 0, 0) == NULL);
+  inode_manager_lookup(&manager, "/lib/libc.so", INODE_FILE, 1, DEFAULT_MODE | S_IXUSR);
+  Assert(inode_manager_lookup(&manager, "/lib/libc.so", INODE_DIR, 0, 0) == NULL);
   inode_manager_print(&manager);
   inode_manager_destroy(&manager);
   return 1;
