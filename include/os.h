@@ -2,6 +2,7 @@
 #define __OS_H__
 
 #include <kernel.h>
+#include <klib.h>
 
 /*------------------------------------------
                   thread.h
