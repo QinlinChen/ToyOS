@@ -11,6 +11,8 @@ void filesystem_init(filesystem_t *fs, const char *name,
   inode_manager_init(&fs->inode_manager);
   fs->access_handle = access_handle;
   fs->open_handle = open_handle;
+  Log("access_handle %p", access_handle);
+  Log("fs->access_handle %p", fs->access_handle);
 }
 
 void filesystem_destroy(filesystem_t *fs) {
@@ -22,7 +24,6 @@ void filesystem_destroy(filesystem_t *fs) {
 filesystem_t *new_filesystem(const char *name, access_handle_t access_handle,
                              open_handle_t open_handle) {
   filesystem_t *fs = pmm->alloc(sizeof(filesystem_t));
-  Log("kvfs_access %p", access_handle);
   filesystem_init(fs, name, access_handle, open_handle);
   return fs;
 }
