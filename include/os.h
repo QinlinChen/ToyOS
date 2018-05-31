@@ -177,17 +177,10 @@ filesystem_t *new_filesystem(const char *name, access_handle_t access_handle,
                              open_handle_t open_handle);
 void delete_filesystem(filesystem_t *fs);
 
-// int new_kvfile(inode_t *inode);
-// int new_procfile(inode_t *inode);
-// int new_devfile(inode_t *inode);
-
-// void delete_kvfile(int fd);
-// void delete_procfile(int fd);
-// void delete_devfile(int fd);
-
+// three filesystems' factory function
 filesystem_t *new_kvfs(const char *name);
-// filesystem_t *new_procfs(const char *name);
-// filesystem_t *new_devfs(const char *name);
+filesystem_t *new_procfs(const char *name);
+filesystem_t *new_devfs(const char *name);
 
 /*------------------------------------------
                   fs_manager.h

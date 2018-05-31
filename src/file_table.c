@@ -17,7 +17,7 @@ void file_table_init() {
 int file_table_alloc(inode_manager_t *inode_manager, inode_t *inode, 
                      read_handle_t read_handle, write_handle_t write_handle,
                      lseek_handle_t lseek_handle, close_handle_t close_handle) {
-  Assert(inode != NULL);
+  Assert(inode_manager != NULL && inode != NULL);
   for (int fd = 0; fd < NR_FD; ++fd)
     if (is_free[fd]) {
       file_t *file = &file_table[fd];
