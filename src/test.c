@@ -327,8 +327,8 @@ int inode_manager_test() {
                 "libc.so") == 0);
   Assert(strcmp(inode_manager_lookup(&manager, "/lib/libc.so", INODE_FILE, 1, 0)->name, 
                 "libc.so") == 0);
-  Assert(inode_manager_lookup(&manager, "/lib/libc.so", INODE_FILE, 1, 213)->mode, 
-         == DEFAULT_MODE | S_IXUSR);
+  Assert(inode_manager_lookup(&manager, "/lib/libc.so", INODE_FILE, 1, 213)->mode 
+         == (DEFAULT_MODE | S_IXUSR));
   Assert(inode_manager_lookup(&manager, "/lib/libc.so", INODE_DIR, 0, 0) == NULL);
   inode_manager_print(&manager);
   inode_manager_destroy(&manager);
