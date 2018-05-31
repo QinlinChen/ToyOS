@@ -11,8 +11,6 @@ void filesystem_init(filesystem_t *fs, const char *name,
   inode_manager_init(&fs->inode_manager);
   fs->access_handle = access_handle;
   fs->open_handle = open_handle;
-  Log("access_handle %p", access_handle);
-  Log("fs->access_handle %p", fs->access_handle);
 }
 
 void filesystem_destroy(filesystem_t *fs) {
