@@ -273,7 +273,7 @@ void stackfence_test() {
               fs_manager test
   ------------------------------------------*/
 
-static int fs_manager_test() {
+int fs_manager_test() {
   filesystem_t procfs, kvfs, devfs;
   procfs.name = "procfs";
   kvfs.name = "kvfs";
@@ -314,7 +314,7 @@ static int fs_manager_test() {
               inode_manager test
   ------------------------------------------*/
 
-static int inode_manager_test() {
+int inode_manager_test() {
   inode_manager_t manager;
   inode_t *result;
 
@@ -356,7 +356,7 @@ static int inode_manager_test() {
                 string test
   ------------------------------------------*/
 
-static int string_test() {
+int string_test() {
   string_t s;
   string_init(&s);
   string_push_back(&s, 'H');
@@ -372,7 +372,7 @@ static int string_test() {
                 file table test
   ------------------------------------------*/
 
-static int file_table_test() {
+int file_table_test() {
   inode_t dumb_inode;
   inode_manager_t dumb_manager;
   int fd1 = file_table_alloc(&dumb_manager, &dumb_inode, NULL, NULL, NULL, NULL);
@@ -388,7 +388,7 @@ static int file_table_test() {
                 kv_access test
   ------------------------------------------*/
 
-static int kv_access_test() {
+int kv_access_test() {
   char subpath[MAXPATHLEN];
   int ok;
   filesystem_t *kvfs = fs_manager_get("/", subpath);
@@ -414,5 +414,6 @@ void test_run() {
   TEST(inode_manager_test);
   TEST(string_test);
   TEST(file_table_test);
+  TEST(kv_access_test);
   Panic("Stop");
 }
