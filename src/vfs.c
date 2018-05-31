@@ -28,7 +28,10 @@ MOD_DEF(vfs) {
   ------------------------------------------*/
 
 static void vfs_init() {
-  fs_manager_init();
+  // fs_manager_init();
+  // fs_manager_add("/", new_kvfs("kvfs"));
+  // fs_manager_add("/proc", new_procfs("procfs"));
+  // fs_manager_add("/dev", new_devfs("devfs"));
   TODO;
 }
 
@@ -37,7 +40,7 @@ static int vfs_access(const char *path, int mode) {
   filesystem_t *fs = fs_manager_get(path, subpath);
   if (fs == NULL)
     TODO;
-  fs->lookup(fs, subpath, 0);
+  // fs->lookup(fs, subpath, 0);
   TODO;
   return 0;
 }

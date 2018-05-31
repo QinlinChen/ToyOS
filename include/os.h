@@ -122,16 +122,50 @@ void inode_manager_remove(inode_t *inode);
 void inode_manager_print(inode_manager_t *inode_manager);
 
 /*------------------------------------------
+                    file.h
+  ------------------------------------------*/
+
+typedef ssize_t (*read_handle_t)(file_t *this, char *buf, size_t size);
+typedef ssize_t (*write_handle_t)(file_t *this, const char *buf, size_t size);
+typedef off_t (*lseek_handle_t)(file_t *this, off_t offset, int whence);
+typedef int (*close_handle_t)(file_t *this, int fd);
+
+struct file {
+  off_t offset;
+  inode_t *inode;
+  int ref_count;
+  read_handle_t read_handle;
+  write_handle_t write_handle;
+  lseek_handle_t lseek_handle;
+  close_handle_t close_handle;
+};
+
+int new_file(inode_t *inode, read_handle_t read_hanle, write_handle_t write_handle,
+             lseek_handle_t lseek_handle, close_handle_t close_handle);
+void delete_file(int fd);
+
+/*------------------------------------------
                   filesystem.h
   ------------------------------------------*/
+
+typedef int (*access_handle_t)(filesystem_t *this, const char *path, int mode);
+typedef int (*open_handle_t)(filesystem_t *this, const char *path, int flags);
 
 struct filesystem {
   const char *name;
   inode_manager_t inode_manager;
 
-  // void (*init)(filesystem_t *fs, const char *name, inode_t *dev);
-  inode_t *(*lookup)(filesystem_t *fs, const char *path, int flags);
+  access_handle_t access_handle;
+  open_handle_t open_handle;
 };
+
+int new_kvfs_file(inode_t *inode);
+int new_procfs_file(inode_t *inode);
+int new_devfs_file(inode_t *inode);
+
+void delete_kvfs_file(int fd);
+void delete_procfs_file(int fd);
+void delete_devfs_file(int fd);
 
 filesystem_t *new_kvfs(const char *name);
 filesystem_t *new_procfs(const char *name);
@@ -146,26 +180,5 @@ int fs_manager_add(const char *path, filesystem_t *fs);
 filesystem_t *fs_manager_get(const char *path, char *subpath);
 int fs_manager_remove(const char *path);
 void fs_manager_print();
-
-/*------------------------------------------
-                    file.h
-  ------------------------------------------*/
-
-struct file {
-  off_t offset;
-  inode_t *inode;
-  int (*open)(inode_t *inode, file_t *file, int flags);
-  ssize_t (*read)(inode_t *inode, file_t *file, char *buf, size_t size);
-  ssize_t (*write)(inode_t *inode, file_t *file, const char *buf, size_t size);
-  off_t (*lseek)(inode_t *inode, file_t *file, off_t offset, int whence);
-};
-
-int new_kvfs_file();
-int new_procfs_file();
-int new_devfs_file();
-
-void delete_kvfs_file(int fd);
-void delete_procfs_file(int fd);
-void delete_devfs_file(int fd);
 
 #endif
