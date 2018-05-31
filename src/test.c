@@ -388,7 +388,7 @@ int file_table_test() {
 }
 
 /*------------------------------------------
-                kv_access test
+                    kv test
   ------------------------------------------*/
 
 int kv_access_test() {
@@ -409,7 +409,19 @@ int kv_access_test() {
   Assert(vfs->access("/lib/libc.so", X_OK) == 1);
   Assert(vfs->access("/lib/libc.so", W_OK) == 0);
   Assert(vfs->access("/lib/libc.so", R_OK) == 0);
+
+  Assert(vfs->open("/lib/libc.so", O_RONLY) == -1);
+  Assert(vfs->open("/usr/cql/minilab", O_RDWR) == -1);
+  int fd = vfs->open("/usr/cql/oslab", O_RDWR);
+  Assert(fd != -1);
+  file_t *file = file_table_get(fd);
+  Assert(file->readable);
+  Assert(file->writable);
   return 1;
+}
+
+int kv_open_test() {
+  
 }
 
 /*------------------------------------------
