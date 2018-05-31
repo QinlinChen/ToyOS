@@ -12,6 +12,13 @@ static void string_resize(string_t *s, size_t capacity) {
   s->capacity = capacity;
 }
 
+static void string_push_back(string_t *s, char ch) {
+  Assert(s != NULL);
+  if (s->size == s->capacity)
+    string_resize(s, 2 * s->capacity);
+  s->data[s->size++] = ch;
+}
+
 void string_init(string_t *s) {
   Assert(s != NULL);
   s->data = pmm->alloc(2);
@@ -35,13 +42,6 @@ size_t string_capacity(string_t *s) {
   return s->capacity;
 }
 
-void string_push_back(string_t *s, char ch) {
-  Assert(s != NULL);
-  if (s->size == s->capacity)
-    string_resize(s, 2 * s->capacity);
-  s->data[s->size++] = ch;
-}
-
 void string_cat(string_t *s1, const char *s2) {
   Assert(s1 != NULL && s2 != NULL);
   while (*s2)
@@ -59,6 +59,40 @@ void string_print(string_t *s) {
   Assert(s != NULL);
   for (size_t i = 0; i < s->size; ++i)
     _putc(s->data[i]);
+}
+
+ssize_t string_read(string_t *s, off_t offset, void *buf, size_t size) {
+  size_t nleft = size;
+  ssize_t nread = 0;
+  char *bufp = buf;
+
+  while (nleft > 0 && (size_t)offset < s->size) {
+    *bufp++ = s->data[offset++];
+    nleft--;
+    nread++;
+  }
+
+  return nread;
+}
+
+ssize_t string_write(string_t *s, off_t offset, void *buf, size_t size) {
+  size_t nleft = size;
+  ssize_t nwritten = 0;
+  char *bufp = buf;
+
+  while (nleft > 0 && (size_t)offset < s->size) {
+    s->data[offset++] = *bufp++;
+    nleft--;
+    nwritten++;
+  }
+
+  while (nleft > 0) {
+    string_push_back(s, *bufp++);
+    nleft--;
+    nwritten++;
+  }
+  
+  return nwritten; 
 }
 
 void *memset(void *s, int c, size_t n) {

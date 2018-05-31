@@ -36,11 +36,7 @@ void delete_filesystem(filesystem_t *fs) {
   ------------------------------------------*/
 
 static ssize_t kvfs_read(file_t *this, char *buf, size_t size) {
-  // string_t *data = file_get_data(this);
-  // int offset = (int)file_get_offset(this);
-
-  // char *bufp = buf; 
-  // ssize_t nread = 0;
+  TODO;
   return 0;
 }
 
