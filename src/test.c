@@ -354,6 +354,7 @@ int string_test() {
   string_push_back(&s, 'e');
   string_push_back(&s, 'l');
   string_cat(&s, "lo, world\n");
+  Assert(strcmp(s.data, "Hello, world\n") == 0);
   string_print(&s);
   return 1;
 }

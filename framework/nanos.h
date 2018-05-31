@@ -9,9 +9,10 @@
 #define R_OK 4
 #define W_OK 2
 #define X_OK 1
-#define STDIN_FILENO 0
+#define STDIN_FILENO  0
 #define STDOUT_FILENO 1
 #define STDERR_FILENO 2
+#define FILENO_BEGIN  3
 #define MAXPATHLEN 128
 #define O_RONLY   1
 #define O_WRONLY  2
