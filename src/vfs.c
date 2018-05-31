@@ -36,14 +36,6 @@ static void vfs_init() {
   // fs_manager_add("/dev", new_devfs("devfs"));
 }
 
-static int vfs_access(const char *path, int mode) {
-  char subpath[MAXPATHLEN];
-  filesystem_t *fs = fs_manager_get(path, subpath);
-  if (fs == NULL)
-    return -1;
-  return fs->access_handle(fs, subpath, mode);
-}
-
 static int vfs_mount(const char *path, filesystem_t *fs) {
   fs_manager_add(path, fs);
   TODO;
@@ -55,6 +47,14 @@ static int vfs_unmount(const char *path) {
   delete_filesystem(fs);
   TODO;
   return 0;
+}
+
+static int vfs_access(const char *path, int mode) {
+  char subpath[MAXPATHLEN];
+  filesystem_t *fs = fs_manager_get(path, subpath);
+  if (fs == NULL)
+    return -1;
+  return fs->access_handle(fs, subpath, mode);
 }
 
 static int vfs_open(const char *path, int flags) {

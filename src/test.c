@@ -389,7 +389,14 @@ static int file_table_test() {
   ------------------------------------------*/
 
 static int kv_access_test() {
-
+  char subpath[MAXPATHLEN];
+  int ok;
+  filesystem_t *kvfs = fs_manager_get("/", subpath);
+  Log("%s", subpath);
+  Assert(kvfs != NULL);
+  ok = kvfs->access_handle(kvfs, subpath, F_OK);
+  Assert(ok == 1);
+  return 1;
 }
 
 /*------------------------------------------
