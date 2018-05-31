@@ -30,6 +30,11 @@ size_t string_length(string_t *s) {
   return s->size;
 }
 
+size_t string_capacity(string_t *s) {
+  Assert(s != NULL);
+  return s->capacity;
+}
+
 void string_push_back(string_t *s, char ch) {
   Assert(s != NULL);
   if (s->size == s->capacity)

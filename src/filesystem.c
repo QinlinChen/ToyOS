@@ -46,8 +46,16 @@ static ssize_t kvfs_write(file_t *this, const char *buf, size_t size) {
 }
 
 static off_t kvfs_lseek(file_t *this, off_t offset, int whence) {
-  TODO;
-  return 0;
+  switch (whence) {
+    case SEEK_SET: break;
+    case SEEK_CUR: offset += file_get_offset(this); break;
+    case SEEK_END: offset += (off_t)string_length(file_get_data(this)); break;
+    default: Panic("Should not reach here");
+  }
+  if (offset > string_length(file_get_data(this)))
+    return -1;
+  file_set_offset(this, offset);
+  return offset;
 }
 
 static int kvfs_close(file_t *this) {

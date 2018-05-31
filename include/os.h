@@ -149,6 +149,9 @@ struct file {
 };
 
 void file_set_permission(int fd, int readable, int writable);
+string_t *file_get_data(file_t *file);
+void file_set_offset(file_t *file, off_t offset);
+off_t file_get_offset(file_t *file);
 
 /*------------------------------------------
                 file_table.h
