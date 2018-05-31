@@ -394,16 +394,22 @@ int file_table_test() {
 int kv_access_test() {
   filesystem_t *kvfs = fs_manager_get("/", NULL);
   inode_manager_t *manager = &kvfs->inode_manager;
-  inode_manager_lookup(manager, "/usr/cql/ws/oslab", INODE_FILE, 1, DEFAULT_MODE);
-  inode_manager_lookup(manager, "/usr/cql/ws/minilab", INODE_FILE, 1, S_IRUSR);
-  inode_manager_lookup(manager, "/lib/libc.so", INODE_FILE, 1, DEFAULT_MODE | S_IXUSR);
+  inode_manager_lookup(manager, "/usr/cql/oslab", INODE_FILE, 1, DEFAULT_MODE);
+  inode_manager_lookup(manager, "/usr/cql/minilab", INODE_FILE, 1, S_IRUSR);
+  inode_manager_lookup(manager, "/lib/libc.so", INODE_FILE, 1, S_IXUSR);
   inode_manager_print(manager);
 
   Assert(vfs->access("/", F_OK) == 0);
   Assert(vfs->access("/", R_OK) == 0);
   Assert(vfs->access("/", W_OK) == 0);
-
-  
+  Assert(vfs->access("/usr/cql/oslab", F_OK) == 1);
+  Assert(vfs->access("/usr/cql/oslab", W_OK | R_OK) == 1);
+  Assert(vfs->access("/usr/cql/minilab", F_OK) == 1);
+  Assert(vfs->access("/usr/cql/minilab", W_OK | R_OK) == 0);
+  Assert(vfs->access("/usr/cql/minilab", R_OK) == 1);
+  Assert(vfs->access("/lib/libc.so", X_OK) == 1);
+  Assert(vfs->access("/usr/cql/minilab", W_OK) == 0);
+  Assert(vfs->access("/usr/cql/minilab", R_OK) == 0);
   return 1;
 }
 

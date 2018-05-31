@@ -2,7 +2,7 @@
 #include "common.h"
 
 /*------------------------------------------
-              abstract file system
+              basic file system
   ------------------------------------------*/
 
 void filesystem_init(filesystem_t *fs, const char *name,
