@@ -31,7 +31,7 @@ void srand(unsigned int seed);
 int rand();
 int random(int left, int right);
 
-// stdio.h
+// printf.h
 int printf(const char* fmt, ...);
 int sprintf(char* out, const char* format, ...);
 
