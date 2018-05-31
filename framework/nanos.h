@@ -12,7 +12,7 @@
 #define STDIN_FILENO  0
 #define STDOUT_FILENO 1
 #define STDERR_FILENO 2
-#define FILENO_BEGIN  3
+#define FD_BEGIN      3
 #define MAXPATHLEN 128
 #define O_RONLY   1
 #define O_WRONLY  2

@@ -9,7 +9,8 @@ int main() {
   if (os->init) os->init();
   if (pmm->init) pmm->init();
   if (kmt->init) kmt->init();
-
+  if (vfs->init) vfs->init();
+  
   // call os->run()
   if (os->run) os->run();
 

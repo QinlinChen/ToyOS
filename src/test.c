@@ -279,7 +279,7 @@ static int fs_manager_test() {
   kvfs.name = "kvfs";
   devfs.name = "devfs";
   
-  fs_manager_init();
+  // fs_manager_init();
   // sequence matters
   Assert(fs_manager_add("/dev", &devfs) == 0);
   Assert(fs_manager_add("/", &kvfs) == 0);
@@ -314,7 +314,7 @@ static int fs_manager_test() {
               inode_manager test
   ------------------------------------------*/
 
-int inode_manager_test() {
+static int inode_manager_test() {
   inode_manager_t manager;
   inode_t *result;
 
@@ -356,7 +356,7 @@ int inode_manager_test() {
                 string test
   ------------------------------------------*/
 
-int string_test() {
+static int string_test() {
   string_t s;
   string_init(&s);
   string_push_back(&s, 'H');
@@ -365,6 +365,20 @@ int string_test() {
   string_cat(&s, "lo, world\n");
   Assert(strcmp(s.data, "Hello, world\n") == 0);
   string_print(&s);
+  return 1;
+}
+
+/*------------------------------------------
+                file table test
+  ------------------------------------------*/
+
+static int file_table_test {
+  int fd1 = file_table_alloc(NULL, NULL, NULL, NULL, NULL);
+  int fd2 = file_table_alloc(NULL, NULL, NULL, NULL, NULL);
+  printf("fd1 %d\nfd2 %d\n", fd1, fd2);
+  file_table_free(fd1);
+  int fd3 = file_table_alloc(NULL, NULL, NULL, NULL, NULL);
+  printf("fd3 %d\n", fd3);
   return 1;
 }
 
@@ -382,11 +396,6 @@ void test_run() {
   TEST(fs_manager_test);
   TEST(inode_manager_test);
   TEST(string_test);
-  int fd1 = file_table_alloc(NULL, NULL, NULL, NULL, NULL);
-  int fd2 = file_table_alloc(NULL, NULL, NULL, NULL, NULL);
-  printf("fd1 %d, fd2 %d\n", fd1, fd2);
-  file_table_free(fd1);
-  int fd3 = file_table_alloc(NULL, NULL, NULL, NULL, NULL);
-  printf("fd3 %d\n", fd3);
+  TEST(file_table_test);
   Panic("Stop");
 }
