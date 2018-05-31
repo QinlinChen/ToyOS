@@ -133,6 +133,7 @@ inode_t *inode_manager_lookup(inode_manager_t *inode_manager, const char *path,
 
 void inode_manager_remove(inode_t *inode) {
   inode_remove(inode);
+  inode_manager_print(inode);
   delete_inode(inode);
 }
 
