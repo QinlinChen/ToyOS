@@ -435,6 +435,6 @@ void test_run() {
   TEST(inode_manager_test);
   TEST(string_test);
   TEST(file_table_test);
-  TEST(kv_access_test);
+  TEST(kvfs_test);
   Panic("Stop");
 }
