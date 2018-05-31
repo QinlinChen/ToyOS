@@ -14,15 +14,13 @@ void file_table_init() {
   is_free[STDERR_FILENO] = 0;
 }
 
-int file_table_alloc(inode_manager_t *inode_manager, inode_t *inode, 
-                     read_handle_t read_handle, write_handle_t write_handle,
+int file_table_alloc(inode_t *inode, read_handle_t read_handle, write_handle_t write_handle,
                      lseek_handle_t lseek_handle, close_handle_t close_handle) {
-  Assert(inode_manager != NULL && inode != NULL);
+  Assert(inode != NULL);
   for (int fd = 0; fd < NR_FD; ++fd)
     if (is_free[fd]) {
       file_t *file = &file_table[fd];
       file->offset = 0;
-      file->inode_manager = inode_manager;
       file->inode = inode;
       file->ref_count = 1;
       file->read_handle = read_handle;
@@ -43,16 +41,9 @@ void file_table_free(file_t *file) {
   file->lseek_handle = NULL;
   file->close_handle = NULL;
   file->inode = NULL;
-  file->inode_manager = NULL;
   is_free[file - file_table] = 1;
 }
 
 file_t *file_table_get(int fd) {
   return &file_table[fd];
-}
-
-void file_table_set_permission(int fd, int readable, int writable) {
-  file_t *file = &file_table[fd];
-  file->readable = readable ? 1 : 0;
-  file->writable = writable ? 1 : 0;
 }

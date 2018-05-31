@@ -99,14 +99,18 @@ enum {
 };
 
 struct inode {
+  // locked by inode_manager
   char name[MAXPATHLEN];
   int type;
   int mode;
-  string_t data;
   struct inode *parent;
   struct inode *child;
   struct inode *next;
   struct inode *prev;
+  // string_t is thread safe.
+  // Since read, write, lseek and close only have access to data,
+  // it is safe.
+  string_t data;
 };
 
 // implemented as tree
@@ -126,6 +130,7 @@ int inode_manager_checkmode(inode_manager_t *inode_manager, inode_t *inode, int 
                     file.h
   ------------------------------------------*/
 
+// read, write, lseek and close only have access to inode.data
 typedef ssize_t (*read_handle_t)(file_t *this, char *buf, size_t size);
 typedef ssize_t (*write_handle_t)(file_t *this, const char *buf, size_t size);
 typedef off_t (*lseek_handle_t)(file_t *this, off_t offset, int whence);
@@ -133,7 +138,6 @@ typedef int (*close_handle_t)(file_t *this);
 
 struct file {
   off_t offset;
-  inode_manager_t *inode_manager;
   inode_t *inode;
   int ref_count;
   int readable;
@@ -144,17 +148,17 @@ struct file {
   close_handle_t close_handle;
 };
 
+void file_set_permission(int fd, int readable, int writable);
+
 /*------------------------------------------
                 file_table.h
   ------------------------------------------*/
 
 void file_table_init();
-int file_table_alloc(inode_manager_t *inode_manager, inode_t *inode, 
-                     read_handle_t read_handle, write_handle_t write_handle,
+int file_table_alloc(inode_t *inode, read_handle_t read_handle, write_handle_t write_handle,
                      lseek_handle_t lseek_handle, close_handle_t close_handle);
 void file_table_free(file_t *file);
 file_t *file_table_get(int fd);
-void file_table_set_permission(int fd, int readable, int writable);
 
 /*------------------------------------------
                   filesystem.h
