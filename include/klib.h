@@ -15,6 +15,7 @@ void string_init(string_t *s);
 int string_empty(string_t *s);
 size_t string_length(string_t *s);
 void string_push_back(string_t *s, char ch);
+void string_cat(string_t *s1, const char *s2);
 void string_destroy(string_t *s);
 void string_print(string_t *s);
 

@@ -32,6 +32,11 @@ void string_push_back(string_t *s, char ch) {
   s->data[s->size++] = ch;
 }
 
+void string_cat(string_t *s1, const char *s2) {
+  while (*s2)
+    string_push_back(s1, *s2++);
+}
+
 void string_destroy(string_t *s) {
   pmm->free(s->data);
   s->size = 0;
