@@ -61,6 +61,7 @@ filesystem_t *fs_manager_get(const char *path, char *subpath) {
       if (path[i] != '/')
         subpath[j++] = '/';
       strcpy(subpath + j, path + i);
+      Log("fs->access_handle %p", cur->fs->access_handle);
       return cur->fs;
     }
   }
