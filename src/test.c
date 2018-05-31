@@ -397,7 +397,6 @@ int kv_access_test() {
   inode_manager_lookup(manager, "/usr/cql/oslab", INODE_FILE, 1, DEFAULT_MODE);
   inode_manager_lookup(manager, "/usr/cql/minilab", INODE_FILE, 1, S_IRUSR);
   inode_manager_lookup(manager, "/lib/libc.so", INODE_FILE, 1, S_IXUSR);
-  inode_manager_print(manager);
 
   Assert(vfs->access("/", F_OK) == 0);
   Assert(vfs->access("/", R_OK) == 0);
