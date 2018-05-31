@@ -134,7 +134,6 @@ inode_t *inode_manager_lookup(inode_manager_t *inode_manager, const char *path,
 
 void inode_manager_remove(inode_t *inode) {
   inode_remove(inode);
-  inode_recursive_print(inode, 0);
   delete_inode(inode);
 }
 

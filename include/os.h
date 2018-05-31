@@ -131,7 +131,6 @@ struct filesystem {
 
   // void (*init)(filesystem_t *fs, const char *name, inode_t *dev);
   inode_t *(*lookup)(filesystem_t *fs, const char *path, int flags);
-  // int (*close)(inode_t *inode);
 };
 
 filesystem_t *new_kvfs(const char *name);
