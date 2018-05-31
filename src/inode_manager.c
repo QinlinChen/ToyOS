@@ -2,37 +2,51 @@
 #include "common.h"
 
 static inode_t *new_inode(const char *name, int type, int mode) {
-  inode_t *inode = pmm->alloc(sizeof(inode_t));
-  Assert(inode != NULL);
-  strcpy(inode->name, name);
-  inode->type = type;
-  inode->mode = mode;
-  inode->parent = inode->child = inode->sibling = NULL;
-  string_init(&inode->data);
-  return inode;
+  inode_t *node = pmm->alloc(sizeof(inode_t));
+  Assert(node != NULL);
+  strcpy(node->name, name);
+  node->type = type;
+  node->mode = mode;
+  node->parent = node->child = node->next = node->prev = NULL;
+  string_init(&node->data);
+  return node;
 }
 
 static void delete_inode(inode_t *node) {
   inode_t *scan = node->child;
   while (scan != NULL) {
-    inode_t *save = scan->sibling;
+    inode_t *save = scan->next;
     delete_inode(scan);
     scan = save;
   }
-  node->parent = node->child = node->sibling = NULL;
+  node->parent = node->child = node->next = node->prev = NULL;
   string_destroy(&node->data);
   pmm->free(node);
 }
 
 static void inode_add_child(inode_t *parent, inode_t *node) {
-  node->sibling = parent->child;
-  node->child = NULL;
-  node->parent = parent;
+  node->next = parent->child;
+  if (parent->child != NULL)
+    parent->child->prev = node;
   parent->child = node;
+  node->prev = NULL;
+  node->parent = parent;
+  node->child = NULL;
+}
+
+static void inode_remove(inode_t *node) {
+  Assert(node->parent != NULL);
+  if (node->prev != NULL)
+    node->prev->next = node->next;
+  else
+    node->parent->child = node->next;
+  if (node->next != NULL)
+    node->next->prev = node->prev;
+  node->parent = node->prev = node->next = NULL;
 }
 
 static inode_t *inode_find_child(inode_t *node, const char *name, int type) {
-  for (inode_t *scan = node->child; scan != NULL; scan = scan->sibling)
+  for (inode_t *scan = node->child; scan != NULL; scan = scan->next)
     if (strcmp(scan->name, name) == 0 && scan->type == type)
       return scan;
   return NULL;
@@ -99,7 +113,7 @@ static void inode_recursive_print(inode_t *node, int depth) {
   for (int i = 0; i < depth; ++i)
     printf("    ");
   printf("%s[%c%c%c%c]\n", node->name, d, x, w, r);
-  for (inode_t *scan = node->child; scan != NULL; scan = scan->sibling)
+  for (inode_t *scan = node->child; scan != NULL; scan = scan->next)
     inode_recursive_print(scan, depth + 1);
 }
 
@@ -118,6 +132,7 @@ inode_t *inode_manager_lookup(inode_manager_t *inode_manager, const char *path,
 }
 
 void inode_manager_remove(inode_t *inode) {
+  inode_remove(inode);
   delete_inode(inode);
 }
 

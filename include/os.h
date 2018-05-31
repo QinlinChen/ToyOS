@@ -105,7 +105,8 @@ struct inode {
   string_t data;
   struct inode *parent;
   struct inode *child;
-  struct inode *sibling;
+  struct inode *next;
+  struct inode *prev;
 };
 
 // implemented as tree
