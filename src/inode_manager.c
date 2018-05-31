@@ -35,6 +35,7 @@ static void inode_add_child(inode_t *parent, inode_t *node) {
 }
 
 static void inode_remove(inode_t *node) {
+  Assert(node != NULL);
   Assert(node->parent != NULL);
   if (node->prev != NULL)
     node->prev->next = node->next;
