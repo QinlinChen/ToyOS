@@ -307,7 +307,7 @@ int fs_manager_test() {
   Assert((fs = fs_manager_get("/pro", subpath)) != NULL);
   Assert(strcmp(fs->name, "kvfs") == 0);
   Assert(strcmp(subpath, "/pro") == 0);
-  
+
   Assert(fs_manager_remove("/proc") == &procfs);
   Assert(fs_manager_remove("/") == &kvfs);
   return 1;
@@ -392,20 +392,20 @@ int file_table_test() {
   ------------------------------------------*/
 
 int kv_access_test() {
-  char subpath[MAXPATHLEN];
-  Assert(vfs->access("/", F_OK) == 0);
-  Assert(vfs->access("/", R_OK) == 0);
-  Assert(vfs->access("/", W_OK) == 0);
-
-  filesystem_t *kvfs = fs_manager_get("/", subpath);
+  filesystem_t *kvfs = fs_manager_get("/", NULL);
   inode_manager_t *manager = &kvfs->inode_manager;
   inode_manager_lookup(manager, "/bin", INODE_DIR, 1, DEFAULT_MODE);
   inode_manager_lookup(manager, "/bin", INODE_FILE, 1, DEFAULT_MODE);
   inode_manager_lookup(manager, "/usr/cql/ws/oslab", INODE_FILE, 1, DEFAULT_MODE);
-  inode_manager_lookup(manager, "/usr/cql/ws/minilab", INODE_FILE, 1, DEFAULT_MODE);
+  inode_manager_lookup(manager, "/usr/cql/ws/minilab", INODE_FILE, 1, S_IRUSR);
   inode_manager_lookup(manager, "/lib/libc.so", INODE_FILE, 1, DEFAULT_MODE | S_IXUSR);
-  inode_manager_lookup(manager, "/lib/libc.so", INODE_FILE, 1, 0);
-  inode_manager_lookup(manager, "/lib/libc.so", INODE_FILE, 1, 213);
+  inode_manager_print(manager);
+
+  Assert(vfs->access("/", F_OK) == 0);
+  Assert(vfs->access("/", R_OK) == 0);
+  Assert(vfs->access("/", W_OK) == 0);
+
+  
   return 1;
 }
 
