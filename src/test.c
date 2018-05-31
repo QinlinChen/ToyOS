@@ -350,7 +350,7 @@ int inode_manager_test() {
 int string_test() {
   string_t s;
   string_init(&s);
-  string_push_back(&s, 'h');
+  string_push_back(&s, 'H');
   string_push_back(&s, 'e');
   string_push_back(&s, 'l');
   string_cat(&s, "lo, world\n");
