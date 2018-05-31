@@ -101,7 +101,7 @@ struct inode {
   char name[MAXPATHLEN];
   int type;
   int mode;
-  size_t size;
+  string_t data;
   struct inode *parent;
   struct inode *child;
   struct inode *sibling;

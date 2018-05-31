@@ -6,9 +6,9 @@ static inode_t *new_inode(const char *name, int type, int mode) {
   Assert(inode != NULL);
   strcpy(inode->name, name);
   inode->type = type;
-  inode->size = 0;
   inode->mode = mode;
   inode->parent = inode->child = inode->sibling = NULL;
+  string_init(&inode->data);
   return inode;
 }
 
@@ -19,8 +19,9 @@ static void delete_inode(inode_t *node) {
     delete_inode(scan);
     scan = save;
   }
-  pmm->free(node);
   node->parent = node->child = node->sibling = NULL;
+  string_destroy(&node->data);
+  pmm->free(node);
 }
 
 static void inode_add_child(inode_t *parent, inode_t *node) {
