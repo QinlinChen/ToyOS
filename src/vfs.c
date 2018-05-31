@@ -28,7 +28,8 @@ MOD_DEF(vfs) {
   ------------------------------------------*/
 
 static void vfs_init() {
-  // fs_manager_init();
+  fs_manager_init();
+  file_table_init();
   // fs_manager_add("/", new_kvfs("kvfs"));
   // fs_manager_add("/proc", new_procfs("procfs"));
   // fs_manager_add("/dev", new_devfs("devfs"));

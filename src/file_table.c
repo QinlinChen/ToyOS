@@ -6,9 +6,17 @@
 static file_t file_table[NR_FD];
 static int is_free[NR_FD];
 
+void file_table_init() {
+  for (int i = 0; i < NR_FD; ++i)
+    is_free[i] = 1;
+  is_free[STDIN_FILENO] = 0;
+  is_free[STDOUT_FILENO] = 0;
+  is_free[STDERR_FILENO] = 0;
+}
+
 int file_table_alloc(inode_t *inode, read_handle_t read_handle, write_handle_t write_handle,
                      lseek_handle_t lseek_handle, close_handle_t close_handle) {
-  for (int fd = FD_BEGIN; fd < NR_FD; ++fd)
+  for (int fd = 0; fd < NR_FD; ++fd)
     if (is_free[fd]) {
       file_t *file = &file_table[fd];
       file->offset = 0;
