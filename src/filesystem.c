@@ -59,7 +59,7 @@ static off_t kvfs_lseek(file_t *this, off_t offset, int whence) {
 }
 
 static int kvfs_close(file_t *this) {
-  TODO;
+  file_table_free(this);
   return 0;
 }
 
