@@ -354,6 +354,7 @@ int string_test() {
   string_push_back(&s, 'c');
   string_push_back(&s, 'b');
   string_print(&s);
+  return 1;
 }
 
 /*------------------------------------------
