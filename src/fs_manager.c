@@ -23,6 +23,9 @@ void fs_manager_init() {
 }
 
 int fs_manager_add(const char *path, filesystem_t *fs) {
+  Assert(path != NULL);
+  Assert(fs != NULL);
+  
   fs_manager_node_t *node = pmm->alloc(sizeof(fs_manager_node_t));
   if (node == NULL) {
     Panic("Fail to add file system");
@@ -43,6 +46,7 @@ int fs_manager_add(const char *path, filesystem_t *fs) {
 }
 
 filesystem_t *fs_manager_get(const char *path, char *subpath) {
+  Assert(path != NULL);
   for (fs_manager_node_t *cur = fs_manager.head; cur != NULL; cur = cur->next) {
     char *mount_point = cur->path;
     int is_found = 1;
@@ -64,6 +68,7 @@ filesystem_t *fs_manager_get(const char *path, char *subpath) {
 }
 
 filesystem_t *fs_manager_remove(const char *path) {
+  Assert(path != NULL);
   for (fs_manager_node_t *cur = fs_manager.head; cur != NULL; cur = cur->next)
     if (strcmp(cur->path, path) == 0) {
       if (cur->prev != NULL)

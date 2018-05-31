@@ -13,6 +13,7 @@ static inode_t *new_inode(const char *name, int type, int mode) {
 }
 
 static void delete_inode(inode_t *node) {
+  Assert(node != NULL);
   inode_t *scan = node->child;
   while (scan != NULL) {
     inode_t *save = scan->next;
@@ -25,6 +26,8 @@ static void delete_inode(inode_t *node) {
 }
 
 static void inode_add_child(inode_t *parent, inode_t *node) {
+  Assert(parent != NULL);
+  Assert(node != NULL);
   node->next = parent->child;
   if (parent->child != NULL)
     parent->child->prev = node;
@@ -47,6 +50,7 @@ static void inode_remove(inode_t *node) {
 }
 
 static inode_t *inode_find_child(inode_t *node, const char *name, int type) {
+  Assert(node != NULL);
   for (inode_t *scan = node->child; scan != NULL; scan = scan->next)
     if (strcmp(scan->name, name) == 0 && scan->type == type)
       return scan;
@@ -56,6 +60,7 @@ static inode_t *inode_find_child(inode_t *node, const char *name, int type) {
 // path is not allowed to be root '/'
 static inode_t *inode_recursive_lookup(inode_t *node, const char *path, 
                                        int type, int create, int mode) {
+  Assert(node != NULL);
   // if then exit
   char name[MAXPATHLEN];
   int i = 0;
@@ -119,24 +124,45 @@ static void inode_recursive_print(inode_t *node, int depth) {
 }
 
 void inode_manager_init(inode_manager_t *inode_manager) {
+  Assert(inode_manager != NULL);
   inode_manager->root = new_inode("/", INODE_DIR, DEFAULT_MODE);
 }
 
 void inode_manager_destroy(inode_manager_t *inode_manager) {
+  Assert(inode_manager != NULL);
   delete_inode(inode_manager->root);
   inode_manager->root = NULL;
 }
 
 inode_t *inode_manager_lookup(inode_manager_t *inode_manager, const char *path, 
                               int type, int create, int mode) {
+  Assert(inode_manager != NULL);
+  Assert(path != NULL);
   return inode_lookup(inode_manager->root, path, type, create, mode);
 }
 
 void inode_manager_remove(inode_manager_t *inode_manager, inode_t *inode) {
+  Assert(inode_manager != NULL);
+  Assert(inode != NULL);
   inode_remove(inode);
   delete_inode(inode);
 }
 
 void inode_manager_print(inode_manager_t *inode_manager) {
+  Assert(inode_manager != NULL);
   inode_recursive_print(inode_manager->root, 0);
+}
+
+int inode_manager_checkmode(inode_manager_t *inode_manager, inode_t *inode, int mode) {
+  Assert(inode_manager != NULL);
+  Assert(inode != NULL);
+  Assert((mode & ~R_OK & ~W_OK & ~X_OK) == 0);
+  int perm = inode->mode;
+  if ((mode & R_OK) && !(perm & S_IRUSR))
+    return 0;
+  if ((mode & W_OK) && !(perm & S_IWUSR))
+    return 0;
+  if ((mode & X_OK) && !(perm & S_IXUSR))
+    return 0;
+  return 1;
 }

@@ -56,8 +56,14 @@ static int kvfs_close(file_t *this) {
 }
 
 static int kvfs_access(filesystem_t *this, const char *path, int mode) {
-  TODO;
-  return 0;
+  Assert(((mode & ~F_OK) == 0) || (mode & ~R_OK & ~W_OK & ~X_OK) == 0);
+  inode_manager_t *manager = &this->inode_manager;
+  inode_t *inode = inode_manager_lookup(manager, path, INODE_FILE, 0, 0);
+  if (inode == NULL)
+    return 0;
+  if (mode & F_OK)
+    return 1;
+  return inode_manager_checkmode(manager, inode, mode);
 }
 
 static int kvfs_open(filesystem_t *this, const char *path, int flags) {

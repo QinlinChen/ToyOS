@@ -16,6 +16,7 @@ void file_table_init() {
 
 int file_table_alloc(inode_t *inode, read_handle_t read_handle, write_handle_t write_handle,
                      lseek_handle_t lseek_handle, close_handle_t close_handle) {
+  Assert(inode != NULL);
   for (int fd = 0; fd < NR_FD; ++fd)
     if (is_free[fd]) {
       file_t *file = &file_table[fd];
@@ -34,6 +35,7 @@ int file_table_alloc(inode_t *inode, read_handle_t read_handle, write_handle_t w
 }
 
 void file_table_free(file_t *file) {
+  Assert(file != NULL);
   file->read_handle = NULL;
   file->write_handle = NULL;
   file->lseek_handle = NULL;

@@ -2,6 +2,7 @@
 #include "common.h"
 
 static void string_resize(string_t *s, size_t capacity) {
+  Assert(s != NULL);
   Assert(capacity >= s->size);
   char *temp = pmm->alloc(capacity);
   for (size_t i = 0; i < s->size; ++i)
@@ -12,6 +13,7 @@ static void string_resize(string_t *s, size_t capacity) {
 }
 
 void string_init(string_t *s) {
+  Assert(s != NULL);
   s->data = pmm->alloc(2);
   Assert(s->data != NULL);
   s->size = 0;
@@ -19,36 +21,43 @@ void string_init(string_t *s) {
 }
 
 int string_empty(string_t *s) {
+  Assert(s != NULL);
   return s->size == 0;
 }
 
 size_t string_length(string_t *s) {
+  Assert(s != NULL);
   return s->size;
 }
 
 void string_push_back(string_t *s, char ch) {
+  Assert(s != NULL);
   if (s->size == s->capacity)
     string_resize(s, 2 * s->capacity);
   s->data[s->size++] = ch;
 }
 
 void string_cat(string_t *s1, const char *s2) {
+  Assert(s1 != NULL && s2 != NULL);
   while (*s2)
     string_push_back(s1, *s2++);
 }
 
 void string_destroy(string_t *s) {
+  Assert(s != NULL);
   pmm->free(s->data);
   s->size = 0;
   s->capacity = 0;
 }
 
 void string_print(string_t *s) {
+  Assert(s != NULL);
   for (size_t i = 0; i < s->size; ++i)
     _putc(s->data[i]);
 }
 
 void *memset(void *s, int c, size_t n) {
+  Assert(s != NULL);
   size_t i;
 
   for (i = 0; i < n; ++i)
@@ -58,6 +67,7 @@ void *memset(void *s, int c, size_t n) {
 }
 
 void *memcpy(void *dst, const void *src, size_t n) {
+  Assert(dst != NULL && src != NULL);
   size_t i;
 
   for (i = 0; i < n; ++i)
@@ -67,6 +77,7 @@ void *memcpy(void *dst, const void *src, size_t n) {
 }
 
 size_t strlen(const char* s) {
+  Assert(s != NULL);
   size_t n = 0;
 
   while (s[n])
@@ -76,6 +87,7 @@ size_t strlen(const char* s) {
 }
 
 char *strcpy(char *dst, const char *src) {
+  Assert(dst != NULL && src != NULL);
   char *ret = dst;
 
   while((*dst++ = *src++) != 0)
@@ -85,12 +97,14 @@ char *strcpy(char *dst, const char *src) {
 }
 
 int strcmp(const char *s1, const char *s2) {
+  Assert(s1 != NULL && s2 != NULL);
   while(*s1 && *s1 == *s2)
     s1++, s2++;
   return (uint8_t)*s1 - (uint8_t)*s2;
 }
 
 char *strchr(const char *s, int ch) {
+  Assert(s != NULL);
   if (s == NULL)
     return NULL;
   
