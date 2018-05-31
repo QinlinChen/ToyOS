@@ -7,7 +7,7 @@ SRCS = $(shell find src -name "*.c") framework/main.c
 OBJS = $(addprefix build/, $(addsuffix .o, $(basename $(SRCS))))
 DEPS = $(addprefix build/, $(addsuffix .d, $(basename $(SRCS))))
 
-.PHONY: run clean
+.PHONY: run clean count
 
 $(shell bash git-commit.sh $(MAKECMDGOALS))
 
@@ -30,3 +30,6 @@ build/kernel: $(OBJS)
 build/%.o: %.c
 	@mkdir -p $(dir $@)
 	gcc $(CFLAGS) -c -o $@ $<
+
+count:
+	find src -name "*.c" | xargs cat | wc -l
