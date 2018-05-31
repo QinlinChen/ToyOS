@@ -391,7 +391,7 @@ int file_table_test() {
                     kv test
   ------------------------------------------*/
 
-int kv_access_test() {
+int kvfs_test() {
   filesystem_t *kvfs = fs_manager_get("/", NULL);
   inode_manager_t *manager = &kvfs->inode_manager;
   inode_manager_lookup(manager, "/usr/cql/oslab", INODE_FILE, 1, DEFAULT_MODE);
@@ -418,10 +418,6 @@ int kv_access_test() {
   Assert(file->readable);
   Assert(file->writable);
   return 1;
-}
-
-int kv_open_test() {
-  
 }
 
 /*------------------------------------------
