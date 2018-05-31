@@ -22,6 +22,7 @@ void filesystem_destroy(filesystem_t *fs) {
 filesystem_t *new_filesystem(const char *name, access_handle_t access_handle,
                              open_handle_t open_handle) {
   filesystem_t *fs = pmm->alloc(sizeof(filesystem_t));
+  Log("kvfs_access %p", access_handle);
   filesystem_init(fs, name, access_handle, open_handle);
   return fs;
 }
@@ -100,6 +101,5 @@ static int kvfs_open(filesystem_t *this, const char *path, int flags) {
 }
 
 filesystem_t *new_kvfs(const char *name) {
-  Log("kvfs_access %p", kvfs_access);
   return new_filesystem(name, kvfs_access, kvfs_open);
 }
