@@ -284,7 +284,7 @@ static int fs_manager_test() {
   Assert(fs_manager_add("/dev", &devfs) == 0);
   Assert(fs_manager_add("/", &kvfs) == 0);
   Assert(fs_manager_add("/proc/", &procfs) == 0);
-  Assert(fs_manager_remove("/dev") == 0);
+  Assert(fs_manager_remove("/dev") == &procfs);
 
   char subpath[MAXPATHLEN];
   filesystem_t *fs;

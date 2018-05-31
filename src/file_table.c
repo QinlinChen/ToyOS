@@ -33,13 +33,12 @@ int file_table_alloc(inode_t *inode, read_handle_t read_handle, write_handle_t w
   return -1;
 }
 
-void file_table_free(int fd) {
-  file_t *file = &file_table[fd];
+void file_table_free(file_t *file) {
   file->read_handle = NULL;
   file->write_handle = NULL;
   file->lseek_handle = NULL;
   file->close_handle = NULL;
-  is_free[fd] = 1;
+  is_free[file - file_table] = 1;
 }
 
 file_t *file_table_get(int fd) {

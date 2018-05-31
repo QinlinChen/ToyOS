@@ -39,52 +39,47 @@ static int vfs_access(const char *path, int mode) {
   char subpath[MAXPATHLEN];
   filesystem_t *fs = fs_manager_get(path, subpath);
   if (fs == NULL)
-    TODO;
-  // fs->lookup(fs, subpath, 0);
+    return -1;
+  return fs->access_handle(fs, subpath, mode);
+}
+
+static int vfs_mount(const char *path, filesystem_t *fs) {
+  fs_manager_add(path, fs);
   TODO;
   return 0;
 }
 
-static int vfs_mount(const char *path, filesystem_t *fs) {
-  TODO;
-  return fs_manager_add(path, fs);
-}
-
 static int vfs_unmount(const char *path) {
+  filesystem_t *fs = fs_manager_remove(path);
+  // delete_filesystem
   TODO;
-  return fs_manager_remove(path);
+  return 0;
 }
 
 static int vfs_open(const char *path, int flags) {
   char subpath[MAXPATHLEN];
   filesystem_t *fs = fs_manager_get(path, subpath);
-  if (fs == NULL) {
-    Panic("Illegal path");
+  if (fs == NULL)
     return -1;
-  }
-
-  // Assert(fs->lookup != NULL);
-  // inode_t *inode = fs->lookup(fs, subpath, flags);
-  TODO;
-  return 0;
+  return fs->open_handle(fs, subpath, flags);
 }
 
-static ssize_t vfs_read(int fd, void *buf, size_t nbyte) {
-  TODO;
-  return 0;
+static ssize_t vfs_read(int fd, void *buf, size_t size) {
+  file_t *file = file_table_get(fd);
+  return file->read_handle(file, buf, size);
 }
 
-static ssize_t vfs_write(int fd, void *buf, size_t nbyte) {
-  TODO;
-  return 0;
+static ssize_t vfs_write(int fd, void *buf, size_t size) {
+  file_t *file = file_table_get(fd);
+  return file->write_handle(file, buf, size);
 }
 
 static off_t vfs_lseek(int fd, off_t offset, int whence) {
-  TODO;
-  return 0;
+  file_t *file = file_table_get(fd);
+  return file->lseek_handle(file, offset, whence);
 }
 
 static int vfs_close(int fd) {
-  TODO;
-  return 0;
+  file_t *file = file_table_get(fd);
+  return file->close_handle(file);
 }

@@ -128,7 +128,7 @@ void inode_manager_print(inode_manager_t *inode_manager);
 typedef ssize_t (*read_handle_t)(file_t *this, char *buf, size_t size);
 typedef ssize_t (*write_handle_t)(file_t *this, const char *buf, size_t size);
 typedef off_t (*lseek_handle_t)(file_t *this, off_t offset, int whence);
-typedef int (*close_handle_t)(file_t *this, int fd);
+typedef int (*close_handle_t)(file_t *this);
 
 struct file {
   off_t offset;
@@ -147,7 +147,7 @@ struct file {
 void file_table_init();
 int file_table_alloc(inode_t *inode, read_handle_t read_handle, write_handle_t write_handle,
                      lseek_handle_t lseek_handle, close_handle_t close_handle);
-void file_table_free(int fd);
+void file_table_free(file_t *file);
 file_t *file_table_get(int fd);
 
 /*------------------------------------------
@@ -184,7 +184,7 @@ filesystem_t *new_devfs(const char *name);
 void fs_manager_init();
 int fs_manager_add(const char *path, filesystem_t *fs);
 filesystem_t *fs_manager_get(const char *path, char *subpath);
-int fs_manager_remove(const char *path);
+filesystem_t *fs_manager_remove(const char *path);
 void fs_manager_print();
 
 #endif
