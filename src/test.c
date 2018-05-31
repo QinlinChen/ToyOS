@@ -318,6 +318,7 @@ int inode_manager_test() {
   inode_manager_t manager;
   inode_manager_init(&manager);
   inode_manager_lookup(&manager, "/bin", INODE_DIR, 1, DEFAULT_MODE);
+  inode_manager_lookup(&manager, "/bin", INODE_FILE, 1, DEFAULT_MODE);
   inode_manager_lookup(&manager, "/usr/cql/ws/oslab", INODE_FILE, 1, DEFAULT_MODE);
   inode_manager_lookup(&manager, "/usr/cql/ws/minilab", INODE_FILE, 1, DEFAULT_MODE);
   inode_manager_lookup(&manager, "/usr/jss/ds", INODE_FILE, 1, DEFAULT_MODE);
@@ -330,6 +331,7 @@ int inode_manager_test() {
   Assert(inode_manager_lookup(&manager, "/lib/libc.so", INODE_FILE, 1, 213)->mode 
          == (DEFAULT_MODE | S_IXUSR));
   Assert(inode_manager_lookup(&manager, "/lib/libc.so", INODE_DIR, 0, 0) == NULL);
+  
   inode_manager_print(&manager);
   inode_manager_destroy(&manager);
   return 1;
