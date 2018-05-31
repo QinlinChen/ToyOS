@@ -372,7 +372,7 @@ static int string_test() {
                 file table test
   ------------------------------------------*/
 
-static int file_table_test {
+static int file_table_test() {
   int fd1 = file_table_alloc(NULL, NULL, NULL, NULL, NULL);
   int fd2 = file_table_alloc(NULL, NULL, NULL, NULL, NULL);
   printf("fd1 %d\nfd2 %d\n", fd1, fd2);
