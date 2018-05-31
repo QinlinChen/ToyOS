@@ -396,13 +396,13 @@ int kv_access_test() {
 
   filesystem_t *kvfs = fs_manager_get("/", subpath);
   inode_manager_t *manager = &kvfs->inode_manager;
-  inode_manager_lookup(&manager, "/bin", INODE_DIR, 1, DEFAULT_MODE);
-  inode_manager_lookup(&manager, "/bin", INODE_FILE, 1, DEFAULT_MODE);
-  inode_manager_lookup(&manager, "/usr/cql/ws/oslab", INODE_FILE, 1, DEFAULT_MODE);
-  inode_manager_lookup(&manager, "/usr/cql/ws/minilab", INODE_FILE, 1, DEFAULT_MODE);
-  inode_manager_lookup(&manager, "/lib/libc.so", INODE_FILE, 1, DEFAULT_MODE | S_IXUSR);
-  inode_manager_lookup(&manager, "/lib/libc.so", INODE_FILE, 1, 0);
-  inode_manager_lookup(&manager, "/lib/libc.so", INODE_FILE, 1, 213);
+  inode_manager_lookup(manager, "/bin", INODE_DIR, 1, DEFAULT_MODE);
+  inode_manager_lookup(manager, "/bin", INODE_FILE, 1, DEFAULT_MODE);
+  inode_manager_lookup(manager, "/usr/cql/ws/oslab", INODE_FILE, 1, DEFAULT_MODE);
+  inode_manager_lookup(manager, "/usr/cql/ws/minilab", INODE_FILE, 1, DEFAULT_MODE);
+  inode_manager_lookup(manager, "/lib/libc.so", INODE_FILE, 1, DEFAULT_MODE | S_IXUSR);
+  inode_manager_lookup(manager, "/lib/libc.so", INODE_FILE, 1, 0);
+  inode_manager_lookup(manager, "/lib/libc.so", INODE_FILE, 1, 213);
   return 1;
 }
 
@@ -417,10 +417,10 @@ void test_run() {
   // sem_test(3);
   // hello_test();
   // stackfence_test();
-  // TEST(fs_manager_test);
-  // TEST(inode_manager_test);
-  // TEST(string_test);
-  // TEST(file_table_test);
+  TEST(fs_manager_test);
+  TEST(inode_manager_test);
+  TEST(string_test);
+  TEST(file_table_test);
   TEST(kv_access_test);
   Panic("Stop");
 }
