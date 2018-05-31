@@ -392,10 +392,8 @@ int kv_access_test() {
   char subpath[MAXPATHLEN];
   int ok;
   filesystem_t *kvfs = fs_manager_get("/", subpath);
-  Log("%s", subpath);
   Assert(kvfs != NULL);
   Assert(kvfs->access_handle != NULL);
-  Log("kvfs_access %p", kvfs->access_handle);
   ok = kvfs->access_handle(kvfs, subpath, F_OK);
   Assert(ok == 1);
   return 1;
@@ -412,10 +410,10 @@ void test_run() {
   // sem_test(3);
   // hello_test();
   // stackfence_test();
-  TEST(fs_manager_test);
-  TEST(inode_manager_test);
-  TEST(string_test);
-  TEST(file_table_test);
+  // TEST(fs_manager_test);
+  // TEST(inode_manager_test);
+  // TEST(string_test);
+  // TEST(file_table_test);
   TEST(kv_access_test);
   Panic("Stop");
 }
