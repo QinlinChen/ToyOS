@@ -50,7 +50,7 @@ static int vfs_mount(const char *path, filesystem_t *fs) {
 }
 
 static int vfs_unmount(const char *path) {
-  filesystem_t *fs = fs_manager_remove(path);
+  // filesystem_t *fs = fs_manager_remove(path);
   // delete_filesystem
   TODO;
   return 0;
