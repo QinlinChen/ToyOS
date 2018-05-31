@@ -371,7 +371,7 @@ int string_test() {
   Assert(strcmp(s.data, "Hello, worlabcdefg") == 0);
   char buf[10];
   string_read(&s, 3, buf, 9);
-  buf[10] = '\0';
+  buf[9] = '\0';
   string_print(&s);
   return 1;
 }
