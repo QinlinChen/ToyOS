@@ -307,6 +307,9 @@ int fs_manager_test() {
   Assert((fs = fs_manager_get("/pro", subpath)) != NULL);
   Assert(strcmp(fs->name, "kvfs") == 0);
   Assert(strcmp(subpath, "/pro") == 0);
+  
+  Assert(fs_manager_remove("/proc") == &procfs);
+  Assert(fs_manager_remove("/") == &kvfs);
   return 1;
 }
 
