@@ -372,7 +372,7 @@ int string_test() {
   char buf[10];
   string_read(&s, 3, buf, 9);
   buf[9] = '\0';
-  string_print(&s);
+  printf("%s", buf);
   return 1;
 }
 
