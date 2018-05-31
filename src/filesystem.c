@@ -63,7 +63,7 @@ static int kvfs_open(filesystem_t *this, const char *path, int flags) {
   inode_t *inode = inode_manager_lookup(&this->inode_manager, path, 
     INODE_FILE, (flags & O_CREAT), DEFAULT_MODE);
   if (inode == NULL) {
-    LOG("Can't find path %s", path);
+    Log("Can't find path %s", path);
     return -1;
   }
 
