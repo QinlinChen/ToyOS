@@ -394,6 +394,7 @@ int kv_access_test() {
   filesystem_t *kvfs = fs_manager_get("/", subpath);
   Log("%s", subpath);
   Assert(kvfs != NULL);
+  Assert(kvfs->access_handle != NULL);
   ok = kvfs->access_handle(kvfs, subpath, F_OK);
   Assert(ok == 1);
   return 1;
