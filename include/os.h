@@ -118,7 +118,7 @@ void inode_manager_init(inode_manager_t *inode_manager);
 void inode_manager_destroy(inode_manager_t *inode_manager);
 inode_t *inode_manager_lookup(inode_manager_t *inode_manager, const char *path, 
                               int type, int create, int mode);
-void inode_manager_remove(inode_t *inode);
+void inode_manager_remove(inode_manager_t *inode_manager, inode_t *inode);
 void inode_manager_print(inode_manager_t *inode_manager);
 
 /*------------------------------------------
@@ -134,6 +134,8 @@ struct file {
   off_t offset;
   inode_t *inode;
   int ref_count;
+  int readable;
+  int writable;
   read_handle_t read_handle;
   write_handle_t write_handle;
   lseek_handle_t lseek_handle;
@@ -160,22 +162,28 @@ typedef int (*open_handle_t)(filesystem_t *this, const char *path, int flags);
 struct filesystem {
   const char *name;
   inode_manager_t inode_manager;
-
   access_handle_t access_handle;
   open_handle_t open_handle;
 };
 
-int new_kvfs_file(inode_t *inode);
-int new_procfs_file(inode_t *inode);
-int new_devfs_file(inode_t *inode);
+void filesystem_init(filesystem_t *fs, const char *name,
+                     access_handle_t access_handle, open_handle_t open_handle);
+void filesystem_destroy(filesystem_t *fs);
+filesystem_t *new_filesystem(const char *name, access_handle_t access_handle,
+                             open_handle_t open_handle);
+void delete_filesystem(filesystem_t *fs);
 
-void delete_kvfs_file(int fd);
-void delete_procfs_file(int fd);
-void delete_devfs_file(int fd);
+// int new_kvfile(inode_t *inode);
+// int new_procfile(inode_t *inode);
+// int new_devfile(inode_t *inode);
+
+// void delete_kvfile(int fd);
+// void delete_procfile(int fd);
+// void delete_devfile(int fd);
 
 filesystem_t *new_kvfs(const char *name);
-filesystem_t *new_procfs(const char *name);
-filesystem_t *new_devfs(const char *name);
+// filesystem_t *new_procfs(const char *name);
+// filesystem_t *new_devfs(const char *name);
 
 /*------------------------------------------
                   fs_manager.h

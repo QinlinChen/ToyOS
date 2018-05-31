@@ -346,7 +346,7 @@ static int inode_manager_test() {
   inode_manager_lookup(&manager, "/bin/456", INODE_FILE, 1, DEFAULT_MODE);
   inode_manager_print(&manager);
   result = inode_manager_lookup(&manager, "/bin", INODE_DIR, 0, 0);
-  inode_manager_remove(result);
+  inode_manager_remove(&manager, result);
   inode_manager_print(&manager);
   inode_manager_destroy(&manager);
   return 1;
