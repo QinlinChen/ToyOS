@@ -56,7 +56,6 @@ static int kvfs_close(file_t *this) {
 }
 
 static int kvfs_access(filesystem_t *this, const char *path, int mode) {
-  TRACE_ENTRY;
   Assert(this != NULL && path != NULL);
   Assert(((mode & ~F_OK) == 0) || (mode & ~R_OK & ~W_OK & ~X_OK) == 0);
   inode_manager_t *manager = &this->inode_manager;

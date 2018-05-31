@@ -275,10 +275,10 @@ void stackfence_test() {
 
 int fs_manager_test() {
   filesystem_t procfs, kvfs, devfs;
-  procfs.name = "procfs";
-  kvfs.name = "kvfs";
-  devfs.name = "devfs";
-  
+  filesystem_init(&procfs, "procfs", NULL, NULL);
+  filesystem_init(&kvfs, "kvfs", NULL, NULL);
+  filesystem_init(&devfs, "devfs", NULL, NULL);
+
   // fs_manager_init();
   // sequence matters
   Assert(fs_manager_add("/dev", &devfs) == 0);
@@ -390,12 +390,19 @@ int file_table_test() {
 
 int kv_access_test() {
   char subpath[MAXPATHLEN];
-  int ok;
+  Assert(vfs->access("/", F_OK) == 0);
+  Assert(vfs->access("/", R_OK) == 0);
+  Assert(vfs->access("/", W_OK) == 0);
+
   filesystem_t *kvfs = fs_manager_get("/", subpath);
-  Assert(kvfs != NULL);
-  Assert(kvfs->access_handle != NULL);
-  ok = kvfs->access_handle(kvfs, subpath, F_OK);
-  Assert(ok == 1);
+  inode_manager_t *manager = &kvfs->inode_manager;
+  inode_manager_lookup(&manager, "/bin", INODE_DIR, 1, DEFAULT_MODE);
+  inode_manager_lookup(&manager, "/bin", INODE_FILE, 1, DEFAULT_MODE);
+  inode_manager_lookup(&manager, "/usr/cql/ws/oslab", INODE_FILE, 1, DEFAULT_MODE);
+  inode_manager_lookup(&manager, "/usr/cql/ws/minilab", INODE_FILE, 1, DEFAULT_MODE);
+  inode_manager_lookup(&manager, "/lib/libc.so", INODE_FILE, 1, DEFAULT_MODE | S_IXUSR);
+  inode_manager_lookup(&manager, "/lib/libc.so", INODE_FILE, 1, 0);
+  inode_manager_lookup(&manager, "/lib/libc.so", INODE_FILE, 1, 213);
   return 1;
 }
 

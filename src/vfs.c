@@ -54,6 +54,7 @@ static int vfs_access(const char *path, int mode) {
   filesystem_t *fs = fs_manager_get(path, subpath);
   if (fs == NULL)
     return -1;
+  Assert(fs->access_handle != NULL);
   return fs->access_handle(fs, subpath, mode);
 }
 

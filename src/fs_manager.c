@@ -57,10 +57,12 @@ filesystem_t *fs_manager_get(const char *path, char *subpath) {
         break;
       }
     if (is_found) {
-      j = 0;
-      if (path[i] != '/')
-        subpath[j++] = '/';
-      strcpy(subpath + j, path + i);
+      if (subpath != NULL) {
+        j = 0;
+        if (path[i] != '/')
+          subpath[j++] = '/';
+        strcpy(subpath + j, path + i);
+      }
       return cur->fs;
     }
   }
