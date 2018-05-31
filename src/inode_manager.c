@@ -30,16 +30,16 @@ static void inode_add_child(inode_t *parent, inode_t *node) {
   parent->child = node;
 }
 
-static inode_t *inode_find_child(inode_t *node, const char *name) {
+static inode_t *inode_find_child(inode_t *node, const char *name, int type) {
   for (inode_t *scan = node->child; scan != NULL; scan = scan->sibling)
-    if (strcmp(scan->name, name) == 0)
+    if (strcmp(scan->name, name) == 0 && scan->type == type)
       return scan;
   return NULL;
 }
 
 // path is not allowed to be root '/'
 static inode_t *inode_recursive_lookup(inode_t *node, const char *path, 
-                                       int create, int type, int mode) {
+                                       int type, int create, int mode) {
   // if then exit
   char name[MAXPATHLEN];
   int i = 0;
@@ -55,30 +55,39 @@ static inode_t *inode_recursive_lookup(inode_t *node, const char *path,
   if  (*path == '\0')
     is_leaf = 1;
 
-  inode_t *child = inode_find_child(node, name);
-  // if found
-  if (child != NULL)
-    return is_leaf ? child 
-                   : inode_recursive_lookup(child, path, create, type, mode);
+  // recursive lookup
+  inode_t *child;
+  if (is_leaf) {
+    if ((child = inode_find_child(node, name, type)) != NULL)
+      return child;
 
-  // not found but create
-  if (create) {
-    inode_t *new_child = is_leaf ? new_inode(name, type, mode)
-                                 : new_inode(name, INODE_DIR, DEFAULT_MODE);
-    inode_add_child(node, new_child);
-    return is_leaf ? new_child 
-                   : inode_recursive_lookup(new_child, path, create, type, mode);
+    if (create) {
+      inode_t *new_child = new_inode(name, type, mode);
+      inode_add_child(node, new_child);
+      return new_child;
+    }
   }
 
-  // not found and not created
+  else {
+    if ((child = inode_find_child(node, name, INODE_DIR)) != NULL)
+      return inode_recursive_lookup(child, path, type, create, mode);
+    
+    if (create) {
+      inode_t *new_child = new_inode(name, INODE_DIR, DEFAULT_MODE);
+      inode_add_child(node, new_child);
+      return inode_recursive_lookup(new_child, path, type, create, mode);
+    }
+  }
+
+  // not found and not create
   return NULL;
 }
 
 static inode_t *inode_lookup(inode_t *root, const char *path,
-                             int create, int type, int mode) {
+                             int type, int create, int mode) {
   if (strcmp(path, "/") == 0)
     return type == INODE_DIR ? root : NULL;
-  return inode_recursive_lookup(root, path, create, type, mode);
+  return inode_recursive_lookup(root, path, type, create, mode);
 }
 
 static void inode_recursive_print(inode_t *node, int depth) {
@@ -103,8 +112,8 @@ void inode_manager_destroy(inode_manager_t *inode_manager) {
 }
 
 inode_t *inode_manager_lookup(inode_manager_t *inode_manager, const char *path, 
-                              int create, int type, int mode) {
-  return inode_lookup(inode_manager->root, path, create, type, mode);
+                              int type, int create, int mode) {
+  return inode_lookup(inode_manager->root, path, type, create, mode);
 }
 
 void inode_manager_print(inode_manager_t *inode_manager) {
