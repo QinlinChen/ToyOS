@@ -117,6 +117,10 @@ inode_t *inode_manager_lookup(inode_manager_t *inode_manager, const char *path,
   return inode_lookup(inode_manager->root, path, type, create, mode);
 }
 
+void inode_manager_remove(inode_t *inode) {
+  delete_inode(inode);
+}
+
 void inode_manager_print(inode_manager_t *inode_manager) {
   inode_recursive_print(inode_manager->root, 0);
 }

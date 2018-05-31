@@ -117,6 +117,7 @@ void inode_manager_init(inode_manager_t *inode_manager);
 void inode_manager_destroy(inode_manager_t *inode_manager);
 inode_t *inode_manager_lookup(inode_manager_t *inode_manager, const char *path, 
                               int type, int create, int mode);
+void inode_manager_remove(inode_t *inode);
 void inode_manager_print(inode_manager_t *inode_manager);
 
 /*------------------------------------------
@@ -127,9 +128,9 @@ struct filesystem {
   const char *name;
   inode_manager_t inode_manager;
 
-  void (*init)(filesystem_t *fs, const char *name, inode_t *dev);
+  // void (*init)(filesystem_t *fs, const char *name, inode_t *dev);
   inode_t *(*lookup)(filesystem_t *fs, const char *path, int flags);
-  int (*close)(inode_t *inode);
+  // int (*close)(inode_t *inode);
 };
 
 filesystem_t *new_kvfs(const char *name);
@@ -153,7 +154,7 @@ void fs_manager_print();
 struct file {
   off_t offset;
   inode_t *inode;
-  // int (*open)(inode_t *inode, file_t *file, int flags);
+  int (*open)(inode_t *inode, file_t *file, int flags);
   ssize_t (*read)(inode_t *inode, file_t *file, char *buf, size_t size);
   ssize_t (*write)(inode_t *inode, file_t *file, const char *buf, size_t size);
   off_t (*lseek)(inode_t *inode, file_t *file, off_t offset, int whence);
