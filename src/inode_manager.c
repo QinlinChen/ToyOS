@@ -38,7 +38,8 @@ static inode_t *inode_find_child(inode_t *node, const char *name) {
 }
 
 // path is not allowed to be root '/'
-static inode_t *inode_recursive_lookup(inode_t *node, const char *path, int create, int type) {
+static inode_t *inode_recursive_lookup(inode_t *node, const char *path, 
+                                       int create, int type, int mode) {
   // if then exit
   char name[MAXPATHLEN];
   int i = 0;
@@ -57,23 +58,27 @@ static inode_t *inode_recursive_lookup(inode_t *node, const char *path, int crea
   inode_t *child = inode_find_child(node, name);
   // if found
   if (child != NULL)
-    return is_leaf ? child : inode_recursive_lookup(child, path, create, type);
+    return is_leaf ? child 
+                   : inode_recursive_lookup(child, path, create, type, mode);
 
   // not found but create
   if (create) {
-    inode_t *new_child = new_inode(name, (is_leaf ? type : INODE_DIR), DEFAULT_MODE);
+    inode_t *new_child = is_leaf ? new_inode(name, type, mode)
+                                 : new_inode(name, INODE_DIR, DEFAULT_MODE);
     inode_add_child(node, new_child);
-    return is_leaf ? new_child : inode_recursive_lookup(new_child, path, create, type);
+    return is_leaf ? new_child 
+                   : inode_recursive_lookup(new_child, path, create, type, mode);
   }
 
   // not found and not created
   return NULL;
 }
 
-static inode_t *inode_lookup(inode_t *root, const char *path, int create, int type) {
+static inode_t *inode_lookup(inode_t *root, const char *path,
+                             int create, int type, int mode) {
   if (strcmp(path, "/") == 0)
     return type == INODE_DIR ? root : NULL;
-  return inode_recursive_lookup(root, path, create, type);
+  return inode_recursive_lookup(root, path, create, type, mode);
 }
 
 static void inode_recursive_print(inode_t *node, int depth) {
@@ -97,9 +102,9 @@ void inode_manager_destroy(inode_manager_t *inode_manager) {
   inode_manager->root = NULL;
 }
 
-inode_t *inode_manager_lookup(inode_manager_t *inode_manager,
-                              const char *path, int create, int type) {
-  return inode_lookup(inode_manager->root, path, create, type);
+inode_t *inode_manager_lookup(inode_manager_t *inode_manager, const char *path, 
+                              int create, int type, int mode) {
+  return inode_lookup(inode_manager->root, path, create, type, mode);
 }
 
 void inode_manager_print(inode_manager_t *inode_manager) {
