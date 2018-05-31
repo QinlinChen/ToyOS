@@ -100,5 +100,6 @@ static int kvfs_open(filesystem_t *this, const char *path, int flags) {
 }
 
 filesystem_t *new_kvfs(const char *name) {
+  Log("kvfs_access %p", kvfs_access);
   return new_filesystem(name, kvfs_access, kvfs_open);
 }

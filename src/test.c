@@ -395,6 +395,7 @@ int kv_access_test() {
   Log("%s", subpath);
   Assert(kvfs != NULL);
   Assert(kvfs->access_handle != NULL);
+  Log("kvfs_access %p", kvfs->access_handle);
   ok = kvfs->access_handle(kvfs, subpath, F_OK);
   Assert(ok == 1);
   return 1;
