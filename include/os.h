@@ -133,6 +133,7 @@ typedef int (*close_handle_t)(file_t *this);
 
 struct file {
   off_t offset;
+  inode_manager_t *inode_manager;
   inode_t *inode;
   int ref_count;
   int readable;
@@ -148,10 +149,12 @@ struct file {
   ------------------------------------------*/
 
 void file_table_init();
-int file_table_alloc(inode_t *inode, read_handle_t read_handle, write_handle_t write_handle,
+int file_table_alloc(inode_manager_t *inode_manager, inode_t *inode, 
+                     read_handle_t read_handle, write_handle_t write_handle,
                      lseek_handle_t lseek_handle, close_handle_t close_handle);
 void file_table_free(file_t *file);
 file_t *file_table_get(int fd);
+void file_table_set_permission(int fd, int readable, int writable);
 
 /*------------------------------------------
                   filesystem.h

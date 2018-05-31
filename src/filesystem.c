@@ -68,16 +68,34 @@ static int kvfs_access(filesystem_t *this, const char *path, int mode) {
 }
 
 static int kvfs_open(filesystem_t *this, const char *path, int flags) {
-  inode_t *inode = inode_manager_lookup(&this->inode_manager, path, 
-    INODE_FILE, (flags & O_CREAT), DEFAULT_MODE);
+  Assert(this != NULL && path != NULL);
+  inode_manager_t *manager = &this->inode_manager;
+  inode_t *inode = inode_manager_lookup(manager, path, INODE_FILE, 
+    (flags & O_CREAT), DEFAULT_MODE);
   if (inode == NULL) {
     Log("Can't find path %s", path);
     return -1;
   }
 
-  file_table_alloc(inode, kvfs_read, kvfs_write, kvfs_lseek, kvfs_close);
-  TODO;
-  return 0;
+  int readable = 0, writable = 0, mode = 0;
+  if ((flags & O_RONLY) || (flags & O_RDWR)) {
+    readable = 1;
+    mode |= R_OK;
+  }
+  if ((flags & O_WRONLY) || (flags & O_RDWR)) {
+    writable = 1;
+    mode |= W_OK;
+  }  
+  if (!inode_manager_checkmode(manager, inode, mode)) {
+    Log("Permission denied!");
+    return -1;
+  }
+  
+  int fd = file_table_alloc(manager, inode,
+    kvfs_read, kvfs_write, kvfs_lseek, kvfs_close);
+  file_table_set_permission(fd, readable, writable);
+  
+  return fd;
 }
 
 filesystem_t *new_kvfs(const char *name) {
