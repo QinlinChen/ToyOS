@@ -107,6 +107,7 @@ struct inode {
   struct inode *sibling;
 };
 
+// implemented as tree
 typedef struct inode_manager {
   inode_t *root;
 } inode_manager_t;

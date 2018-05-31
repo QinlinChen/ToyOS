@@ -317,10 +317,11 @@ static int fs_manager_test() {
 int inode_manager_test() {
   inode_manager_t manager;
   inode_manager_init(&manager);
+  inode_manager_lookup(&manager, "/bin", 1, INODE_DIR);
   inode_manager_lookup(&manager, "/usr/jss/lv/you", 1, INODE_FILE);
   inode_manager_lookup(&manager, "/usr/jss/lv/me", 1, INODE_FILE);
   inode_manager_lookup(&manager, "/usr/jss/ds", 1, INODE_FILE);
-  inode_manager_lookup(&manager, "/bin", 1, INODE_DIR);
+  Assert(inode_manager_lookup(&manager, "/lib/libc.so", 0, INODE_FILE) == NULL);
   inode_manager_print(&manager);
   inode_manager_destroy(&manager);
   return 1;
