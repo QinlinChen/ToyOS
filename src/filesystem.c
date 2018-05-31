@@ -36,7 +36,11 @@ void delete_filesystem(filesystem_t *fs) {
   ------------------------------------------*/
 
 static ssize_t kvfs_read(file_t *this, char *buf, size_t size) {
-  TODO;
+  // string_t *data = file_get_data(this);
+  // int offset = (int)file_get_offset(this);
+
+  // char *bufp = buf; 
+  // ssize_t nread = 0;
   return 0;
 }
 
@@ -52,7 +56,7 @@ static off_t kvfs_lseek(file_t *this, off_t offset, int whence) {
     case SEEK_END: offset += (off_t)string_length(file_get_data(this)); break;
     default: Panic("Should not reach here");
   }
-  if (offset > string_length(file_get_data(this)))
+  if (offset > string_length(file_get_data(this)) || offset < 0)
     return -1;
   file_set_offset(this, offset);
   return offset;
@@ -101,7 +105,8 @@ static int kvfs_open(filesystem_t *this, const char *path, int flags) {
   
   int fd = file_table_alloc(inode, kvfs_read, kvfs_write, 
     kvfs_lseek, kvfs_close);
-  file_set_permission(fd, readable, writable);
+  file_t *file = file_table_get(fd);
+  file_set_permission(file, readable, writable);
   
   return fd;
 }
