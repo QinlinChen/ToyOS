@@ -26,7 +26,7 @@ char *strcpy(char *dst, const char *src);
 int strcmp(const char *s1, const char *s2);
 char *strchr(const char *s, int c);
 
-// stdlib.h
+// rand.h
 void srand(unsigned int seed);
 int rand();
 int random(int left, int right);
