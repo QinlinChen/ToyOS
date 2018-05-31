@@ -382,11 +382,11 @@ void test_run() {
   TEST(fs_manager_test);
   TEST(inode_manager_test);
   TEST(string_test);
-  int fd1 = new_file(NULL, NULL, NULL, NULL, NULL);
-  int fd2 = new_file(NULL, NULL, NULL, NULL, NULL);
+  int fd1 = file_table_alloc(NULL, NULL, NULL, NULL, NULL);
+  int fd2 = file_table_alloc(NULL, NULL, NULL, NULL, NULL);
   printf("fd1 %d, fd2 %d\n", fd1, fd2);
-  delete_file(fd1);
-  int fd3 = new_file(NULL, NULL, NULL, NULL, NULL);
+  file_table_free(fd1);
+  int fd3 = file_table_alloc(NULL, NULL, NULL, NULL, NULL);
   printf("fd3 %d\n", fd3);
   Panic("Stop");
 }

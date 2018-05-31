@@ -140,9 +140,14 @@ struct file {
   close_handle_t close_handle;
 };
 
-int new_file(inode_t *inode, read_handle_t read_hanle, write_handle_t write_handle,
-             lseek_handle_t lseek_handle, close_handle_t close_handle);
-void delete_file(int fd);
+/*------------------------------------------
+                file_table.h
+  ------------------------------------------*/
+
+int file_table_alloc(inode_t *inode, read_handle_t read_hanle, write_handle_t write_handle,
+                     lseek_handle_t lseek_handle, close_handle_t close_handle);
+void file_table_free(int fd);
+file_t *file_table_get(int fd);
 
 /*------------------------------------------
                   filesystem.h
