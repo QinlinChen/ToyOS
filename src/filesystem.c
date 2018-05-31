@@ -23,6 +23,7 @@ filesystem_t *new_filesystem(const char *name, access_handle_t access_handle,
                              open_handle_t open_handle) {
   filesystem_t *fs = pmm->alloc(sizeof(filesystem_t));
   filesystem_init(fs, name, access_handle, open_handle);
+  return fs;
 }
 
 void delete_filesystem(filesystem_t *fs) {
