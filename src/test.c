@@ -408,8 +408,8 @@ int kv_access_test() {
   Assert(vfs->access("/usr/cql/minilab", W_OK | R_OK) == 0);
   Assert(vfs->access("/usr/cql/minilab", R_OK) == 1);
   Assert(vfs->access("/lib/libc.so", X_OK) == 1);
-  Assert(vfs->access("/usr/cql/minilab", W_OK) == 0);
-  Assert(vfs->access("/usr/cql/minilab", R_OK) == 0);
+  Assert(vfs->access("/lib/libc.so", W_OK) == 0);
+  Assert(vfs->access("/lib/libc.so", R_OK) == 0);
   return 1;
 }
 
