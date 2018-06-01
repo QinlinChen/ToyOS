@@ -38,14 +38,12 @@ static void vfs_init() {
 
 static int vfs_mount(const char *path, filesystem_t *fs) {
   fs_manager_add(path, fs);
-  TODO;
   return 0;
 }
 
 static int vfs_unmount(const char *path) {
   filesystem_t *fs = fs_manager_remove(path);
   delete_filesystem(fs);
-  TODO;
   return 0;
 }
 
@@ -63,25 +61,30 @@ static int vfs_open(const char *path, int flags) {
   filesystem_t *fs = fs_manager_get(path, subpath);
   if (fs == NULL)
     return -1;
+  Assert(fs->open_handle != NULL);
   return fs->open_handle(fs, subpath, flags);
 }
 
 static ssize_t vfs_read(int fd, void *buf, size_t size) {
   file_t *file = file_table_get(fd);
+  Assert(file->read_handle != NULL);
   return file->read_handle(file, buf, size);
 }
 
 static ssize_t vfs_write(int fd, void *buf, size_t size) {
   file_t *file = file_table_get(fd);
+  Assert(file->write_handle != NULL);
   return file->write_handle(file, buf, size);
 }
 
 static off_t vfs_lseek(int fd, off_t offset, int whence) {
   file_t *file = file_table_get(fd);
+  Assert(file->lseek_handle != NULL);
   return file->lseek_handle(file, offset, whence);
 }
 
 static int vfs_close(int fd) {
   file_t *file = file_table_get(fd);
+  Assert(file->close_handle != NULL);
   return file->close_handle(file);
 }

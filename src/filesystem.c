@@ -36,13 +36,19 @@ void delete_filesystem(filesystem_t *fs) {
   ------------------------------------------*/
 
 static ssize_t kvfs_read(file_t *this, char *buf, size_t size) {
-  TODO;
-  return 0;
+  string_t *data = file_get_data(this);
+  off_t offset = file_get_offset(this);
+  ssize_t nread = string_read(data, offset, buf, size);
+  file_set_offset(this, offset + nread);
+  return nread;
 }
 
 static ssize_t kvfs_write(file_t *this, const char *buf, size_t size) {
-  TODO;
-  return 0;
+  string_t *data = file_get_data(this);
+  off_t offset = file_get_offset(this);
+  ssize_t nwritten = string_write(data, offset, buf, size);
+  file_set_offset(this, offset + nwritten);
+  return nwritten;
 }
 
 static off_t kvfs_lseek(file_t *this, off_t offset, int whence) {
@@ -59,7 +65,9 @@ static off_t kvfs_lseek(file_t *this, off_t offset, int whence) {
 }
 
 static int kvfs_close(file_t *this) {
-  file_table_free(this);
+  file_decr_ref_count(this);
+  if (file_ref_count_is_zero(this))
+    file_table_free(this);
   return 0;
 }
 
@@ -102,8 +110,9 @@ static int kvfs_open(filesystem_t *this, const char *path, int flags) {
   int fd = file_table_alloc(inode, kvfs_read, kvfs_write, 
     kvfs_lseek, kvfs_close);
   file_t *file = file_table_get(fd);
-  file_set_permission(file, readable, writable);
-  
+  file_set_readable(file, readable);
+  file_set_writable(file, writable);
+
   return fd;
 }
 

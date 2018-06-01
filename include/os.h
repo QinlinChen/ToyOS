@@ -148,10 +148,13 @@ struct file {
   close_handle_t close_handle;
 };
 
-void file_set_permission(file_t *file, int readable, int writable);
 string_t *file_get_data(file_t *file);
-void file_set_offset(file_t *file, off_t offset);
 off_t file_get_offset(file_t *file);
+void file_set_offset(file_t *file, off_t offset);
+void file_set_readable(file_t *file, int readable);
+void file_set_writable(file_t *file, int writable);
+void file_decr_ref_count(file_t *file);
+int file_ref_count_is_zero(file_t *file);
 
 /*------------------------------------------
                 file_table.h
