@@ -66,11 +66,8 @@ static off_t kvfs_lseek(file_t *this, off_t offset, int whence) {
 
 static int kvfs_close(file_t *this) {
   file_decr_ref_count(this);
-  if (file_ref_count_is_zero(this)) {
-    Log("fd is freed");
+  if (file_ref_count_is_zero(this))
     file_table_free(this);
-  }
-    
   return 0;
 }
 
