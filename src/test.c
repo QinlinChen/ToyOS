@@ -467,7 +467,6 @@ int devfs_test() {
   Assert(vfs->read(fd, &n, sizeof(n)) == sizeof(n));
   Assert(vfs->lseek(fd, 0, SEEK_END) == 0);
   Assert(n == 0);
-  printf("fd %d\n", fd);
   Assert(vfs->close(fd) == 0);
 
   n = 456;
@@ -476,17 +475,17 @@ int devfs_test() {
   Assert(vfs->read(fd, &n, sizeof(n)) == 0);
   Assert(vfs->lseek(fd, 111, SEEK_CUR) == 0);
   Assert(n == 456);
-  printf("fd %d\n", fd);
   Assert(vfs->close(fd) == 0);
 
-  n = 456;
+  n = 789;
   fd = vfs->open("/dev/random", O_RDWR);
   Assert(vfs->write(fd, &n, sizeof(n)) == 0);
+  Assert(n == 789);
   Assert(vfs->read(fd, &n, sizeof(n)) == sizeof(n));
   Assert(vfs->lseek(fd, 222, SEEK_SET) == 0);
   printf("random n = %d\n", n);
   Assert(vfs->close(fd) == 0);
-  
+
   return 1;
 }
 /*------------------------------------------
