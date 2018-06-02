@@ -409,9 +409,10 @@ static ssize_t stdin_read(file_t *this, void *buf, size_t size) {
   int i = 0;
   char ch;
   while (i < MAXLINE) {
-    if ((ch = getc()) == '\n')
-      break;
+    ch = getc();
     _putc(ch);
+    if (ch == '\n')
+      break;
     line[i++] = ch;
   }
   
