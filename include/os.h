@@ -195,7 +195,6 @@ typedef struct filesystem_ops {
   open_handle_t open_handle;
 } filesystem_ops_t;
 
-
 struct filesystem {
   const char *name;
   inode_manager_t inode_manager;

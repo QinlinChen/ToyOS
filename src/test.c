@@ -545,7 +545,7 @@ int procfs_test() {
                 test run
   ------------------------------------------*/
 
-void test_run() {
+void test_run(void *arg) {
   // debug_test();
   // schedule_test();
   // lock_test();
@@ -561,5 +561,6 @@ void test_run() {
   TEST(procfs_test);
 
   printf("\33[1;32mALL TESTS PASSED\33[0m\n");
-  _halt(0);
+  while(1)
+    continue;
 }

@@ -17,9 +17,11 @@ static void os_init() {
   }
 }
 
+extern void test_run(void *arg);
+
 static void os_run() {
-  extern void test_run();
-  test_run();
+  thread_t test_thread;
+  kmt->create(&test_thread, test_run, NULL);
   _intr_write(1); // enable interrupt
   while (1) ; // should never return
 }

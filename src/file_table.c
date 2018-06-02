@@ -11,8 +11,11 @@ void file_table_init() {
   kmt->spin_lock(&lock);
   for (int i = 0; i < NR_FD; ++i)
     is_free[i] = 1;
+  // init_as_stdin(&file_table[STDIN_FILENO]);
   is_free[STDIN_FILENO] = 0;
+  // (&file_table[STDOUT_FILENO]);
   is_free[STDOUT_FILENO] = 0;
+  // init_as_stderr(&file_table[STDERR_FILENO]);
   is_free[STDERR_FILENO] = 0;
   kmt->spin_unlock(&lock);
 }
