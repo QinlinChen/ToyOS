@@ -509,12 +509,19 @@ int procfs_test() {
   thread_t thread;
   kmt->create(&thread, nothing, NULL);
 
-  int fd = vfs->open("/proc/1/hello", O_RDONLY);
+  char path[MAXPATHLEN], name[32], buf[1024];
+  strcpy(path, "/proc/");
+  itoa(thread.tid, name);
+  strcat(path, name);
+  strcat(path, "/hello");
+
+  int fd = vfs->open(path, O_RDONLY);
   Assert(fd != -1);
-  char buf[1024];
   vfs->read(fd, buf, 1024);
   printf("%s\n", buf);
-
+  Assert(vfs->close(fd));
+  
+  1 + 2;
   return 1;
 }
 
