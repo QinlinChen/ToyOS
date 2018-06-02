@@ -55,7 +55,6 @@ static ssize_t basic_file_write(file_t *this, const char *buf, size_t size) {
 static off_t basic_file_lseek(file_t *this, off_t offset, int whence) {
   kmt->spin_lock(&this->lock);
   size_t filesize = inode_manager_get_filesize(this->inode_manager, this->inode);
-  string_t *data = &this->inode->data;
   switch (whence) {
     case SEEK_SET: break;
     case SEEK_CUR: offset += this->offset; break;
