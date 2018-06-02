@@ -402,9 +402,26 @@ filesystem_t *new_procfs(const char *name) {
                     stdin
   ------------------------------------------*/
 
+#define MAXLINE 1024
+
 static ssize_t stdin_read(file_t *this, void *buf, size_t size) {
-  TODO;
-  return basic_file_read(this, buf, size);
+  static char line[MAXLINE];
+  int i = 0;
+  while (i < MAXLINE)
+    if ((line[i++] = getc()) == '\n')
+      break;
+  
+  char *bufp = buf;
+  char *linep = line;
+  size_t nread = 0;
+  size_t nleft = (i < size ? i : size);
+  while (nleft > 0) {
+    *bufp++ = *linep++;
+    nleft--;
+    nread++;
+  }
+
+  return nread;
 }
 
 static ssize_t stdin_write(file_t *this, const void *buf, size_t size) {
