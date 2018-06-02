@@ -149,7 +149,7 @@ char *strcpy(char *dst, const char *src) {
   Assert(dst != NULL && src != NULL);
   char *ret = dst;
 
-  while((*dst++ = *src++) != 0)
+  while((*dst++ = *src++) != '\0')
     continue;
 
   return ret;
@@ -161,7 +161,7 @@ char *strcat(char *dst, const char *src) {
   while (*dst)
     dst++;
 
-  while(*dst++ = *src++)
+  while((*dst++ = *src++) != '\0')
     continue;
 
   return ret;
