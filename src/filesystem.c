@@ -420,7 +420,8 @@ static int stdin_close(file_t *this) {
 
 void init_as_stdin(file_t *file) {
   file->offset = file ->ref_count = 0;
-  file->inode = file->inode_manager = NULL;
+  file->inode = NULL;
+  file->inode_manager = NULL;
   file->readable = 1;
   file->writable = 0;
   kmt->init(file->lock, "stdin_lock");
@@ -461,7 +462,8 @@ static int stdout_close(file_t *this) {
 
 void init_as_stdout(file_t *file) {
   file->offset = file ->ref_count = 0;
-  file->inode = file->inode_manager = NULL;
+  file->inode = NULL;
+  file->inode_manager = NULL;
   file->readable = 0;
   file->writable = 1;
   kmt->init(file->lock, "stdout_lock");
@@ -502,7 +504,8 @@ static int stderr_close(file_t *this) {
 
 void init_as_stderr(file_t *file) {
   file->offset = file ->ref_count = 0;
-  file->inode = file->inode_manager = NULL;
+  file->inode = NULL;
+  file->inode_manager = NULL;
   file->readable = 0;
   file->writable = 1;
   kmt->init(file->lock, "stderr_lock");
