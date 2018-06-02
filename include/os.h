@@ -100,6 +100,7 @@ typedef struct string {
   spinlock_t lock;
 } string_t;
 
+// thread safe
 void string_init(string_t *s);
 void string_destroy(string_t *s);
 int string_empty(string_t *s);
@@ -129,14 +130,14 @@ struct inode {
   struct inode *next;
   struct inode *prev;
   // string_t is thread safe.
-  // Since read, write, lseek and close only have access to data,
-  // it is safe.
+  // read, write, lseek and close handles only operate on data.
   string_t data;
 };
 
 // implemented as tree
 typedef struct inode_manager {
   inode_t *root;
+  spinlock_t lock;
 } inode_manager_t;
 
 void inode_manager_init(inode_manager_t *inode_manager);
@@ -151,7 +152,7 @@ int inode_manager_checkmode(inode_manager_t *inode_manager, inode_t *inode, int 
                     file.h
   ------------------------------------------*/
 
-// read, write, lseek and close only have access to inode.data
+// read, write, lseek and close only operate on inode.data
 typedef ssize_t (*read_handle_t)(file_t *this, char *buf, size_t size);
 typedef ssize_t (*write_handle_t)(file_t *this, const char *buf, size_t size);
 typedef off_t (*lseek_handle_t)(file_t *this, off_t offset, int whence);
@@ -217,6 +218,7 @@ filesystem_t *new_devfs(const char *name);
                   fs_manager.h
   ------------------------------------------*/
 
+// thread safe
 void fs_manager_init();
 int fs_manager_add(const char *path, filesystem_t *fs);
 filesystem_t *fs_manager_get(const char *path, char *subpath);
