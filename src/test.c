@@ -519,20 +519,20 @@ int procfs_test() {
   Assert(fd != -1);
   vfs->read(fd, buf, 1024);
   printf("%s\n", buf);
-  Assert(vfs->close(fd));
+  Assert(vfs->close(fd) == 0);
 
   fd = vfs->open("/proc/cpuinfo", O_RDONLY);
   Assert(fd != -1);
   vfs->read(fd, buf, 1024);
   printf("%s\n", buf);
-  Assert(vfs->close(fd));
+  Assert(vfs->close(fd) == 0);
 
   fd = vfs->open("/proc/meminfo", O_RDONLY);
   Assert(fd != -1);
   vfs->read(fd, buf, 1024);
   printf("%s\n", buf);
-  Assert(vfs->close(fd));
-  
+  Assert(vfs->close(fd) == 0);
+
   return 1;
 }
 
