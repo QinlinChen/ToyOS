@@ -509,6 +509,11 @@ int procfs_test() {
   thread_t thread;
   kmt->create(&thread, nothing, NULL);
 
+  int fd = vfs->open("/proc/1/hello");
+  Assert(fd != -1);
+  char buf[1024];
+  vfs->read(fd, buf, 1024);
+  printf("%s\n", buf);
   filesystem_t *fs = fs_manager_get("/proc", NULL);
   inode_manager_print(&fs->inode_manager);
 
