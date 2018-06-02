@@ -165,6 +165,8 @@ struct file {
   int ref_count;
   int readable;
   int writable;
+  // thread safe
+  spinlock_t lock;
   read_handle_t read_handle;
   write_handle_t write_handle;
   lseek_handle_t lseek_handle;

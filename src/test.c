@@ -397,7 +397,6 @@ int file_table_test() {
 int kvfs_test() {
   filesystem_t *kvfs = fs_manager_get("/", NULL);
   inode_manager_t *manager = &kvfs->inode_manager;
-  printf("Fuck\n");
   inode_manager_lookup(manager, "/usr/cql/oslab", INODE_FILE, 1, DEFAULT_MODE);
   inode_manager_lookup(manager, "/usr/cql/minilab", INODE_FILE, 1, S_IRUSR);
   inode_manager_lookup(manager, "/lib/libc.so", INODE_FILE, 1, S_IXUSR);

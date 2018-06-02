@@ -36,38 +36,49 @@ void delete_filesystem(filesystem_t *fs) {
   ------------------------------------------*/
 
 static ssize_t kvfs_read(file_t *this, char *buf, size_t size) {
-  string_t *data = file_get_data(this);
-  off_t offset = file_get_offset(this);
+  kmt->spin_lock(&this->lock);
+  string_t *data = &this->inode->data;
+  off_t offset = this->offset;
   ssize_t nread = string_read(data, offset, buf, size);
-  file_set_offset(this, offset + nread);
+  this->offset += nread;
+  kmt->spin_unlock(&this->lock);
   return nread;
 }
 
 static ssize_t kvfs_write(file_t *this, const char *buf, size_t size) {
-  string_t *data = file_get_data(this);
-  off_t offset = file_get_offset(this);
+  kmt->spin_lock(&this->lock);
+  string_t *data = &this->inode->data;
+  off_t offset = this->offset;
   ssize_t nwritten = string_write(data, offset, buf, size);
-  file_set_offset(this, offset + nwritten);
+  this->offset += nwritten;
+  kmt->spin_unlock(&this->lock);
   return nwritten;
 }
 
 static off_t kvfs_lseek(file_t *this, off_t offset, int whence) {
+  kmt->spin_lock(&this->lock);
+  string_t *data = &this->inode->data;
   switch (whence) {
     case SEEK_SET: break;
-    case SEEK_CUR: offset += file_get_offset(this); break;
-    case SEEK_END: offset += (off_t)string_length(file_get_data(this)); break;
+    case SEEK_CUR: offset += this->offset; break;
+    case SEEK_END: offset += (off_t)string_length(data); break;
     default: Panic("Should not reach here");
   }
-  if (offset > string_length(file_get_data(this)) || offset < 0)
+  if (offset > string_length(data) || offset < 0) {
+    kmt->spin_unlock(&this->lock);
     return -1;
-  file_set_offset(this, offset);
+  }
+  this->offset = offset;
+  kmt->spin_unlock(&this->lock);
   return offset;
 }
 
 static int kvfs_close(file_t *this) {
-  file_decr_ref_count(this);
-  if (file_ref_count_is_zero(this))
+  kmt->spin_lock(&this->lock);
+  this->ref_count--;
+  if (this->ref_count == 0)
     file_table_free(this);
+  kmt->spin_unlock(&this->lock);
   return 0;
 }
 
@@ -86,8 +97,8 @@ static int kvfs_access(filesystem_t *this, const char *path, int mode) {
 static int kvfs_open(filesystem_t *this, const char *path, int flags) {
   Assert(this != NULL && path != NULL);
   inode_manager_t *manager = &this->inode_manager;
-  inode_t *inode = inode_manager_lookup(manager, path, INODE_FILE, 
-    (flags & O_CREAT), DEFAULT_MODE);
+  inode_t *inode = inode_manager_lookup(manager, path, INODE_FILE,
+                                        (flags & O_CREAT), DEFAULT_MODE);
   if (inode == NULL) {
     Log("Can't find path %s", path);
     return -1;
@@ -106,12 +117,13 @@ static int kvfs_open(filesystem_t *this, const char *path, int flags) {
     Log("Permission denied!");
     return -1;
   }
-  
-  int fd = file_table_alloc(inode, kvfs_read, kvfs_write, 
-    kvfs_lseek, kvfs_close);
+
+  int fd = file_table_alloc(inode, kvfs_read, kvfs_write, kvfs_lseek, kvfs_close);
   file_t *file = file_table_get(fd);
-  file_set_readable(file, readable);
-  file_set_writable(file, writable);
+  kmt->spin_lock(&file->lock);
+  file->readable = readable;
+  file->writable = writable;
+  kmt->spin_unlock(&file->lock);
 
   return fd;
 }
