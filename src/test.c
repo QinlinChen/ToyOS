@@ -500,7 +500,7 @@ int devfs_test() {
                   procfs test
   ------------------------------------------*/
 
-static void nothing(void *) {
+static void nothing(void *arg) {
   while (1)
     continue;
 }
