@@ -437,6 +437,7 @@ int kvfs_test() {
   Assert(d2 == d);
   Assert(file->offset == sizeof(n) + sizeof(d));
   char buf[10];
+  printf("%d\n", vfs->read(fd, buf, 10));
   Assert(vfs->read(fd, buf, 10) == 0);
   return 1;
 }
