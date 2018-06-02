@@ -92,11 +92,12 @@ struct semaphore {
 /*------------------------------------------
                   string.h
   ------------------------------------------*/
-  
+
 typedef struct string {
   char *data;
   size_t capacity;
   size_t size;
+  spinlock_t lock;
 } string_t;
 
 void string_init(string_t *s);
