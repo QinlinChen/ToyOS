@@ -502,7 +502,7 @@ void test_run() {
   int n = 123;
   char buf[512];
   char number[512];
-  itoa(123, 10, 1, number);
+  itoa(n, 10, 1, number);
   strcpy(buf, "/proc/");
   strcat(buf, number);
   printf("%s\n", buf);
