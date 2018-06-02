@@ -5,24 +5,26 @@
               basic file system
   ------------------------------------------*/
 
-void filesystem_init(filesystem_t *fs, const char *name,
-                     access_handle_t access_handle, open_handle_t open_handle) {
+void filesystem_init(filesystem_t *fs, const char *name, filesystem_ops_t *ops) {
+  Assert(fs != NULL && ops != NULL);
   fs->name = name;
   inode_manager_init(&fs->inode_manager);
-  fs->access_handle = access_handle;
-  fs->open_handle = open_handle;
+  fs->ops = *ops;
+  kmt->spin_init(&fs->lock, "filesystem_lock");
 }
 
 void filesystem_destroy(filesystem_t *fs) {
+  Assert(fs != NULL);
+  kmt->spin_lock(&fs->lock);
   inode_manager_destroy(&fs->inode_manager);
-  fs->access_handle = NULL;
-  fs->open_handle = NULL;
+  fs->ops.access_handle = NULL;
+  fs->ops.open_handle = NULL;
+  kmt->spin_unlock(&fs->lock);
 }
 
-filesystem_t *new_filesystem(const char *name, access_handle_t access_handle,
-                             open_handle_t open_handle) {
+filesystem_t *new_filesystem(const char *name, filesystem_ops_t *ops) {
   filesystem_t *fs = pmm->alloc(sizeof(filesystem_t));
-  filesystem_init(fs, name, access_handle, open_handle);
+  filesystem_init(fs, name, ops);
   return fs;
 }
 
@@ -31,11 +33,8 @@ void delete_filesystem(filesystem_t *fs) {
   pmm->free(fs);
 }
 
-/*------------------------------------------
-                    kvfs
-  ------------------------------------------*/
-
-static ssize_t kvfs_read(file_t *this, char *buf, size_t size) {
+// basic file system's implementation
+static ssize_t basic_file_read(file_t *this, char *buf, size_t size) {
   kmt->spin_lock(&this->lock);
   string_t *data = &this->inode->data;
   off_t offset = this->offset;
@@ -45,7 +44,7 @@ static ssize_t kvfs_read(file_t *this, char *buf, size_t size) {
   return nread;
 }
 
-static ssize_t kvfs_write(file_t *this, const char *buf, size_t size) {
+static ssize_t basic_file_write(file_t *this, const char *buf, size_t size) {
   kmt->spin_lock(&this->lock);
   string_t *data = &this->inode->data;
   off_t offset = this->offset;
@@ -55,7 +54,7 @@ static ssize_t kvfs_write(file_t *this, const char *buf, size_t size) {
   return nwritten;
 }
 
-static off_t kvfs_lseek(file_t *this, off_t offset, int whence) {
+static off_t basic_file_lseek(file_t *this, off_t offset, int whence) {
   kmt->spin_lock(&this->lock);
   string_t *data = &this->inode->data;
   switch (whence) {
@@ -73,7 +72,7 @@ static off_t kvfs_lseek(file_t *this, off_t offset, int whence) {
   return offset;
 }
 
-static int kvfs_close(file_t *this) {
+static int basic_file_close(file_t *this) {
   kmt->spin_lock(&this->lock);
   this->ref_count--;
   if (this->ref_count == 0)
@@ -82,28 +81,35 @@ static int kvfs_close(file_t *this) {
   return 0;
 }
 
-static int kvfs_access(filesystem_t *this, const char *path, int mode) {
+static int basic_fs_access(filesystem_t *this, const char *path, int mode) {
   Assert(this != NULL && path != NULL);
   Assert(((mode & ~F_OK) == 0) || (mode & ~R_OK & ~W_OK & ~X_OK) == 0);
+  kmt->spin_lock(&this->lock);
   inode_manager_t *manager = &this->inode_manager;
   inode_t *inode = inode_manager_lookup(manager, path, INODE_FILE, 0, 0);
   if (inode == NULL)
     return 0;
   if (mode & F_OK)
     return 1;
-  return inode_manager_checkmode(manager, inode, mode);
+  int ok = inode_manager_checkmode(manager, inode, mode);
+  kmt->spin_unlock(&this->lock);
+  return ok;
 }
 
-static int kvfs_open(filesystem_t *this, const char *path, int flags) {
+static int basic_fs_open(filesystem_t *this, const char *path, int flags, file_ops_t *ops) {
   Assert(this != NULL && path != NULL);
+  kmt->spin_lock(&this->lock);
+  // get inode
   inode_manager_t *manager = &this->inode_manager;
   inode_t *inode = inode_manager_lookup(manager, path, INODE_FILE,
                                         (flags & O_CREAT), DEFAULT_MODE);
   if (inode == NULL) {
     Log("Can't find path %s", path);
+    kmt->spin_unlock(&this->lock);
     return -1;
   }
 
+  // decide permission
   int readable = 0, writable = 0, mode = 0;
   if ((flags & O_RONLY) || (flags & O_RDWR)) {
     readable = 1;
@@ -115,19 +121,51 @@ static int kvfs_open(filesystem_t *this, const char *path, int flags) {
   }  
   if (!inode_manager_checkmode(manager, inode, mode)) {
     Log("Permission denied!");
+    kmt->spin_unlock(&this->lock);
     return -1;
   }
 
-  int fd = file_table_alloc(inode, kvfs_read, kvfs_write, kvfs_lseek, kvfs_close);
-  file_t *file = file_table_get(fd);
-  kmt->spin_lock(&file->lock);
-  file->readable = readable;
-  file->writable = writable;
-  kmt->spin_unlock(&file->lock);
-
+  // allocate fd
+  int fd = file_table_alloc(inode, readable, writable, ops);
+  kmt->spin_unlock(&this->lock);
   return fd;
+}
+/*------------------------------------------
+                    kvfs
+  ------------------------------------------*/
+
+static ssize_t kvfs_read(file_t *this, char *buf, size_t size) {
+  return basic_file_read(this, buf, size);
+}
+
+static ssize_t kvfs_write(file_t *this, const char *buf, size_t size) {
+  return basic_file_write(this, buf, size);
+}
+
+static off_t kvfs_lseek(file_t *this, off_t offset, int whence) {
+  return basic_file_lseek(this, offset, whence);
+}
+
+static int kvfs_close(file_t *this) {
+  return basic_file_close(this);
+}
+
+static int kvfs_access(filesystem_t *this, const char *path, int mode) {
+  return basic_fs_access(this, path, mode);
+}
+
+static int kvfs_open(filesystem_t *this, const char *path, int flags) {
+  file_ops_t ops;
+  ops.read_handle = kvfs_read;
+  ops.write_handle = kvfs_write;
+  ops.lseek_handle = kvfs_lseek;
+  ops.close_handle = kvfs_close;
+  return basic_fs_open(this, path, flags, &ops);
 }
 
 filesystem_t *new_kvfs(const char *name) {
-  return new_filesystem(name, kvfs_access, kvfs_open);
+  filesystem_ops_t ops;
+  ops.access_handle = kvfs_access;
+  ops.open_handle = kvfs_open;
+  return new_filesystem(name, &ops);
 }

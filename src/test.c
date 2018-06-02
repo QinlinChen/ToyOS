@@ -275,9 +275,10 @@ void stackfence_test() {
 
 int fs_manager_test() {
   filesystem_t procfs, kvfs, devfs;
-  filesystem_init(&procfs, "procfs", NULL, NULL);
-  filesystem_init(&kvfs, "kvfs", NULL, NULL);
-  filesystem_init(&devfs, "devfs", NULL, NULL);
+  filesystem_ops_t dumb_ops = { NULL, NULL };
+  filesystem_init(&procfs, "procfs", &dumb_ops);
+  filesystem_init(&kvfs, "kvfs", &dumb_ops);
+  filesystem_init(&devfs, "devfs", &dumb_ops);
 
   // fs_manager_init();
   // sequence matters
@@ -381,11 +382,12 @@ int string_test() {
 
 int file_table_test() {
   inode_t dumb_inode;
-  int fd1 = file_table_alloc(&dumb_inode, NULL, NULL, NULL, NULL);
-  int fd2 = file_table_alloc(&dumb_inode, NULL, NULL, NULL, NULL);
+  file_ops_t dumb_ops = { NULL, NULL, NULL, NULL };
+  int fd1 = file_table_alloc(&dumb_inode, 0, 0, &dumb_ops);
+  int fd2 = file_table_alloc(&dumb_inode, 0, 0, &dumb_ops);
   printf("fd1 %d, fd2 %d, ", fd1, fd2);
   file_table_free(file_table_get(fd1));
-  int fd3 = file_table_alloc(&dumb_inode, NULL, NULL, NULL, NULL);
+  int fd3 = file_table_alloc(&dumb_inode, 0, 0, &dumb_ops);
   printf("fd3 %d\n", fd3);
   return 1;
 }

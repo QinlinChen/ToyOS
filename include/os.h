@@ -153,11 +153,19 @@ int inode_manager_checkmode(inode_manager_t *inode_manager, inode_t *inode, int 
                     file.h
   ------------------------------------------*/
 
-// read, write, lseek and close handles only operate on inode.data
+// Read, write, lseek and close handles only operate on inode.data
+// and should be thread safe.
 typedef ssize_t (*read_handle_t)(file_t *this, char *buf, size_t size);
 typedef ssize_t (*write_handle_t)(file_t *this, const char *buf, size_t size);
 typedef off_t (*lseek_handle_t)(file_t *this, off_t offset, int whence);
 typedef int (*close_handle_t)(file_t *this);
+
+typedef struct file_ops {
+  read_handle_t read_handle;
+  write_handle_t write_handle;
+  lseek_handle_t lseek_handle;
+  close_handle_t close_handle;
+} file_ops_t;
 
 struct file {
   off_t offset;
@@ -167,10 +175,7 @@ struct file {
   int writable;
   // thread safe
   spinlock_t lock;
-  read_handle_t read_handle;
-  write_handle_t write_handle;
-  lseek_handle_t lseek_handle;
-  close_handle_t close_handle;
+  file_ops_t ops;
 };
 
 /*------------------------------------------
@@ -179,8 +184,7 @@ struct file {
 
 // thread safe
 void file_table_init();
-int file_table_alloc(inode_t *inode, read_handle_t read_handle, write_handle_t write_handle,
-                     lseek_handle_t lseek_handle, close_handle_t close_handle);
+int file_table_alloc(inode_t *inode, int readable, int writable, file_ops_t *ops);
 void file_table_free(file_t *file);
 file_t *file_table_get(int fd);
 
@@ -188,21 +192,27 @@ file_t *file_table_get(int fd);
                   filesystem.h
   ------------------------------------------*/
 
+// should be thread safe
 typedef int (*access_handle_t)(filesystem_t *this, const char *path, int mode);
 typedef int (*open_handle_t)(filesystem_t *this, const char *path, int flags);
+
+typedef struct filesystem_ops {
+  access_handle_t access_handle;
+  open_handle_t open_handle;
+} filesystem_ops_t;
+
 
 struct filesystem {
   const char *name;
   inode_manager_t inode_manager;
-  access_handle_t access_handle;
-  open_handle_t open_handle;
+  spinlock_t lock;
+  filesystem_ops_t ops;
 };
 
-void filesystem_init(filesystem_t *fs, const char *name,
-                     access_handle_t access_handle, open_handle_t open_handle);
+// thread safe
+void filesystem_init(filesystem_t *fs, const char *name, filesystem_ops_t *ops);
 void filesystem_destroy(filesystem_t *fs);
-filesystem_t *new_filesystem(const char *name, access_handle_t access_handle,
-                             open_handle_t open_handle);
+filesystem_t *new_filesystem(const char *name, filesystem_ops_t *ops);
 void delete_filesystem(filesystem_t *fs);
 
 // three filesystems' factory function
