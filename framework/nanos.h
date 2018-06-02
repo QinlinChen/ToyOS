@@ -14,7 +14,7 @@
 #define STDERR_FILENO 2
 #define FD_BEGIN      3
 #define MAXPATHLEN 128
-#define O_RONLY   1
+#define O_RDONLY   1
 #define O_WRONLY  2
 #define O_RDWR    4
 #define O_CREAT   8
