@@ -453,7 +453,8 @@ int kvfs_test() {
   Assert(fd != -1);
   Assert(vfs->write(fd, &n, sizeof(n) == -1));
   Assert(vfs->close(fd) == 0);
-  Assert(vfs->close(fd + 1) == 0);
+  
+  Assert(vfs->close(fd + 1) == -1);
   return 1;
 }
 

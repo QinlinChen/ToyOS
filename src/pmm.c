@@ -179,8 +179,13 @@ static void *pmm_sbrk(int incr) {
 
 static void *pmm_alloc(size_t size) {
   kmt->spin_lock(&pmm_lock);
+  
   void *ret = addr_aligned_alloc(size);
+
+#ifdef DEBUG_MEM
   Log("addr: %p, size: %d", ret, size);
+#endif
+
   kmt->spin_unlock(&pmm_lock);
   return ret;
 }
@@ -188,7 +193,12 @@ static void *pmm_alloc(size_t size) {
 static void pmm_free(void *ptr) {
   Assert(ptr != NULL);
   kmt->spin_lock(&pmm_lock);
+
   freelist_free(ptr);
+
+#ifdef DEBUG_MEM
   Log("addr: %p", ptr);
+#endif
+
   kmt->spin_unlock(&pmm_lock);
 }
