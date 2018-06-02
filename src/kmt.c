@@ -30,7 +30,6 @@ MOD_DEF(kmt) {
   ------------------------------------------*/
 
 thread_t *new_thread(void (*entry)(void *), void *arg) {
-  TRACE_ENTRY;
   static int tid = 0;
   
   thread_t *thread = (thread_t *)pmm->alloc(sizeof(thread_t));
@@ -44,7 +43,6 @@ thread_t *new_thread(void (*entry)(void *), void *arg) {
   // allocate stack and prepare RegSet
   thread->kstack = (uint8_t *)pmm->alloc(MAX_KSTACK_SIZE);
 
-  TRACE_ENTRY;
   _Area stackinfo;
 #ifdef DEBUG
   // set fence to protect stack
@@ -151,9 +149,7 @@ static void IDLE(void *arg) {
 static void kmt_init() {
   // create IDLE thread
   // we will not add idle to threadlist
-  TRACE_ENTRY;
   idle = new_thread(IDLE, NULL);
-  TRACE_EXIT;
 }
 
 static int kmt_create(thread_t *thread,

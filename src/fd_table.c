@@ -2,7 +2,7 @@
 #include "common.h"
 
 void fd_table_init(fd_table_t *fd_table) {
-  kmt->init(&fd_table->lock);
+  kmt->spin_init(&fd_table->lock, "fd_table_lock");
   for (int i = 0; i < NR_FD; ++i)
     fd_table->map[i] = NULL;
 }
