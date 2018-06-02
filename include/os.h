@@ -147,6 +147,10 @@ void procfs_add_metainfo(filesystem_t *procfs, const char *name,
 void procfs_add_procinfo(filesystem_t *procfs, int tid, const char *name,
                          const char *content, size_t size);
 
+file_t *file_table_alloc_stdin();
+file_t *file_table_alloc_stdout();
+file_t *file_table_alloc_stderr();
+
 /*------------------------------------------
                 file_table.h
   ------------------------------------------*/

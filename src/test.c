@@ -402,6 +402,7 @@ int kvfs_test() {
   Assert(vfs->open("/lib/libc.so", O_RDONLY) == -1);
   Assert(vfs->open("/usr/cql/minilab", O_RDWR) == -1);
   int fd = vfs->open("/usr/cql/oslab", O_RDWR);
+  Log("fd %d\n", fd);
   Assert(fd != -1);
   file_t *file = fd_table_get(&cur_thread->fd_table, fd);
   Assert(file->readable);

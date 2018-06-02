@@ -401,9 +401,31 @@ filesystem_t *new_procfs(const char *name) {
                     stdin
   ------------------------------------------*/
 
+#define MAXLINE 1024
+
 static ssize_t stdin_read(file_t *this, void *buf, size_t size) {
-  TODO;
-  return basic_file_read(this, buf, size);
+  static char line[MAXLINE];
+  int i = 0;
+  char ch;
+  while (i < MAXLINE) {
+    ch = getc();
+    _putc(ch);
+    if (ch == '\n')
+      break;
+    line[i++] = ch;
+  }
+  
+  char *bufp = buf;
+  char *linep = line;
+  size_t nread = 0;
+  size_t nleft = (i < size ? i : size);
+  while (nleft > 0) {
+    *bufp++ = *linep++;
+    nleft--;
+    nread++;
+  }
+
+  return nread;
 }
 
 static ssize_t stdin_write(file_t *this, const void *buf, size_t size) {
@@ -415,20 +437,16 @@ static off_t stdin_lseek(file_t *this, off_t offset, int whence) {
 }
 
 static int stdin_close(file_t *this) {
-  return -1;
+  return basic_file_close(this);
 }
 
-void init_as_stdin(file_t *file) {
-  file->offset = file ->ref_count = 0;
-  file->inode = NULL;
-  file->inode_manager = NULL;
-  file->readable = 1;
-  file->writable = 0;
-  kmt->init(file->lock, "stdin_lock");
-  file->ops.read_handle = stdin_read;
-  file->ops.write_handle = stdin_write;
-  file->ops.lseek_handle = stdin_lseek;
-  file->ops.close_handle = stdin_close;
+file_t *file_table_alloc_stdin() {
+  file_ops_t ops;
+  ops.read_handle = stdin_read;
+  ops.write_handle = stdin_write;
+  ops.lseek_handle = stdin_lseek;
+  ops.close_handle = stdin_close;
+  return file_table_alloc(NULL, NULL, 1, 0, &ops);
 }
 
 /*------------------------------------------
@@ -457,21 +475,18 @@ static off_t stdout_lseek(file_t *this, off_t offset, int whence) {
 }
 
 static int stdout_close(file_t *this) {
-  return -1;
+  return basic_file_close(this);
 }
 
-void init_as_stdout(file_t *file) {
-  file->offset = file ->ref_count = 0;
-  file->inode = NULL;
-  file->inode_manager = NULL;
-  file->readable = 0;
-  file->writable = 1;
-  kmt->init(file->lock, "stdout_lock");
-  file->ops.read_handle = stdout_read;
-  file->ops.write_handle = stdout_write;
-  file->ops.lseek_handle = stdout_lseek;
-  file->ops.close_handle = stdout_close;
+file_t *file_table_alloc_stdout() {
+  file_ops_t ops;
+  ops.read_handle = stdout_read;
+  ops.write_handle = stdout_write;
+  ops.lseek_handle = stdout_lseek;
+  ops.close_handle = stdout_close;
+  return file_table_alloc(NULL, NULL, 0, 1, &ops);
 }
+
 
 /*------------------------------------------
                     stderr
@@ -499,18 +514,14 @@ static off_t stderr_lseek(file_t *this, off_t offset, int whence) {
 }
 
 static int stderr_close(file_t *this) {
-  return -1;
+  return basic_file_close(this);
 }
 
-void init_as_stderr(file_t *file) {
-  file->offset = file ->ref_count = 0;
-  file->inode = NULL;
-  file->inode_manager = NULL;
-  file->readable = 0;
-  file->writable = 1;
-  kmt->init(file->lock, "stderr_lock");
-  file->ops.read_handle = stderr_read;
-  file->ops.write_handle = stderr_write;
-  file->ops.lseek_handle = stderr_lseek;
-  file->ops.close_handle = stderr_close;
+file_t *file_table_alloc_stderr() {
+  file_ops_t ops;
+  ops.read_handle = stderr_read;
+  ops.write_handle = stderr_write;
+  ops.lseek_handle = stderr_lseek;
+  ops.close_handle = stderr_close;
+  return file_table_alloc(NULL, NULL, 0, 1, &ops);
 }
