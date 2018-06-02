@@ -428,7 +428,8 @@ int kvfs_test() {
   Assert(vfs->write(fd, &d, sizeof(d)) == sizeof(d));
   Assert(file->offset == sizeof(n) + sizeof(d));
   
-  int n2, d2;
+  int n2;
+  double d2;
   Assert(vfs->lseek(fd, 0, SEEK_SET) == 0);
   Assert(vfs->read(fd, &n2, sizeof(n2)) == sizeof(n2));
   Assert(n2 == n);
