@@ -453,7 +453,7 @@ int kvfs_test() {
   Assert(fd != -1);
   Assert(vfs->write(fd, &n, sizeof(n) == -1));
   Assert(vfs->close(fd) == 0);
-  
+
   Assert(vfs->close(fd + 1) == -1);
   return 1;
 }
@@ -495,6 +495,31 @@ int devfs_test() {
 
   return 1;
 }
+
+/*------------------------------------------
+                  procfs test
+  ------------------------------------------*/
+
+static void nothing(void *) {
+  while (1)
+    continue;
+}
+
+int procfs_test() {
+  thread_t thread;
+  kmt->create(&thread, nothing, NULL);
+
+  filesystem_t *fs = fs_manager_get("/proc", NULL);
+  inode_manager_print(&fs->inode_manager);
+
+  filesystem_t *fs = fs_manager_get("/", NULL);
+  inode_manager_print(&fs->inode_manager);
+
+  filesystem_t *fs = fs_manager_get("/dev", NULL);
+  inode_manager_print(&fs->inode_manager);
+  return 1;
+}
+
 /*------------------------------------------
                 test run
   ------------------------------------------*/
@@ -512,5 +537,7 @@ void test_run() {
   TEST(file_table_test);
   TEST(kvfs_test);
   TEST(devfs_test);
-  Panic("Stop");
+  TEST(procfs_test);
+
+  Panic("ALL TESTS PASSED");
 }
