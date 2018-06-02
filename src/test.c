@@ -402,7 +402,6 @@ int kvfs_test() {
   Assert(vfs->open("/lib/libc.so", O_RDONLY) == -1);
   Assert(vfs->open("/usr/cql/minilab", O_RDWR) == -1);
   int fd = vfs->open("/usr/cql/oslab", O_RDWR);
-  Log("fd %d\n", fd);
   Assert(fd != -1);
   file_t *file = fd_table_get(&cur_thread->fd_table, fd);
   Assert(file->readable);
@@ -543,6 +542,9 @@ void test_run(void *arg) {
   TEST(devfs_test);
   TEST(procfs_test);
 
+  char buf[10];
+  size_t nread = vfs->read(STDIN_FILENO, buf, 10);
+  vfs->write(STDOUT_FILENO, buf, nread);
   printf("\33[1;32mALL TESTS PASSED\33[0m\n");
   while(1)
     continue;
