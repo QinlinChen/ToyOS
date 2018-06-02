@@ -515,21 +515,26 @@ int procfs_test() {
   strcat(path, name);
   strcat(path, "/hello");
 
-  int fd = vfs->open(path, O_RDONLY);
+  int fd;
+  size_t size;
+  fd = vfs->open(path, O_RDONLY);
   Assert(fd != -1);
-  vfs->read(fd, buf, 1024);
+  size = vfs->read(fd, buf, 1024);
+  buf[size] = '\0';
   printf("%s\n", buf);
   Assert(vfs->close(fd) == 0);
 
   fd = vfs->open("/proc/cpuinfo", O_RDONLY);
   Assert(fd != -1);
-  vfs->read(fd, buf, 1024);
+  size = vfs->read(fd, buf, 1024);
+  buf[size] = '\0';
   printf("%s\n", buf);
   Assert(vfs->close(fd) == 0);
 
   fd = vfs->open("/proc/meminfo", O_RDONLY);
   Assert(fd != -1);
-  vfs->read(fd, buf, 1024);
+  size = vfs->read(fd, buf, 1024);
+  buf[size] = '\0';
   printf("%s\n", buf);
   Assert(vfs->close(fd) == 0);
 
