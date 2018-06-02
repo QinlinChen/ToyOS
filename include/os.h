@@ -148,6 +148,11 @@ inode_t *inode_manager_lookup(inode_manager_t *inode_manager, const char *path,
 void inode_manager_remove(inode_manager_t *inode_manager, inode_t *inode);
 void inode_manager_print(inode_manager_t *inode_manager);
 int inode_manager_checkmode(inode_manager_t *inode_manager, inode_t *inode, int mode);
+size_t inode_manager_get_filesize(inode_manager_t *inode_manager, inode_t *inode);
+ssize_t inode_manager_read(inode_manager_t *inode_manager, inode_t *inode,
+                           off_t offset, void *buf, size_t size);
+ssize_t inode_manager_write(inode_manager_t *inode_manager, inode_t *inode,
+                            off_t offset, const void *buf, size_t size);
 
 /*------------------------------------------
                     file.h
@@ -170,6 +175,7 @@ typedef struct file_ops {
 struct file {
   off_t offset;
   inode_t *inode;
+  inode_manager_t *inode_manager;
   int ref_count;
   int readable;
   int writable;
@@ -184,7 +190,8 @@ struct file {
 
 // thread safe
 void file_table_init();
-int file_table_alloc(inode_t *inode, int readable, int writable, file_ops_t *ops);
+int file_table_alloc(inode_t *inode, inode_manager_t *inode_manager,
+                     int readable, int writable, file_ops_t *ops);
 void file_table_free(file_t *file);
 file_t *file_table_get(int fd);
 

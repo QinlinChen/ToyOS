@@ -182,3 +182,26 @@ int inode_manager_checkmode(inode_manager_t *inode_manager, inode_t *inode, int 
   kmt->spin_unlock(&inode_manager->lock);
   return 1;
 }
+
+size_t inode_manager_get_filesize(inode_manager_t *inode_manager, inode_t *inode) {
+  kmt->spin_lock(&inode_manager->lock);
+  size_t filesize = string_length(&inode->data);
+  kmt->spin_unlock(&inode_manager->lock);
+  return filesize;
+}
+
+ssize_t inode_manager_read(inode_manager_t *inode_manager, inode_t *inode,
+                           off_t offset, void *buf, size_t size) {
+  kmt->spin_lock(&inode_manager->lock);
+  ssize_t nread = string_read(&inode->data, offset, buf, size);
+  kmt->spin_unlock(&inode_manager->lock);
+  return nread;
+}
+
+ssize_t inode_manager_write(inode_manager_t *inode_manager, inode_t *inode,
+                            off_t offset, const void *buf, size_t size) {
+  kmt->spin_lock(&inode_manager->lock);
+  ssize_t nwritten = string_write(&inode->data, offset, buf, size);
+  kmt->spin_unlock(&inode_manager->lock);
+  return nwritten;
+}

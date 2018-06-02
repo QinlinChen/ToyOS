@@ -36,9 +36,8 @@ void delete_filesystem(filesystem_t *fs) {
 // basic file system's implementation
 static ssize_t basic_file_read(file_t *this, char *buf, size_t size) {
   kmt->spin_lock(&this->lock);
-  string_t *data = &this->inode->data;
-  off_t offset = this->offset;
-  ssize_t nread = string_read(data, offset, buf, size);
+  ssize_t nread = inode_manager_read(this->inode_manager, this->inode,
+                                     this->offset, buf, size);
   this->offset += nread;
   kmt->spin_unlock(&this->lock);
   return nread;
@@ -46,9 +45,8 @@ static ssize_t basic_file_read(file_t *this, char *buf, size_t size) {
 
 static ssize_t basic_file_write(file_t *this, const char *buf, size_t size) {
   kmt->spin_lock(&this->lock);
-  string_t *data = &this->inode->data;
-  off_t offset = this->offset;
-  ssize_t nwritten = string_write(data, offset, buf, size);
+  ssize_t nwritten = inode_manager_write(this->inode_manager, this->inode,
+                                         this->offset, buf, size);
   this->offset += nwritten;
   kmt->spin_unlock(&this->lock);
   return nwritten;
@@ -56,14 +54,15 @@ static ssize_t basic_file_write(file_t *this, const char *buf, size_t size) {
 
 static off_t basic_file_lseek(file_t *this, off_t offset, int whence) {
   kmt->spin_lock(&this->lock);
+  size_t filesize = inode_manager_get_filesize(this->inode_manager, this->inode);
   string_t *data = &this->inode->data;
   switch (whence) {
     case SEEK_SET: break;
     case SEEK_CUR: offset += this->offset; break;
-    case SEEK_END: offset += (off_t)string_length(data); break;
+    case SEEK_END: offset += filesize; break;
     default: Panic("Should not reach here");
   }
-  if (offset > string_length(data) || offset < 0) {
+  if (offset > filesize || offset < 0) {
     kmt->spin_unlock(&this->lock);
     return -1;
   }
@@ -130,10 +129,11 @@ static int basic_fs_open(filesystem_t *this, const char *path, int flags, file_o
   }
 
   // allocate fd
-  int fd = file_table_alloc(inode, readable, writable, ops);
+  int fd = file_table_alloc(inode, manager, readable, writable, ops);
   kmt->spin_unlock(&this->lock);
   return fd;
 }
+
 /*------------------------------------------
                     kvfs
   ------------------------------------------*/
@@ -173,3 +173,47 @@ filesystem_t *new_kvfs(const char *name) {
   ops.open_handle = kvfs_open;
   return new_filesystem(name, &ops);
 }
+
+/*------------------------------------------
+                    devfs
+  ------------------------------------------*/
+
+// static ssize_t devfs_read(file_t *this, char *buf, size_t size) {
+//   return basic_file_read(this, buf, size);
+// }
+
+// static ssize_t devfs_write(file_t *this, const char *buf, size_t size) {
+//   return basic_file_write(this, buf, size);
+// }
+
+// static off_t devfs_lseek(file_t *this, off_t offset, int whence) {
+//   return basic_file_lseek(this, offset, whence);
+// }
+
+// static int devfs_close(file_t *this) {
+//   return basic_file_close(this);
+// }
+
+// static int devfs_access(filesystem_t *this, const char *path, int mode) {
+//   return basic_fs_access(this, path, mode);
+// }
+
+// static int devfs_open(filesystem_t *this, const char *path, int flags) {
+//   if (flags & O_CREAT) {
+//     Log("Forbid creating files in devfs");
+//     return -1;
+//   }
+//   file_ops_t ops;
+//   ops.read_handle = devfs_read;
+//   ops.write_handle = devfs_write;
+//   ops.lseek_handle = devfs_lseek;
+//   ops.close_handle = devfs_close;
+//   return basic_fs_open(this, path, flags, &ops);
+// }
+
+// filesystem_t *new_kvfs(const char *name) {
+//   filesystem_ops_t ops;
+//   ops.access_handle = devfs_access;
+//   ops.open_handle = devfs_open;
+//   return new_filesystem(name, &ops);
+// }
