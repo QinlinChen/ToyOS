@@ -512,10 +512,10 @@ int procfs_test() {
   filesystem_t *fs = fs_manager_get("/proc", NULL);
   inode_manager_print(&fs->inode_manager);
 
-  filesystem_t *fs = fs_manager_get("/", NULL);
+  fs = fs_manager_get("/", NULL);
   inode_manager_print(&fs->inode_manager);
 
-  filesystem_t *fs = fs_manager_get("/dev", NULL);
+  fs = fs_manager_get("/dev", NULL);
   inode_manager_print(&fs->inode_manager);
   return 1;
 }
