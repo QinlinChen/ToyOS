@@ -407,9 +407,13 @@ filesystem_t *new_procfs(const char *name) {
 static ssize_t stdin_read(file_t *this, void *buf, size_t size) {
   static char line[MAXLINE];
   int i = 0;
-  while (i < MAXLINE)
-    if ((line[i++] = getc()) == '\n')
+  char ch;
+  while (i < MAXLINE) {
+    if ((ch = getc()) == '\n')
       break;
+    _putc(ch);
+    line[i++] = ch;
+  }
   
   char *bufp = buf;
   char *linep = line;
