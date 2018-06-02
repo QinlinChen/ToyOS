@@ -22,6 +22,7 @@ extern void test_run(void *arg);
 static void os_run() {
   thread_t test_thread;
   kmt->create(&test_thread, test_run, NULL);
+  printf("Fuck!\n");
   _intr_write(1); // enable interrupt
   while (1) ; // should never return
 }
