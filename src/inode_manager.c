@@ -9,6 +9,7 @@ static inode_t *new_inode(const char *name, int type, int mode) {
   node->mode = mode;
   node->parent = node->child = node->next = node->prev = NULL;
   string_init(&node->data);
+  Log("inode data size %d", node->data.size);
   return node;
 }
 
