@@ -34,7 +34,7 @@ file_t *fd_table_replace(fd_table_t *fd_table, int fd, file_t *newfile) {
   return oldfile;
 }
 
-void fd_table_remove(fd_table_t *fd_table, int fd) {
+file_t *fd_table_remove(fd_table_t *fd_table, int fd) {
   kmt->spin_lock(&fd_table->lock);
   file_t *oldfile = fd_table->map[fd];
   fd_table->map[fd] = NULL;
