@@ -421,10 +421,13 @@ int kvfs_test() {
   Assert(file->readable);
   Assert(file->writable);
 
-  int number = 123;
-  vfs->write(fd, &number, sizeof(number));
-  printf("%d\n", file->offset);
-  printf("%d\n", file->ref_count);
+  int n = 100;
+  double d = 3.1415926;
+  Assert(vfs->write(fd, &n, sizeof(n)) == sizeof(n));
+  Assert(vfs->write(fd, &d, sizeof(d)) == sizeof(d));
+  Assert(file->offset == sizeof(n) + sizeof(d));
+  Assert(file->ref_count == 1);
+
   
   return 1;
 }
