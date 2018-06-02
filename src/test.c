@@ -499,6 +499,14 @@ void test_run() {
   // sem_test(3);
   // hello_test();
   // stackfence_test();
+  int n = 123;
+  char buf[512];
+  char number[512];
+  itoa(123, 10, 1, number);
+  strcpy(buf, "/proc/");
+  strcat(buf, number);
+  printf("%s\n", buf);
+
   TEST(fs_manager_test);
   TEST(inode_manager_test);
   TEST(string_test);

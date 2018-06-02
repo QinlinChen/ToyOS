@@ -155,6 +155,18 @@ char *strcpy(char *dst, const char *src) {
   return ret;
 }
 
+char *strcat(char *dst, const char *src) {
+  char *ret = dst;
+
+  while (*dst)
+    dst++;
+
+  while(*dst++ = *src++)
+    continue;
+
+  return ret;
+}
+
 int strcmp(const char *s1, const char *s2) {
   Assert(s1 != NULL && s2 != NULL);
   while(*s1 && *s1 == *s2)
