@@ -425,6 +425,7 @@ int kvfs_test() {
   vfs->write(fd, &number, sizeof(number));
   printf("%d\n", file->offset);
   printf("%d\n", file->ref_count);
+  
   return 1;
 }
 

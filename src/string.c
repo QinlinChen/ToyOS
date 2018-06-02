@@ -75,7 +75,7 @@ ssize_t string_read(string_t *s, off_t offset, void *buf, size_t size) {
   return nread;
 }
 
-ssize_t string_write(string_t *s, off_t offset, void *buf, size_t size) {
+ssize_t string_write(string_t *s, off_t offset, const void *buf, size_t size) {
   size_t nleft = size;
   ssize_t nwritten = 0;
   char *bufp = buf;
