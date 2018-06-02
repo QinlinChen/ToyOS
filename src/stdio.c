@@ -177,6 +177,7 @@ char getc() {
   int key, down;
   do {
     read_key(&key, &down);
+    _putc(key);
   } while ((key != _KEY_NONE) & down);
   return keycode[key];
 }
