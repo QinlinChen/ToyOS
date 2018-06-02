@@ -166,7 +166,12 @@ filesystem_t *new_kvfs(const char *name) {
   filesystem_ops_t ops;
   ops.access_handle = kvfs_access;
   ops.open_handle = kvfs_open;
-  return new_filesystem(name, &ops);
+  filesystem_t *fs = new_filesystem(name, &ops);
+  // Remember to add /dev and /proc directories before calling mount.
+  inode_manager_t *manager = &fs->inode_manager;
+  inode_manager_lookup(manager, "/dev", INODE_DIR, 1, S_IRUSR);
+  inode_manager_lookup(manager, "/proc", INODE_DIR, 1, S_IRUSR);
+  return fs;
 }
 
 /*------------------------------------------
@@ -265,8 +270,64 @@ filesystem_t *new_devfs(const char *name) {
   ops.access_handle = devfs_access;
   ops.open_handle = devfs_open;
   filesystem_t *fs = new_filesystem(name, &ops);
-  inode_manager_lookup(&fs->inode_manager, "/null", INODE_FILE, 1, DEFAULT_MODE);
-  inode_manager_lookup(&fs->inode_manager, "/zero", INODE_FILE, 1, DEFAULT_MODE);
-  inode_manager_lookup(&fs->inode_manager, "/random", INODE_FILE, 1, DEFAULT_MODE);
+  // devfs has three devices: null, zero and random.
+  inode_manager_t *manager = &fs->inode_manager;
+  inode_manager_lookup(manager, "/null", INODE_FILE, 1, DEFAULT_MODE);
+  inode_manager_lookup(manager, "/zero", INODE_FILE, 1, DEFAULT_MODE);
+  inode_manager_lookup(manager, "/random", INODE_FILE, 1, DEFAULT_MODE);
+  return fs;
+}
+
+/*------------------------------------------
+                    procfs
+  ------------------------------------------*/
+
+static ssize_t procfs_read(file_t *this, void *buf, size_t size) {
+  return basic_file_read(this, buf, size);
+}
+
+static ssize_t procfs_write(file_t *this, const void *buf, size_t size) {
+  return basic_file_write(this, buf, size);
+}
+
+static off_t procfs_lseek(file_t *this, off_t offset, int whence) {
+  return basic_file_lseek(this, offset, whence);
+}
+
+static int procfs_close(file_t *this) {
+  return basic_file_close(this);
+}
+
+static int procfs_access(filesystem_t *this, const char *path, int mode) {
+  return basic_fs_access(this, path, mode);
+}
+
+static int procfs_open(filesystem_t *this, const char *path, int flags) {
+  file_ops_t ops;
+  ops.read_handle = procfs_read;
+  ops.write_handle = procfs_write;
+  ops.lseek_handle = procfs_lseek;
+  ops.close_handle = procfs_close;
+  return basic_fs_open(this, path, flags, &ops);
+}
+
+filesystem_t *new_procfs(const char *name) {
+  filesystem_ops_t ops;
+  ops.access_handle = procfs_access;
+  ops.open_handle = procfs_open;
+  filesystem_t *fs = new_filesystem(name, &ops);
+  inode_manager_t *manager = &fs->inode_manager;
+
+  // add cpuinfo
+  const char *cpuinfo = "I am cpu infomation!";
+  inode_t *inode = inode_manager_lookup(manager, "/cpuinfo", INODE_FILE, 1, S_IRUSR);
+  size_t nwritten = inode_manager_write(manager, inode, 0, cpuinfo, strlen(cpuinfo));
+  Assert(nwritten == strlen(cpuinfo));
+
+  const char *meminfo = "I am memeory infomation!";
+  inode = inode_manager_lookup(manager, "/meminfo", INODE_FILE, 1, S_IRUSR);
+  nwritten = inode_manager_write(manager, inode, 0, meminfo, strlen(meminfo));
+  Assert(nwritten == strlen(meminfo));  
+  
   return fs;
 }

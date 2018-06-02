@@ -11,6 +11,7 @@ size_t strlen(const char* s);
 char *strcpy(char *dst, const char *src);
 int strcmp(const char *s1, const char *s2);
 char *strchr(const char *s, int c);
+void itoa(int x, int base, int sgn, char *dst);
 
 // rand.h
 void srand(unsigned int seed);

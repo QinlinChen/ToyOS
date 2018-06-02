@@ -175,3 +175,28 @@ char *strchr(const char *s, int ch) {
 
   return NULL;
 }
+
+void itoa(int x, int base, int sgn, char *dst) {
+  static char digits[] = "0123456789abcdef";
+  char buf[32];
+
+  int neg = 0;
+  uint32_t ux = x;
+  if(sgn && x < 0){
+    neg = 1;
+    ux = -x;
+  }
+
+  int i = 0;
+  do {
+    buf[i++] = digits[ux % base];
+  } while((ux /= base) != 0);
+
+  if(neg)
+    buf[i++] = '-';
+  
+  while(--i >= 0)
+    *dst++ = buf[i];
+  
+  *dst = '\0';
+}
