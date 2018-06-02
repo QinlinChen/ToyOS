@@ -552,6 +552,10 @@ void test_run() {
   // sem_test(3);
   // hello_test();
   // stackfence_test();
+  char ch;
+  while ((ch = getc())) {
+    _putc(ch);
+  }
   TEST(fs_manager_test);
   TEST(inode_manager_test);
   TEST(string_test);

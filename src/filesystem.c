@@ -1,5 +1,6 @@
 #include "os.h"
 #include "common.h"
+#include <amdevutil.h>
 
 /*------------------------------------------
               basic file system

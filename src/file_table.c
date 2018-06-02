@@ -14,6 +14,9 @@ void file_table_init() {
   is_free[STDIN_FILENO] = 0;
   is_free[STDOUT_FILENO] = 0;
   is_free[STDERR_FILENO] = 0;
+  init_as_stdin(&file_table[STDIN_FILENO]);
+  init_as_stdout(&file_table[STDOUT_FILENO]);
+  init_as_stderr(&file_table[STDERR_FILENO]);
   kmt->spin_unlock(&lock);
 }
 

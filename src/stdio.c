@@ -1,6 +1,8 @@
 #include <stdarg.h>
 #include <common.h>
 #include <os.h>
+#include <amdevutil.h>
+#include <amdev.h>
 
 static inline int is_flag(char ch) {
   return strchr("0-+ #", ch) != NULL;
@@ -160,3 +162,21 @@ int sprintf(char* out, const char* format, ...) {
 
 }
 */
+
+static const char keycode[] = 
+"??????????????"
+"`1234567890-=\b"
+"\tqwertyuiop[]\\"
+"?asdfghjkl;'\n"
+"?zxcvbnm,./?"
+"??? ??"
+"??????"
+"????";
+
+char getc() {
+  int key, down;
+  do {
+    read_key(&key, &down);
+  } while (key != _KEY_NONE & down);
+  return keycode[key];
+}
