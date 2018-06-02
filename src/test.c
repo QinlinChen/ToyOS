@@ -420,6 +420,11 @@ int kvfs_test() {
   file_t *file = file_table_get(fd);
   Assert(file->readable);
   Assert(file->writable);
+
+  int number = 123;
+  vfs->write(fd, &number, sizeof(number));
+  printf("%d\n", file->offset);
+  printf("%d\n", file->ref_count);
   return 1;
 }
 
