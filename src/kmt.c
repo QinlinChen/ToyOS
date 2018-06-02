@@ -60,14 +60,14 @@ thread_t *new_thread(void (*entry)(void *), void *arg) {
  
   fd_table_t *fd_table = &thread->fd_table;
   fd_table_init(fd_table);
-  int ret;
+  file_t *ret;
   ret = fd_table_replace(fd_table, STDIN_FILENO, file_table_alloc_stdin());
   Assert(ret == NULL);
   ret = fd_table_replace(fd_table, STDOUT_FILENO, file_table_alloc_stdout());
   Assert(ret == NULL);
   ret = fd_table_replace(fd_table, STDERR_FILENO, file_table_alloc_stderr());
   Assert(ret == NULL);
-  
+
   Log("Created thread (tid: %d), kstack start: %p", 
     thread->tid, stackinfo.start);
   return thread;
