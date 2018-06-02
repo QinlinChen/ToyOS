@@ -52,8 +52,10 @@ static int vfs_unmount(const char *path) {
 static int vfs_access(const char *path, int mode) {
   char subpath[MAXPATHLEN];
   filesystem_t *fs = fs_manager_get(path, subpath);
-  if (fs == NULL)
+  if (fs == NULL) {
+    Log("Can't parse path!");
     return -1;
+  }
   Assert(fs->ops.access_handle != NULL);
   return fs->ops.access_handle(fs, subpath, mode);
 }
@@ -61,8 +63,10 @@ static int vfs_access(const char *path, int mode) {
 static int vfs_open(const char *path, int flags) {
   char subpath[MAXPATHLEN];
   filesystem_t *fs = fs_manager_get(path, subpath);
-  if (fs == NULL)
+  if (fs == NULL) {
+    Log("Can't parse path!");
     return -1;
+  }
   Assert(fs->ops.open_handle != NULL);
   return fs->ops.open_handle(fs, subpath, flags);
 }
@@ -70,7 +74,7 @@ static int vfs_open(const char *path, int flags) {
 static ssize_t vfs_read(int fd, void *buf, size_t size) {
   file_t *file = file_table_get(fd);
   if (file == NULL) {
-    Log("Invalid fd");
+    Log("Invalid fd!");
     return -1;
   }
   Assert(file->ops.read_handle != NULL);
@@ -80,7 +84,7 @@ static ssize_t vfs_read(int fd, void *buf, size_t size) {
 static ssize_t vfs_write(int fd, void *buf, size_t size) {
   file_t *file = file_table_get(fd);
   if (file == NULL) {
-    Log("Invalid fd");
+    Log("Invalid fd!");
     return -1;
   }
   Assert(file->ops.write_handle != NULL);
@@ -90,7 +94,7 @@ static ssize_t vfs_write(int fd, void *buf, size_t size) {
 static off_t vfs_lseek(int fd, off_t offset, int whence) {
   file_t *file = file_table_get(fd);
   if (file == NULL) {
-    Log("Invalid fd");
+    Log("Invalid fd!");
     return -1;
   }
   Assert(file->ops.lseek_handle != NULL);
@@ -100,7 +104,7 @@ static off_t vfs_lseek(int fd, off_t offset, int whence) {
 static int vfs_close(int fd) {
   file_t *file = file_table_get(fd);
   if (file == NULL) {
-    Log("Invalid fd");
+    Log("Invalid fd!");
     return -1;
   }
   Assert(file->ops.close_handle != NULL);

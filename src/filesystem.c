@@ -24,17 +24,20 @@ void filesystem_destroy(filesystem_t *fs) {
 
 filesystem_t *new_filesystem(const char *name, filesystem_ops_t *ops) {
   filesystem_t *fs = pmm->alloc(sizeof(filesystem_t));
+  Assert(fs != NULL);
   filesystem_init(fs, name, ops);
   return fs;
 }
 
 void delete_filesystem(filesystem_t *fs) {
+  Assert(fs != NULL);
   filesystem_destroy(fs);
   pmm->free(fs);
 }
 
 // basic file system's implementation
 static ssize_t basic_file_read(file_t *this, void *buf, size_t size) {
+  Assert(this != NULL && buf != NULL);
   kmt->spin_lock(&this->lock);
 
   if (!this->readable) {
@@ -78,6 +81,7 @@ static off_t basic_file_lseek(file_t *this, off_t offset, int whence) {
     default: Panic("Should not reach here");
   }
   if (offset > filesize || offset < 0) {
+    Log("Offset is out of bound!");
     kmt->spin_unlock(&this->lock);
     return -1;
   }
@@ -141,6 +145,7 @@ static int basic_fs_open(filesystem_t *this, const char *path, int flags, file_o
 
   // allocate fd
   int fd = file_table_alloc(inode, manager, readable, writable, ops);
+  Assert(fd != -1);
   kmt->spin_unlock(&this->lock);
   return fd;
 }
@@ -183,6 +188,7 @@ filesystem_t *new_kvfs(const char *name) {
   ops.access_handle = kvfs_access;
   ops.open_handle = kvfs_open;
   filesystem_t *fs = new_filesystem(name, &ops);
+
   // Remember to add /dev and /proc directories before calling mount.
   inode_manager_t *manager = &fs->inode_manager;
   inode_manager_lookup(manager, "/dev", INODE_DIR, 1, S_IRUSR);
@@ -198,6 +204,12 @@ static ssize_t devfs_read(file_t *this, void *buf, size_t size) {
   kmt->spin_lock(&this->lock);
   inode_manager_t *manager = this->inode_manager;
   inode_t *inode = this->inode;
+
+  if (!this->readable) {
+    Log("Read permission denied!");
+    kmt->spin_unlock(&this->lock);
+    return -1;
+  }
 
   // read null
   if (inode_manager_cmp_name(manager, inode, "null") == 0) {
@@ -232,6 +244,12 @@ static ssize_t devfs_write(file_t *this, const void *buf, size_t size) {
   kmt->spin_lock(&this->lock);
   inode_manager_t *manager = this->inode_manager;
   inode_t *inode = this->inode;
+
+  if (!this->writable) {
+    Log("Write permission denied!");
+    kmt->spin_unlock(&this->lock);
+    return -1;
+  }
 
   // write null
   if (inode_manager_cmp_name(manager, inode, "null") == 0) {
