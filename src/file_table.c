@@ -27,7 +27,7 @@ int file_table_alloc(inode_t *inode, read_handle_t read_handle, write_handle_t w
       file->offset = 0;
       file->inode = inode;
       file->ref_count = 1;
-      kmt->spin_init(&file->lock);
+      kmt->spin_init(&file->lock, "file_lock");
       file->read_handle = read_handle;
       file->write_handle = write_handle;
       file->lseek_handle = lseek_handle;
