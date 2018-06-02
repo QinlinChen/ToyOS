@@ -53,8 +53,8 @@ static int vfs_access(const char *path, int mode) {
   filesystem_t *fs = fs_manager_get(path, subpath);
   if (fs == NULL)
     return -1;
-  Assert(fs->access_handle != NULL);
-  return fs->access_handle(fs, subpath, mode);
+  Assert(fs->ops.access_handle != NULL);
+  return fs->ops.access_handle(fs, subpath, mode);
 }
 
 static int vfs_open(const char *path, int flags) {
@@ -62,30 +62,30 @@ static int vfs_open(const char *path, int flags) {
   filesystem_t *fs = fs_manager_get(path, subpath);
   if (fs == NULL)
     return -1;
-  Assert(fs->open_handle != NULL);
-  return fs->open_handle(fs, subpath, flags);
+  Assert(fs->ops.open_handle != NULL);
+  return fs->ops.open_handle(fs, subpath, flags);
 }
 
 static ssize_t vfs_read(int fd, void *buf, size_t size) {
   file_t *file = file_table_get(fd);
-  Assert(file->read_handle != NULL);
-  return file->read_handle(file, buf, size);
+  Assert(file->ops.read_handle != NULL);
+  return file->ops.read_handle(file, buf, size);
 }
 
 static ssize_t vfs_write(int fd, void *buf, size_t size) {
   file_t *file = file_table_get(fd);
-  Assert(file->write_handle != NULL);
-  return file->write_handle(file, buf, size);
+  Assert(file->ops.write_handle != NULL);
+  return file->ops.write_handle(file, buf, size);
 }
 
 static off_t vfs_lseek(int fd, off_t offset, int whence) {
   file_t *file = file_table_get(fd);
-  Assert(file->lseek_handle != NULL);
-  return file->lseek_handle(file, offset, whence);
+  Assert(file->ops.lseek_handle != NULL);
+  return file->ops.lseek_handle(file, offset, whence);
 }
 
 static int vfs_close(int fd) {
   file_t *file = file_table_get(fd);
-  Assert(file->close_handle != NULL);
-  return file->close_handle(file);
+  Assert(file->ops.close_handle != NULL);
+  return file->ops.close_handle(file);
 }
