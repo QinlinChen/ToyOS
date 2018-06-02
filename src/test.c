@@ -539,5 +539,6 @@ void test_run() {
   TEST(devfs_test);
   TEST(procfs_test);
 
-  Panic("ALL TESTS PASSED");
+  printf("\33[1;32mALL TESTS PASSED\33[0m\n");
+  _halt(0);
 }
