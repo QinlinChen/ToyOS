@@ -226,8 +226,8 @@ void delete_filesystem(filesystem_t *fs);
 
 // three filesystems' factory function
 filesystem_t *new_kvfs(const char *name);
-filesystem_t *new_procfs(const char *name);
 filesystem_t *new_devfs(const char *name);
+filesystem_t *new_procfs(const char *name);
 
 /*------------------------------------------
                   fs_manager.h

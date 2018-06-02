@@ -264,7 +264,7 @@ static int devfs_open(filesystem_t *this, const char *path, int flags) {
   return basic_fs_open(this, path, flags, &ops);
 }
 
-filesystem_t *new_kvfs(const char *name) {
+filesystem_t *new_devfs(const char *name) {
   filesystem_ops_t ops;
   ops.access_handle = devfs_access;
   ops.open_handle = devfs_open;
