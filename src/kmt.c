@@ -267,11 +267,11 @@ static void kmt_spin_lock(spinlock_t *lk) {
   while (_atomic_xchg(&lk->locked, 1) == 1)
     continue;
 
-  // Log("%s is locked", lk->name);
+  Log("%s is locked", lk->name);
 }
 
 static void kmt_spin_unlock(spinlock_t *lk) {
-  // Log("%s is unlocked", lk->name);
+  Log("%s is unlocked", lk->name);
   
   lk->locked = 0;
 

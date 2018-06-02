@@ -182,6 +182,7 @@ int file_ref_count_is_zero(file_t *file);
                 file_table.h
   ------------------------------------------*/
 
+// thread safe
 void file_table_init();
 int file_table_alloc(inode_t *inode, read_handle_t read_handle, write_handle_t write_handle,
                      lseek_handle_t lseek_handle, close_handle_t close_handle);
