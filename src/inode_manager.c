@@ -205,3 +205,10 @@ ssize_t inode_manager_write(inode_manager_t *inode_manager, inode_t *inode,
   kmt->spin_unlock(&inode_manager->lock);
   return nwritten;
 }
+
+int inode_manager_cmp_name(inode_manager_t *inode_manager, inode_t *inode, const char *name) {
+  kmt->spin_lock(&inode_manager->lock);
+  int ret = strcmp(inode->name, name);
+  kmt->spin_unlock(&inode_manager->lock);
+  return ret;
+}

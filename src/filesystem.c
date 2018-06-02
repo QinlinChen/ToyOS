@@ -34,7 +34,7 @@ void delete_filesystem(filesystem_t *fs) {
 }
 
 // basic file system's implementation
-static ssize_t basic_file_read(file_t *this, char *buf, size_t size) {
+static ssize_t basic_file_read(file_t *this, void *buf, size_t size) {
   kmt->spin_lock(&this->lock);
   ssize_t nread = inode_manager_read(this->inode_manager, this->inode,
                                      this->offset, buf, size);
@@ -43,7 +43,7 @@ static ssize_t basic_file_read(file_t *this, char *buf, size_t size) {
   return nread;
 }
 
-static ssize_t basic_file_write(file_t *this, const char *buf, size_t size) {
+static ssize_t basic_file_write(file_t *this, const void *buf, size_t size) {
   kmt->spin_lock(&this->lock);
   ssize_t nwritten = inode_manager_write(this->inode_manager, this->inode,
                                          this->offset, buf, size);
@@ -137,11 +137,11 @@ static int basic_fs_open(filesystem_t *this, const char *path, int flags, file_o
                     kvfs
   ------------------------------------------*/
 
-static ssize_t kvfs_read(file_t *this, char *buf, size_t size) {
+static ssize_t kvfs_read(file_t *this, void *buf, size_t size) {
   return basic_file_read(this, buf, size);
 }
 
-static ssize_t kvfs_write(file_t *this, const char *buf, size_t size) {
+static ssize_t kvfs_write(file_t *this, const void *buf, size_t size) {
   return basic_file_write(this, buf, size);
 }
 
@@ -177,42 +177,100 @@ filesystem_t *new_kvfs(const char *name) {
                     devfs
   ------------------------------------------*/
 
-// static ssize_t devfs_read(file_t *this, char *buf, size_t size) {
-//   return basic_file_read(this, buf, size);
-// }
+static ssize_t devfs_read(file_t *this, void *buf, size_t size) {
+  kmt->spin_lock(&this->lock);
+  inode_manager_t *manager = this->inode_manager;
+  inode_t *inode = this->inode;
 
-// static ssize_t devfs_write(file_t *this, const char *buf, size_t size) {
-//   return basic_file_write(this, buf, size);
-// }
+  // read null
+  if (inode_manager_cmp_name(manager, inode, "null") == 0) {
+    kmt->spin_unlock(&this->lock); 
+    return 0;
+  }
 
-// static off_t devfs_lseek(file_t *this, off_t offset, int whence) {
-//   return basic_file_lseek(this, offset, whence);
-// }
+  // read zero
+  if (inode_manager_cmp_name(manager, inode, "zero") == 0) {
+    size_t nread;
+    for (nread = 0; nread < size; ++nread)
+      ((char *)buf)[nread] = 0;
+    kmt->spin_unlock(&this->lock); 
+    return nread;
+  }
 
-// static int devfs_close(file_t *this) {
-//   return basic_file_close(this);
-// }
+  // read random
+  if (inode_manager_cmp_name(manager, inode, "random") == 0) {
+    size_t nread;
+    for (nread = 0; nread < size; ++nread)
+      ((char *)buf)[nread] = (rand() % (1 << 8));
+    kmt->spin_unlock(&this->lock); 
+    return nread;
+  }
 
-// static int devfs_access(filesystem_t *this, const char *path, int mode) {
-//   return basic_fs_access(this, path, mode);
-// }
+  Panic("Should not reach here!");
+  kmt->spin_unlock(&this->lock); 
+  return -1;
+}
 
-// static int devfs_open(filesystem_t *this, const char *path, int flags) {
-//   if (flags & O_CREAT) {
-//     Log("Forbid creating files in devfs");
-//     return -1;
-//   }
-//   file_ops_t ops;
-//   ops.read_handle = devfs_read;
-//   ops.write_handle = devfs_write;
-//   ops.lseek_handle = devfs_lseek;
-//   ops.close_handle = devfs_close;
-//   return basic_fs_open(this, path, flags, &ops);
-// }
+static ssize_t devfs_write(file_t *this, const void *buf, size_t size) {
+  kmt->spin_lock(&this->lock);
+  inode_manager_t *manager = this->inode_manager;
+  inode_t *inode = this->inode;
 
-// filesystem_t *new_kvfs(const char *name) {
-//   filesystem_ops_t ops;
-//   ops.access_handle = devfs_access;
-//   ops.open_handle = devfs_open;
-//   return new_filesystem(name, &ops);
-// }
+  // write null
+  if (inode_manager_cmp_name(manager, inode, "null") == 0) {
+    kmt->spin_unlock(&this->lock); 
+    return size;
+  }
+
+  // write zero
+  if (inode_manager_cmp_name(manager, inode, "zero") == 0) {
+    kmt->spin_unlock(&this->lock); 
+    return 0;
+  }
+
+  // write random
+  if (inode_manager_cmp_name(manager, inode, "random") == 0) {
+    kmt->spin_unlock(&this->lock); 
+    return 0;
+  }
+
+  Panic("Should not reach here!");
+  kmt->spin_unlock(&this->lock); 
+  return -1;
+}
+
+static off_t devfs_lseek(file_t *this, off_t offset, int whence) {
+  return 0;
+}
+
+static int devfs_close(file_t *this) {
+  return basic_file_close(this);
+}
+
+static int devfs_access(filesystem_t *this, const char *path, int mode) {
+  return basic_fs_access(this, path, mode);
+}
+
+static int devfs_open(filesystem_t *this, const char *path, int flags) {
+  if (flags & O_CREAT) {
+    Log("Forbid creating files in devfs");
+    return -1;
+  }
+  file_ops_t ops;
+  ops.read_handle = devfs_read;
+  ops.write_handle = devfs_write;
+  ops.lseek_handle = devfs_lseek;
+  ops.close_handle = devfs_close;
+  return basic_fs_open(this, path, flags, &ops);
+}
+
+filesystem_t *new_kvfs(const char *name) {
+  filesystem_ops_t ops;
+  ops.access_handle = devfs_access;
+  ops.open_handle = devfs_open;
+  filesystem_t *fs = new_filesystem(name, &ops);
+  inode_manager_lookup(&fs->inode_manager, "/null", INODE_FILE, 1, DEFAULT_MODE);
+  inode_manager_lookup(&fs->inode_manager, "/zero", INODE_FILE, 1, DEFAULT_MODE);
+  inode_manager_lookup(&fs->inode_manager, "/random", INODE_FILE, 1, DEFAULT_MODE);
+  return fs;
+}

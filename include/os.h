@@ -147,12 +147,15 @@ inode_t *inode_manager_lookup(inode_manager_t *inode_manager, const char *path,
                               int type, int create, int mode);
 void inode_manager_remove(inode_manager_t *inode_manager, inode_t *inode);
 void inode_manager_print(inode_manager_t *inode_manager);
+
 int inode_manager_checkmode(inode_manager_t *inode_manager, inode_t *inode, int mode);
 size_t inode_manager_get_filesize(inode_manager_t *inode_manager, inode_t *inode);
+
 ssize_t inode_manager_read(inode_manager_t *inode_manager, inode_t *inode,
                            off_t offset, void *buf, size_t size);
 ssize_t inode_manager_write(inode_manager_t *inode_manager, inode_t *inode,
                             off_t offset, const void *buf, size_t size);
+int inode_manager_cmp_name(inode_manager_t *inode_manager, inode_t *inode, const char *name);
 
 /*------------------------------------------
                     file.h
