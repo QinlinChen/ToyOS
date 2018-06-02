@@ -441,7 +441,7 @@ static ssize_t stdout_read(file_t *this, void *buf, size_t size) {
 
 static ssize_t stdout_write(file_t *this, const void *buf, size_t size) {
   kmt->spin_lock(&this->lock);
-  size_t nwritten;
+  size_t nwritten = 0;
   const char *bufp = buf;
   while (size > 0) {
     _putc(*bufp++);
@@ -483,7 +483,7 @@ static ssize_t stderr_read(file_t *this, void *buf, size_t size) {
 
 static ssize_t stderr_write(file_t *this, const void *buf, size_t size) {
   kmt->spin_lock(&this->lock);
-  size_t nwritten;
+  size_t nwritten = 0;
   const char *bufp = buf;
   while (size > 0) {
     _putc(*bufp++);
