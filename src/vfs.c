@@ -32,7 +32,7 @@ static void vfs_init() {
   fs_manager_init();
   fs_manager_add("/", new_kvfs("kvfs"));
   fs_manager_add("/dev", new_devfs("devfs"));
-  // fs_manager_add("/proc", new_procfs("procfs"));
+  fs_manager_add("/proc", new_procfs("procfs"));
   
   Log("vfs initialized");
 }
@@ -69,24 +69,40 @@ static int vfs_open(const char *path, int flags) {
 
 static ssize_t vfs_read(int fd, void *buf, size_t size) {
   file_t *file = file_table_get(fd);
+  if (file == NULL) {
+    Log("Invalid fd");
+    return -1;
+  }
   Assert(file->ops.read_handle != NULL);
   return file->ops.read_handle(file, buf, size);
 }
 
 static ssize_t vfs_write(int fd, void *buf, size_t size) {
   file_t *file = file_table_get(fd);
+  if (file == NULL) {
+    Log("Invalid fd");
+    return -1;
+  }
   Assert(file->ops.write_handle != NULL);
   return file->ops.write_handle(file, buf, size);
 }
 
 static off_t vfs_lseek(int fd, off_t offset, int whence) {
   file_t *file = file_table_get(fd);
+  if (file == NULL) {
+    Log("Invalid fd");
+    return -1;
+  }
   Assert(file->ops.lseek_handle != NULL);
   return file->ops.lseek_handle(file, offset, whence);
 }
 
 static int vfs_close(int fd) {
   file_t *file = file_table_get(fd);
+  if (file == NULL) {
+    Log("Invalid fd");
+    return -1;
+  }
   Assert(file->ops.close_handle != NULL);
   return file->ops.close_handle(file);
 }

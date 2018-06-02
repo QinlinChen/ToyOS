@@ -55,7 +55,9 @@ void file_table_free(file_t *file) {
 
 file_t *file_table_get(int fd) {
   kmt->spin_lock(&lock);
-  file_t *file = &file_table[fd];
+  file_t *file = NULL;
+  if (!is_free[fd])
+    file = &file_table[fd];
   kmt->spin_unlock(&lock);
   return file;
 }

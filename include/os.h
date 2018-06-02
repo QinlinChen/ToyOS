@@ -228,7 +228,11 @@ void delete_filesystem(filesystem_t *fs);
 filesystem_t *new_kvfs(const char *name);
 filesystem_t *new_devfs(const char *name);
 filesystem_t *new_procfs(const char *name);
-
+void procfs_add_metainfo(filesystem_t *procfs, const char *name,
+                         const char *content, size_t size);
+void procfs_add_procinfo(filesystem_t *procfs, int tid, const char *name,
+                         const char *content, size_t size);
+                         
 /*------------------------------------------
                   fs_manager.h
   ------------------------------------------*/

@@ -57,7 +57,7 @@ thread_t *new_thread(void (*entry)(void *), void *arg) {
 #endif
 
   thread->regs = _make(stackinfo, (void (*)(void *))entry, arg);
-
+ 
   Log("Created thread (tid: %d), kstack start: %p", 
     thread->tid, stackinfo.start);
   return thread;
@@ -154,8 +154,19 @@ static int kmt_create(thread_t *thread,
   void (*entry)(void *arg), void *arg) {
 
   thread_t *new_thr = new_thread(entry, arg);
+  
+  // add thread to list
   threadlist_add(new_thr);
 
+  // add thread info to procfs
+  filesystem_t *procfs = fs_manager_get("/proc", NULL);
+  char content[512], number[32];
+  itoa(new_thr->tid, 10, 1, number);
+  strcpy(content, "Thread ");
+  strcat(content, number);
+  strcat(content, " say hello to you!");
+  procfs_add_procinfo(procfs, new_thr->tid, "hello", content, strlen(content));
+  
   // only return tid to user
   memset(thread, 0, sizeof(thread_t));
   thread->tid = new_thr->tid;

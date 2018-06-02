@@ -36,18 +36,34 @@ void delete_filesystem(filesystem_t *fs) {
 // basic file system's implementation
 static ssize_t basic_file_read(file_t *this, void *buf, size_t size) {
   kmt->spin_lock(&this->lock);
+
+  if (!this->readable) {
+    Log("Read permission denied!");
+    kmt->spin_unlock(&this->lock);
+    return -1;
+  }
+
   ssize_t nread = inode_manager_read(this->inode_manager, this->inode,
                                      this->offset, buf, size);
   this->offset += nread;
+
   kmt->spin_unlock(&this->lock);
   return nread;
 }
 
 static ssize_t basic_file_write(file_t *this, const void *buf, size_t size) {
   kmt->spin_lock(&this->lock);
+
+  if (!this->writable) {
+    Log("Write permission denied!");
+    kmt->spin_unlock(&this->lock);
+    return -1;
+  }
+
   ssize_t nwritten = inode_manager_write(this->inode_manager, this->inode,
                                          this->offset, buf, size);
   this->offset += nwritten;
+  
   kmt->spin_unlock(&this->lock);
   return nwritten;
 }
@@ -303,12 +319,49 @@ static int procfs_access(filesystem_t *this, const char *path, int mode) {
 }
 
 static int procfs_open(filesystem_t *this, const char *path, int flags) {
+  if (flags & O_CREAT) {
+    Log("Forbid creating files in procfs");
+    return -1;
+  }
   file_ops_t ops;
   ops.read_handle = procfs_read;
   ops.write_handle = procfs_write;
   ops.lseek_handle = procfs_lseek;
   ops.close_handle = procfs_close;
   return basic_fs_open(this, path, flags, &ops);
+}
+
+void procfs_add_metainfo(filesystem_t *procfs, const char *name,
+                         const char *content, size_t size) {
+  Assert(strcmp(procfs->name, "procfs") == 0);
+  char path[MAXPATHLEN];
+  strcpy(path, "/");
+  strcat(path, name);
+
+  kmt->spin_lock(&procfs->lock);
+  inode_manager_t *manager = &procfs->inode_manager;
+  inode_t *inode = inode_manager_lookup(manager, path, INODE_FILE, 1, S_IRUSR);
+  size_t nwritten = inode_manager_write(manager, inode, 0, content, strlen(content));
+  Assert(nwritten == strlen(content));
+  kmt->spin_unlock(&procfs->lock);
+}
+
+void procfs_add_procinfo(filesystem_t *procfs, int tid, const char *name,
+                         const char *content, size_t size) {
+  Assert(strcmp(procfs->name, "procfs") == 0);
+  char path[MAXPATHLEN], number[32];
+  strcpy(path, "/");
+  itoa(tid, 10, 1, number);
+  strcat(path, number);
+  strcat(path, "/");
+  strcat(path, name);
+
+  kmt->spin_lock(&procfs->lock);
+  inode_manager_t *manager = &procfs->inode_manager;
+  inode_t *inode = inode_manager_lookup(manager, path, INODE_FILE, 1, S_IRUSR);
+  size_t nwritten = inode_manager_write(manager, inode, 0, content, strlen(content));
+  Assert(nwritten == strlen(content));
+  kmt->spin_unlock(&procfs->lock);                          
 }
 
 filesystem_t *new_procfs(const char *name) {
@@ -318,16 +371,11 @@ filesystem_t *new_procfs(const char *name) {
   filesystem_t *fs = new_filesystem(name, &ops);
   inode_manager_t *manager = &fs->inode_manager;
 
-  // add cpuinfo
+  // add cpuinfo and meminfo
   const char *cpuinfo = "I am cpu infomation!";
-  inode_t *inode = inode_manager_lookup(manager, "/cpuinfo", INODE_FILE, 1, S_IRUSR);
-  size_t nwritten = inode_manager_write(manager, inode, 0, cpuinfo, strlen(cpuinfo));
-  Assert(nwritten == strlen(cpuinfo));
-
   const char *meminfo = "I am memeory infomation!";
-  inode = inode_manager_lookup(manager, "/meminfo", INODE_FILE, 1, S_IRUSR);
-  nwritten = inode_manager_write(manager, inode, 0, meminfo, strlen(meminfo));
-  Assert(nwritten == strlen(meminfo));  
-  
+  procfs_add_metainfo(fs, "cpuinfo", cpuinfo, strlen(cpuinfo));
+  procfs_add_metainfo(fs, "meminfo", meminfo, strlen(meminfo));
+
   return fs;
 }
