@@ -396,3 +396,118 @@ filesystem_t *new_procfs(const char *name) {
 
   return fs;
 }
+
+/*------------------------------------------
+                    stdin
+  ------------------------------------------*/
+
+static ssize_t stdin_read(file_t *this, void *buf, size_t size) {
+  TODO;
+  return basic_file_read(this, buf, size);
+}
+
+static ssize_t stdin_write(file_t *this, const void *buf, size_t size) {
+  return -1;
+}
+
+static off_t stdin_lseek(file_t *this, off_t offset, int whence) {
+  return 0;
+}
+
+static int stdin_close(file_t *this) {
+  return -1;
+}
+
+void init_as_stdin(file_t *file) {
+  file->offset = file ->ref_count = 0;
+  file->inode = file->inode_manager = NULL;
+  file->readable = 1;
+  file->writable = 0;
+  kmt->init(file->lock, "stdin_lock");
+  file->ops.read_handle = stdin_read;
+  file->ops.write_handle = stdin_write;
+  file->ops.lseek_handle = stdin_lseek;
+  file->ops.close_handle = stdin_close;
+}
+
+/*------------------------------------------
+                    stdout
+  ------------------------------------------*/
+
+static ssize_t stdout_read(file_t *this, void *buf, size_t size) {
+  return -1;
+}
+
+static ssize_t stdout_write(file_t *this, const void *buf, size_t size) {
+  kmt->spin_lock(&this->lock);
+  size_t nwritten;
+  char *bufp = buf;
+  while (size > 0) {
+    _putc(*bufp++);
+    nwritten++;
+    size--;
+  }
+  kmt->spin_unlock(&this->lock);
+  return nwritten;
+}
+
+static off_t stdout_lseek(file_t *this, off_t offset, int whence) {
+  return 0;
+}
+
+static int stdout_close(file_t *this) {
+  return -1;
+}
+
+void init_as_stdout(file_t *file) {
+  file->offset = file ->ref_count = 0;
+  file->inode = file->inode_manager = NULL;
+  file->readable = 0;
+  file->writable = 1;
+  kmt->init(file->lock, "stdout_lock");
+  file->ops.read_handle = stdout_read;
+  file->ops.write_handle = stdout_write;
+  file->ops.lseek_handle = stdout_lseek;
+  file->ops.close_handle = stdout_close;
+}
+
+/*------------------------------------------
+                    stderr
+  ------------------------------------------*/
+
+static ssize_t stderr_read(file_t *this, void *buf, size_t size) {
+  return -1;
+}
+
+static ssize_t stderr_write(file_t *this, const void *buf, size_t size) {
+  kmt->spin_lock(&this->lock);
+  size_t nwritten;
+  char *bufp = buf;
+  while (size > 0) {
+    _putc(*bufp++);
+    nwritten++;
+    size--;
+  }
+  kmt->spin_unlock(&this->lock);
+  return 0;
+}
+
+static off_t stderr_lseek(file_t *this, off_t offset, int whence) {
+  return 0;
+}
+
+static int stderr_close(file_t *this) {
+  return -1;
+}
+
+void init_as_stderr(file_t *file) {
+  file->offset = file ->ref_count = 0;
+  file->inode = file->inode_manager = NULL;
+  file->readable = 0;
+  file->writable = 1;
+  kmt->init(file->lock, "stderr_lock");
+  file->ops.read_handle = stderr_read;
+  file->ops.write_handle = stderr_write;
+  file->ops.lseek_handle = stderr_lseek;
+  file->ops.close_handle = stderr_close;
+}

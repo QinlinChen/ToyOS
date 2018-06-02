@@ -157,7 +157,7 @@ ssize_t inode_manager_write(inode_manager_t *inode_manager, inode_t *inode,
 int inode_manager_cmp_name(inode_manager_t *inode_manager, inode_t *inode, const char *name);
 
 /*------------------------------------------
-                    file.h
+                  filesystem.h
   ------------------------------------------*/
 
 // Read, write, lseek and close handles only operate on inode.data
@@ -185,21 +185,6 @@ struct file {
   spinlock_t lock;
   file_ops_t ops;
 };
-
-/*------------------------------------------
-                file_table.h
-  ------------------------------------------*/
-
-// thread safe
-void file_table_init();
-int file_table_alloc(inode_t *inode, inode_manager_t *inode_manager,
-                     int readable, int writable, file_ops_t *ops);
-void file_table_free(file_t *file);
-file_t *file_table_get(int fd);
-
-/*------------------------------------------
-                  filesystem.h
-  ------------------------------------------*/
 
 // should be thread safe
 typedef int (*access_handle_t)(filesystem_t *this, const char *path, int mode);
@@ -232,6 +217,22 @@ void procfs_add_metainfo(filesystem_t *procfs, const char *name,
                          const char *content, size_t size);
 void procfs_add_procinfo(filesystem_t *procfs, int tid, const char *name,
                          const char *content, size_t size);
+
+// stdin, stdout, stderr
+void init_as_stdin(file_t *file);
+void init_as_stdout(file_t *file);
+void init_as_stderr(file_t *file);
+
+/*------------------------------------------
+                file_table.h
+  ------------------------------------------*/
+
+// thread safe
+void file_table_init();
+int file_table_alloc(inode_t *inode, inode_manager_t *inode_manager,
+                     int readable, int writable, file_ops_t *ops);
+void file_table_free(file_t *file);
+file_t *file_table_get(int fd);
                          
 /*------------------------------------------
                   fs_manager.h
