@@ -443,6 +443,8 @@ int kvfs_test() {
   Assert(vfs->lseek(fd, 0, SEEK_SET) == 0);
   Assert(vfs->read(fd, buf, 100) == sizeof(n) + sizeof(d));
   Assert(file->offset == sizeof(n) + sizeof(d));
+
+  Assert(vfs->close(fd) == 0);
   return 1;
 }
 
