@@ -65,7 +65,7 @@ static _RegSet *os_interrupt(_Event ev, _RegSet *regs) {
       Log("Yield! cur_thread thread (tid %d)", cur_thread->tid);
       return switch_thread(regs);
     case _EVENT_IRQ_IODEV:
-      _putc('I');
+      // _putc('I');
       break;
     case _EVENT_ERROR:
       _putc('x'); 
