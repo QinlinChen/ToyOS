@@ -63,7 +63,7 @@ static ssize_t basic_file_write(file_t *this, const void *buf, size_t size) {
   ssize_t nwritten = inode_manager_write(this->inode_manager, this->inode,
                                          this->offset, buf, size);
   this->offset += nwritten;
-  
+
   kmt->spin_unlock(&this->lock);
   return nwritten;
 }
@@ -369,7 +369,6 @@ filesystem_t *new_procfs(const char *name) {
   ops.access_handle = procfs_access;
   ops.open_handle = procfs_open;
   filesystem_t *fs = new_filesystem(name, &ops);
-  inode_manager_t *manager = &fs->inode_manager;
 
   // add cpuinfo and meminfo
   const char *cpuinfo = "I am cpu infomation!";
