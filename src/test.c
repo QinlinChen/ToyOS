@@ -511,7 +511,7 @@ int procfs_test() {
 
   char path[MAXPATHLEN], name[32], buf[1024];
   strcpy(path, "/proc/");
-  itoa(thread.tid, name);
+  itoa(thread.tid, 10, 1, name);
   strcat(path, name);
   strcat(path, "/hello");
 
@@ -520,8 +520,19 @@ int procfs_test() {
   vfs->read(fd, buf, 1024);
   printf("%s\n", buf);
   Assert(vfs->close(fd));
+
+  fd = vfs->open("/proc/cpuinfo", O_RDONLY);
+  Assert(fd != -1);
+  vfs->read(fd, buf, 1024);
+  printf("%s\n", buf);
+  Assert(vfs->close(fd));
+
+  fd = vfs->open("/proc/meminfo", O_RDONLY);
+  Assert(fd != -1);
+  vfs->read(fd, buf, 1024);
+  printf("%s\n", buf);
+  Assert(vfs->close(fd));
   
-  1 + 2;
   return 1;
 }
 
