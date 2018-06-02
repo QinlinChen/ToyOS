@@ -8,7 +8,7 @@
 #define DEBUG
 // #define DEBUG_MEM
 // #define DEBUG_LOCK
-// #define TRACE
+#define TRACE
 
 // Log
 #ifdef LOG

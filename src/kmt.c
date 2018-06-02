@@ -154,12 +154,15 @@ static void kmt_init() {
 
 static int kmt_create(thread_t *thread,
   void (*entry)(void *arg), void *arg) {
+  TRACE_ENTRY;
 
   thread_t *new_thr = new_thread(entry, arg);
   
+  TRACE_ENTRY;
   // add thread to list
   threadlist_add(new_thr);
 
+  TRACE_ENTRY;
   // add thread info to procfs
   filesystem_t *procfs = fs_manager_get("/proc", NULL);
   char content[512], number[32];
