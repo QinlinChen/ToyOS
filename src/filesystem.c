@@ -87,10 +87,14 @@ static int basic_fs_access(filesystem_t *this, const char *path, int mode) {
   kmt->spin_lock(&this->lock);
   inode_manager_t *manager = &this->inode_manager;
   inode_t *inode = inode_manager_lookup(manager, path, INODE_FILE, 0, 0);
-  if (inode == NULL)
+  if (inode == NULL) {
+    kmt->spin_unlock(&this->lock);
     return 0;
-  if (mode & F_OK)
+  }
+  if (mode & F_OK) {
+    kmt->spin_unlock(&this->lock);
     return 1;
+  }
   int ok = inode_manager_checkmode(manager, inode, mode);
   kmt->spin_unlock(&this->lock);
   return ok;
