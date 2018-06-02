@@ -140,6 +140,7 @@ typedef struct inode_manager {
   spinlock_t lock;
 } inode_manager_t;
 
+// threadsafe
 void inode_manager_init(inode_manager_t *inode_manager);
 void inode_manager_destroy(inode_manager_t *inode_manager);
 inode_t *inode_manager_lookup(inode_manager_t *inode_manager, const char *path, 

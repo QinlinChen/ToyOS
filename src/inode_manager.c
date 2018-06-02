@@ -126,6 +126,7 @@ static void inode_recursive_print(inode_t *node, int depth) {
 void inode_manager_init(inode_manager_t *inode_manager) {
   Assert(inode_manager != NULL);
   inode_manager->root = new_inode("/", INODE_DIR, DEFAULT_MODE);
+  kmt->spin_init(&inode_manager->lock, "inode_manager_lock");
 }
 
 void inode_manager_destroy(inode_manager_t *inode_manager) {
@@ -138,31 +139,46 @@ inode_t *inode_manager_lookup(inode_manager_t *inode_manager, const char *path,
                               int type, int create, int mode) {
   Assert(inode_manager != NULL);
   Assert(path != NULL);
-  return inode_lookup(inode_manager->root, path, type, create, mode);
+  kmt->spin_lock(&inode_manager->lock);
+  inode_t *ret = inode_lookup(inode_manager->root, path, type, create, mode);
+  kmt->spin_unlock(&inode_manager->lock);
+  return ret;
 }
 
 void inode_manager_remove(inode_manager_t *inode_manager, inode_t *inode) {
   Assert(inode_manager != NULL);
   Assert(inode != NULL);
+  kmt->spin_lock(&inode_manager->lock);
   inode_remove(inode);
   delete_inode(inode);
+  kmt->spin_unlock(&inode_manager->lock);
 }
 
 void inode_manager_print(inode_manager_t *inode_manager) {
   Assert(inode_manager != NULL);
+  kmt->spin_lock(&inode_manager->lock);
   inode_recursive_print(inode_manager->root, 0);
+  kmt->spin_unlock(&inode_manager->lock);
 }
 
 int inode_manager_checkmode(inode_manager_t *inode_manager, inode_t *inode, int mode) {
   Assert(inode_manager != NULL);
   Assert(inode != NULL);
   Assert((mode & ~R_OK & ~W_OK & ~X_OK) == 0);
+  kmt->spin_lock(&inode_manager->lock);
   int perm = inode->mode;
-  if ((mode & R_OK) && !(perm & S_IRUSR))
+  if ((mode & R_OK) && !(perm & S_IRUSR)) {
+    kmt->spin_unlock(&inode_manager->lock);
     return 0;
-  if ((mode & W_OK) && !(perm & S_IWUSR))
+  }
+  if ((mode & W_OK) && !(perm & S_IWUSR)) {
+    kmt->spin_unlock(&inode_manager->lock);
     return 0;
-  if ((mode & X_OK) && !(perm & S_IXUSR))
+  }
+  if ((mode & X_OK) && !(perm & S_IXUSR)) {
+    kmt->spin_unlock(&inode_manager->lock);
     return 0;
+  }
+  kmt->spin_unlock(&inode_manager->lock);
   return 1;
 }
