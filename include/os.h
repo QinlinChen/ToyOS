@@ -153,7 +153,7 @@ int inode_manager_checkmode(inode_manager_t *inode_manager, inode_t *inode, int 
                     file.h
   ------------------------------------------*/
 
-// read, write, lseek and close only operate on inode.data
+// read, write, lseek and close handles only operate on inode.data
 typedef ssize_t (*read_handle_t)(file_t *this, char *buf, size_t size);
 typedef ssize_t (*write_handle_t)(file_t *this, const char *buf, size_t size);
 typedef off_t (*lseek_handle_t)(file_t *this, off_t offset, int whence);
@@ -172,14 +172,6 @@ struct file {
   lseek_handle_t lseek_handle;
   close_handle_t close_handle;
 };
-
-string_t *file_get_data(file_t *file);
-off_t file_get_offset(file_t *file);
-void file_set_offset(file_t *file, off_t offset);
-void file_set_readable(file_t *file, int readable);
-void file_set_writable(file_t *file, int writable);
-void file_decr_ref_count(file_t *file);
-int file_ref_count_is_zero(file_t *file);
 
 /*------------------------------------------
                 file_table.h
