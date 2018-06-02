@@ -478,5 +478,6 @@ void test_run() {
   TEST(string_test);
   TEST(file_table_test);
   TEST(kvfs_test);
+  TEST(devfs_test);
   Panic("Stop");
 }
