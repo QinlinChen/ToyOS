@@ -16,7 +16,7 @@ void file_table_init() {
 
 file_t *file_table_alloc(inode_t *inode, inode_manager_t *inode_manager,
                      int readable, int writable, file_ops_t *ops) {
-  Assert(inode != NULL && inode_manager != NULL && ops != NULL);
+  Assert(ops != NULL);
   kmt->spin_lock(&lock);
   for (int i = 0; i < NR_FILE; ++i)
     if (is_free[i]) {
