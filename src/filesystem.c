@@ -109,7 +109,7 @@ static int basic_fs_open(filesystem_t *this, const char *path, int flags, file_o
 
   // decide permission
   int readable = 0, writable = 0, mode = 0;
-  if ((flags & O_RONLY) || (flags & O_RDWR)) {
+  if ((flags & O_RDONLY) || (flags & O_RDWR)) {
     readable = 1;
     mode |= R_OK;
   }

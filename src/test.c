@@ -416,7 +416,7 @@ int kvfs_test() {
   Assert(vfs->access("/lib/libc.so", W_OK) == 0);
   Assert(vfs->access("/lib/libc.so", R_OK) == 0);
 
-  Assert(vfs->open("/lib/libc.so", O_RONLY) == -1);
+  Assert(vfs->open("/lib/libc.so", O_RDONLY) == -1);
   Assert(vfs->open("/usr/cql/minilab", O_RDWR) == -1);
   int fd = vfs->open("/usr/cql/oslab", O_RDWR);
   Assert(fd != -1);
@@ -457,9 +457,36 @@ int kvfs_test() {
 
 int devfs_test() {
   Assert(vfs->access("/dev/sda", F_OK) == 0);
-  Assert(vfs->access("/dev/zero", W_OK | R_OK) == 0);
+  Assert(vfs->access("/dev/zero", W_OK | R_OK) == 1);
   Assert(vfs->access("/dev/null", W_OK | R_OK) == 1);
   Assert(vfs->access("/dev/random", W_OK | R_OK) == 1);
+
+  int n = 123;
+  int fd = vfs->open("/dev/zero", O_RDWR);
+  Assert(vfs->write(fd, &n, sizeof(n)) == 0);
+  Assert(vfs->read(fd, &n, sizeof(n)) == sizeof(n));
+  Assert(vfs->lseek(fd, 0, SEEK_END) == 0);
+  Assert(n == 0);
+  printf("fd %d\n", fd);
+  Assert(vfs->close(fd) == 0);
+
+  n = 456;
+  fd = vfs->open("/dev/null", O_RDWR);
+  Assert(vfs->write(fd, &n, sizeof(n)) == sizeof(n));
+  Assert(vfs->read(fd, &n, sizeof(n)) == 0);
+  Assert(vfs->lseek(fd, 111, SEEK_CUR) == 0);
+  Assert(n == 456);
+  printf("fd %d\n", fd);
+  Assert(vfs->close(fd) == 0);
+
+  n = 456;
+  fd = vfs->open("/dev/random", O_RDWR);
+  Assert(vfs->write(fd, &n, sizeof(n)) == 0);
+  Assert(vfs->read(fd, &n, sizeof(n)) == sizeof(n));
+  Assert(vfs->lseek(fd, 222, SEEK_SET) == 0);
+  printf("random n = %d\n", n);
+  Assert(vfs->close(fd) == 0);
+  
   return 1;
 }
 /*------------------------------------------
