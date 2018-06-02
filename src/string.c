@@ -66,6 +66,7 @@ ssize_t string_read(string_t *s, off_t offset, void *buf, size_t size) {
   ssize_t nread = 0;
   char *bufp = buf;
 
+  Log("offset %d size %d", offset, (int)s->size);
   while (nleft > 0 && (size_t)offset < s->size) {
     *bufp++ = s->data[offset++];
     nleft--;
