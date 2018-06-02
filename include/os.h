@@ -150,7 +150,6 @@ void inode_manager_print(inode_manager_t *inode_manager);
 
 int inode_manager_checkmode(inode_manager_t *inode_manager, inode_t *inode, int mode);
 size_t inode_manager_get_filesize(inode_manager_t *inode_manager, inode_t *inode);
-
 ssize_t inode_manager_read(inode_manager_t *inode_manager, inode_t *inode,
                            off_t offset, void *buf, size_t size);
 ssize_t inode_manager_write(inode_manager_t *inode_manager, inode_t *inode,
@@ -163,8 +162,8 @@ int inode_manager_cmp_name(inode_manager_t *inode_manager, inode_t *inode, const
 
 // Read, write, lseek and close handles only operate on inode.data
 // and should be thread safe.
-typedef ssize_t (*read_handle_t)(file_t *this, char *buf, size_t size);
-typedef ssize_t (*write_handle_t)(file_t *this, const char *buf, size_t size);
+typedef ssize_t (*read_handle_t)(file_t *this, void *buf, size_t size);
+typedef ssize_t (*write_handle_t)(file_t *this, const void *buf, size_t size);
 typedef off_t (*lseek_handle_t)(file_t *this, off_t offset, int whence);
 typedef int (*close_handle_t)(file_t *this);
 
