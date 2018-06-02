@@ -394,7 +394,7 @@ int file_table_test() {
 }
 
 /*------------------------------------------
-                    kv test
+                    kvfs test
   ------------------------------------------*/
 
 int kvfs_test() {
@@ -451,6 +451,17 @@ int kvfs_test() {
   return 1;
 }
 
+/*------------------------------------------
+                    devfs test
+  ------------------------------------------*/
+
+int devfs_test() {
+  Assert(vfs->access("/dev/sda", F_OK | W_OK | R_OK) == 1);
+  Assert(vfs->access("/dev/zero", W_OK | R_OK) == 0);
+  Assert(vfs->access("/dev/null", W_OK | R_OK) == 1);
+  Assert(vfs->access("/dev/random", W_OK | R_OK) == 1);
+  
+}
 /*------------------------------------------
                 test run
   ------------------------------------------*/
