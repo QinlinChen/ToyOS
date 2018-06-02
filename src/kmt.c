@@ -58,6 +58,8 @@ thread_t *new_thread(void (*entry)(void *), void *arg) {
 
   thread->regs = _make(stackinfo, (void (*)(void *))entry, arg);
  
+  fd_table_init(&thread->fd_table);
+  
   Log("Created thread (tid: %d), kstack start: %p", 
     thread->tid, stackinfo.start);
   return thread;

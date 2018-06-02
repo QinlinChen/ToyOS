@@ -68,11 +68,13 @@ static int vfs_open(const char *path, int flags) {
     return -1;
   }
   Assert(fs->ops.open_handle != NULL);
-  return fs->ops.open_handle(fs, subpath, flags);
+  file_t *file = fs->ops.open_handle(fs, subpath, flags);
+  Assert(file != NULL);
+  return fd_table_put(&cur_thread->fd_table, file);
 }
 
 static ssize_t vfs_read(int fd, void *buf, size_t size) {
-  file_t *file = file_table_get(fd);
+  file_t *file = fd_table_get(&cur_thread->fd_table, fd);
   if (file == NULL) {
     Log("Invalid fd!");
     return -1;
@@ -82,7 +84,7 @@ static ssize_t vfs_read(int fd, void *buf, size_t size) {
 }
 
 static ssize_t vfs_write(int fd, void *buf, size_t size) {
-  file_t *file = file_table_get(fd);
+  file_t *file = fd_table_get(&cur_thread->fd_table, fd);
   if (file == NULL) {
     Log("Invalid fd!");
     return -1;
@@ -92,7 +94,7 @@ static ssize_t vfs_write(int fd, void *buf, size_t size) {
 }
 
 static off_t vfs_lseek(int fd, off_t offset, int whence) {
-  file_t *file = file_table_get(fd);
+  file_t *file = fd_table_get(&cur_thread->fd_table, fd);
   if (file == NULL) {
     Log("Invalid fd!");
     return -1;
@@ -102,7 +104,7 @@ static off_t vfs_lseek(int fd, off_t offset, int whence) {
 }
 
 static int vfs_close(int fd) {
-  file_t *file = file_table_get(fd);
+  file_t *file = fd_table_remove(&cur_thread->fd_table, fd);
   if (file == NULL) {
     Log("Invalid fd!");
     return -1;

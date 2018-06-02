@@ -114,7 +114,7 @@ static int basic_fs_access(filesystem_t *this, const char *path, int mode) {
   return ok;
 }
 
-static int basic_fs_open(filesystem_t *this, const char *path, int flags, file_ops_t *ops) {
+static file_t *basic_fs_open(filesystem_t *this, const char *path, int flags, file_ops_t *ops) {
   Assert(this != NULL && path != NULL);
   kmt->spin_lock(&this->lock);
   // get inode
@@ -124,7 +124,7 @@ static int basic_fs_open(filesystem_t *this, const char *path, int flags, file_o
   if (inode == NULL) {
     Log("Can't find path %s", path);
     kmt->spin_unlock(&this->lock);
-    return -1;
+    return NULL;
   }
 
   // decide permission
@@ -140,14 +140,14 @@ static int basic_fs_open(filesystem_t *this, const char *path, int flags, file_o
   if (!inode_manager_checkmode(manager, inode, mode)) {
     Log("Permission denied!");
     kmt->spin_unlock(&this->lock);
-    return -1;
+    return NULL;
   }
 
   // allocate fd
-  int fd = file_table_alloc(inode, manager, readable, writable, ops);
-  Assert(fd != -1);
+  file_t *file = file_table_alloc(inode, manager, readable, writable, ops);
+  Assert(file != NULL);
   kmt->spin_unlock(&this->lock);
-  return fd;
+  return file;
 }
 
 /*------------------------------------------
@@ -174,7 +174,7 @@ static int kvfs_access(filesystem_t *this, const char *path, int mode) {
   return basic_fs_access(this, path, mode);
 }
 
-static int kvfs_open(filesystem_t *this, const char *path, int flags) {
+static file_t *kvfs_open(filesystem_t *this, const char *path, int flags) {
   file_ops_t ops;
   ops.read_handle = kvfs_read;
   ops.write_handle = kvfs_write;
@@ -286,7 +286,7 @@ static int devfs_access(filesystem_t *this, const char *path, int mode) {
   return basic_fs_access(this, path, mode);
 }
 
-static int devfs_open(filesystem_t *this, const char *path, int flags) {
+static file_t *devfs_open(filesystem_t *this, const char *path, int flags) {
   if (flags & O_CREAT) {
     Log("Forbid creating files in devfs");
     return -1;
@@ -336,7 +336,7 @@ static int procfs_access(filesystem_t *this, const char *path, int mode) {
   return basic_fs_access(this, path, mode);
 }
 
-static int procfs_open(filesystem_t *this, const char *path, int flags) {
+static file_t *procfs_open(filesystem_t *this, const char *path, int flags) {
   if (flags & O_CREAT) {
     Log("Forbid creating files in procfs");
     return -1;
