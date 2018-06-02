@@ -289,7 +289,7 @@ static int devfs_access(filesystem_t *this, const char *path, int mode) {
 static file_t *devfs_open(filesystem_t *this, const char *path, int flags) {
   if (flags & O_CREAT) {
     Log("Forbid creating files in devfs");
-    return -1;
+    return NULL;
   }
   file_ops_t ops;
   ops.read_handle = devfs_read;
@@ -339,7 +339,7 @@ static int procfs_access(filesystem_t *this, const char *path, int mode) {
 static file_t *procfs_open(filesystem_t *this, const char *path, int flags) {
   if (flags & O_CREAT) {
     Log("Forbid creating files in procfs");
-    return -1;
+    return NULL;
   }
   file_ops_t ops;
   ops.read_handle = procfs_read;
