@@ -403,7 +403,7 @@ int kvfs_test() {
   Assert(vfs->open("/usr/cql/minilab", O_RDWR) == -1);
   int fd = vfs->open("/usr/cql/oslab", O_RDWR);
   Assert(fd != -1);
-  file_t *file = file_table_get(fd);
+  file_t *file = fd_table_get(&cur_thread->fd_table, fd);
   Assert(file->readable);
   Assert(file->writable);
   Assert(file->ref_count == 1);
