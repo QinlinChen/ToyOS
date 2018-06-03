@@ -333,7 +333,6 @@ int fs_manager_test() {
   filesystem_init(&kvfs, "kvfs", &dumb_ops);
   filesystem_init(&devfs, "devfs", &dumb_ops);
 
-  // fs_manager_init();
   // sequence matters
   Assert(fs_manager_add("/dev", &devfs) == 0);
   Assert(fs_manager_add("/", &kvfs) == 0);
