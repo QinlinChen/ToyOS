@@ -469,6 +469,7 @@ static ssize_t stdout_write(file_t *this, const void *buf, size_t size) {
   while (size > 0) {
     _putc(*bufp++);
     nwritten++;
+    _yield();
     size--;
   }
   kmt->spin_unlock(&this->lock);
