@@ -447,7 +447,7 @@ void init_as_stdin(file_t *file) {
   file->inode_manager = NULL;
   file->readable = 1;
   file->writable = 0;
-  kmt->init(file->lock, "stdin_lock");
+  kmt->spin_init(&file->lock, "stdin_lock");
   file->ops.read_handle = stdin_read;
   file->ops.write_handle = stdin_write;
   file->ops.lseek_handle = stdin_lseek;
@@ -489,7 +489,7 @@ void init_as_stdout(file_t *file) {
   file->inode_manager = NULL;
   file->readable = 0;
   file->writable = 1;
-  kmt->init(file->lock, "stdout_lock");
+  kmt->spin_init(&file->lock, "stdout_lock");
   file->ops.read_handle = stdout_read;
   file->ops.write_handle = stdout_write;
   file->ops.lseek_handle = stdout_lseek;
@@ -531,7 +531,7 @@ void init_as_stderr(file_t *file) {
   file->inode_manager = NULL;
   file->readable = 0;
   file->writable = 1;
-  kmt->init(file->lock, "stderr_lock");
+  kmt->spin_init(&file->lock, "stderr_lock");
   file->ops.read_handle = stderr_read;
   file->ops.write_handle = stderr_write;
   file->ops.lseek_handle = stderr_lseek;
