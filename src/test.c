@@ -538,6 +538,11 @@ int procfs_test() {
                 test run
   ------------------------------------------*/
 
+void print_a(void *arg) {
+  while (1)
+    vfs->write(STDOUT_FILENO, arg, strlen((const char *)arg));
+} 
+
 void test_run() {
   Test(inode_manager_test);
   Test(string_test);
@@ -547,5 +552,9 @@ void test_run() {
   Test(devfs_test);
   Test(procfs_test);
   
+  thread_t a, b;
+  kmt->create(&a, print_a, "hello world!!!!!!!!!\n");
+  kmt->create(&a, print_a, "fuck you!!!!!!!!!\n");
+
   printf("\33[1;32mALL TESTS PASSED\33[0m\n");
 }
