@@ -69,10 +69,8 @@ static int vfs_open(const char *path, int flags) {
   }
   Assert(fs->ops.open_handle != NULL);
   file_t *file = fs->ops.open_handle(fs, subpath, flags);
-  if (file == NULL) {
-    Log("No such file!");
+  if (file == NULL)
     return -1;
-  }
   return fd_table_put(&cur_thread->fd_table, file);
 }
 
