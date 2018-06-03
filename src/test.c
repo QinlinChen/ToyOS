@@ -371,15 +371,15 @@ int fs_manager_test() {
   ------------------------------------------*/
 
 int file_table_test() {
-  inode_t dumb_inode;
-  inode_manager_t dumb_manager;
   file_ops_t dumb_ops = { NULL, NULL, NULL, NULL };
-  int fd1 = file_table_alloc(&dumb_inode, &dumb_manager, 0, 0, &dumb_ops);
-  int fd2 = file_table_alloc(&dumb_inode, &dumb_manager, 0, 0, &dumb_ops);
+  int fd1 = file_table_alloc(NULL, NULL, 0, 0, &dumb_ops);
+  int fd2 = file_table_alloc(NULL, NULL, 0, 0, &dumb_ops);
   printf("fd1 %d, fd2 %d, ", fd1, fd2);
   file_table_free(file_table_get(fd1));
-  int fd3 = file_table_alloc(&dumb_inode, &dumb_manager, 0, 0, &dumb_ops);
+  int fd3 = file_table_alloc(NULL, NULL, 0, 0, &dumb_ops);
   printf("fd3 %d\n", fd3);
+  file_table_free(file_table_get(fd2));
+  file_table_free(file_table_get(fd3));
   return 1;
 }
 
