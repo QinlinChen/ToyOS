@@ -313,9 +313,9 @@ int string_test() {
   string_cat(&s, "el");
   string_cat(&s, "lo, world\n");
   string_print(&s);
-  Assert(string_equal(&s, "Hello, world\n") == 0);
+  Assert(string_equal(&s, "Hello, world\n") == 1);
   string_write(&s, 11, "abcdefg\n", 8);
-  Assert(string_equal(&s, "Hello, worlabcdefg\n") == 0);
+  Assert(string_equal(&s, "Hello, worlabcdefg\n") == 1);
   char buf[10];
   string_read(&s, 3, buf, 9);
   buf[9] = '\0';
