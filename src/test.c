@@ -312,7 +312,7 @@ int string_test() {
   string_cat(&s, "H");
   string_cat(&s, "el");
   string_cat(&s, "lo, world\n");
-  printf("%s", s.data);
+  string_print(&s);
   Assert(strcmp("Hello, world\n", s.data) == 0);
   string_write(&s, 11, "abcdefg\n", 8);
   Assert(strcmp("Hello, worlabcdefg\n", s.data) == 0);
