@@ -429,7 +429,7 @@ int kvfs_test() {
   Assert(vfs->read(fd, &d2, sizeof(d2)) == sizeof(d2));
   Assert(d2 == d);
   Assert(file->offset == sizeof(n) + sizeof(d));
-  
+
   char buf[10];
   Assert(vfs->read(fd, buf, 10) == 0);
   Assert(vfs->lseek(fd, -sizeof(d), SEEK_CUR) == sizeof(n));
@@ -505,6 +505,8 @@ int procfs_test() {
   itoa(thread.tid, 10, 1, name);
   strcat(path, name);
   strcat(path, "/hello");
+
+  Assert(vfs->open("/proc/cpuinfo", O_RDONLY) == -1);
 
   int fd;
   size_t size;
