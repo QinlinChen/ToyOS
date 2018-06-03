@@ -506,7 +506,7 @@ int procfs_test() {
   strcat(path, name);
   strcat(path, "/hello");
 
-  Assert(vfs->open("/proc/cpuinfo", O_RDONLY) == -1);
+  Assert(vfs->open("/proc/vgainfo", O_RDONLY) == -1);
 
   int fd;
   size_t size;
