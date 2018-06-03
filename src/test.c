@@ -434,17 +434,17 @@ int kvfs_test() {
   Assert(vfs->lseek(fd, -sizeof(d), SEEK_CUR) == sizeof(n));
   Assert(vfs->lseek(fd, 0, SEEK_END) == sizeof(n) + sizeof(d));
   Assert(vfs->lseek(fd, 0, SEEK_SET) == 0);
+  Assert(vfs->lseek(fd, -1, SEEK_SET) == 0);
   Assert(vfs->read(fd, buf, 100) == sizeof(n) + sizeof(d));
   Assert(file->offset == sizeof(n) + sizeof(d));
-
+  
   Assert(vfs->close(fd) == 0);
-
   fd = vfs->open("/usr/cql/minilab", O_RDONLY);
   Assert(fd != -1);
   Assert(vfs->write(fd, &n, sizeof(n) == -1));
   Assert(vfs->close(fd) == 0);
-
   Assert(vfs->close(fd + 1) == -1);
+
   return 1;
 }
 
