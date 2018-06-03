@@ -4,15 +4,6 @@
 #include <common.h>
 #include <os.h>
 
-#define TEST(func) \
-  do { \
-    if (func() == 1) \
-      printf(#func "\t\33[1;32mOK\33[0m\n"); \
-    else \
-      printf(#func "\t\33[1;32mERROR\33[0m\n"); \
-  } while (0)
-
-
 /*------------------------------------------
                   device test
   ------------------------------------------*/
@@ -403,7 +394,7 @@ int kvfs_test() {
   Assert(vfs->open("/usr/cql/minilabs", O_RDWR) == -1);
   int fd = vfs->open("/usr/cql/oslab", O_RDWR);
   Assert(fd != -1);
-  file_t *file = file_table_get(fd);
+  file_t *file = fd_table_get(&cur_thread->fd_table, fd);
   Assert(file->readable);
   Assert(file->writable);
   Assert(file->ref_count == 1);
