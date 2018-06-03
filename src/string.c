@@ -115,6 +115,25 @@ ssize_t string_write(string_t *s, off_t offset, const void *buf, size_t size) {
   return nwritten; 
 }
 
+int string_equal(string_t *s1, const char *s2) {
+  Assert(s1 != NULL && s2 != NULL);
+  kmt->spin_lock(&s1->lock);
+  const char *data = s1->data;
+  size_t i;
+  for (i = 0; i < s1->size; ++i) {
+    if (!s2[i] || data[i] != s2[i]) {
+      kmt->spin_unlock(&s1->lock);
+      return 0;
+    }
+  }
+  if (s2[i] == '\0') {
+    kmt->spin_unlock(&s1->lock);
+    return 1;
+  }
+  kmt->spin_unlock(&s1->lock);
+  return 0;
+}
+
 void *memset(void *s, int c, size_t n) {
   Assert(s != NULL);
   size_t i;
