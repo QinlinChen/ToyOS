@@ -6,6 +6,7 @@
 
 #define LOG
 #define DEBUG
+#define TEST
 // #define DEBUG_MEM
 // #define DEBUG_LOCK
 // #define TRACE
@@ -61,5 +62,15 @@ void fence_set(uint8_t *target);
   } while (0)
   
 #define TODO  Panic("TODO")
+
+// Test
+#define Test(func) \
+  do { \
+    if (func() == 1) \
+      printf(#func "\t\33[1;32mOK\33[0m\n"); \
+    else \
+      printf(#func "\t\33[1;32mERROR\33[0m\n"); \
+  } while (0)
+
 
 #endif

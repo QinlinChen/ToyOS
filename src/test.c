@@ -4,15 +4,6 @@
 #include <common.h>
 #include <os.h>
 
-#define TEST(func) \
-  do { \
-    if (func() == 1) \
-      printf(#func "\t\33[1;32mOK\33[0m\n"); \
-    else \
-      printf(#func "\t\33[1;32mERROR\33[0m\n"); \
-  } while (0)
-
-
 /*------------------------------------------
                   device test
   ------------------------------------------*/
@@ -546,24 +537,13 @@ int procfs_test() {
   ------------------------------------------*/
 
 void test_run() {
-  // debug_test();
-  // schedule_test();
-  // lock_test();
-  // sem_test(3);
-  // hello_test();
-  // stackfence_test();
-  TEST(fs_manager_test);
-  TEST(inode_manager_test);
-  TEST(string_test);
-  TEST(file_table_test);
-  TEST(kvfs_test);
-  TEST(devfs_test);
-  TEST(procfs_test);
-
-  char buf[10];
-  vfs->read(STDIN_FILENO, buf, 10);
-  vfs->write(STDOUT_FILENO, buf, 10);
+  Test(fs_manager_test);
+  Test(inode_manager_test);
+  Test(string_test);
+  Test(file_table_test);
+  Test(kvfs_test);
+  Test(devfs_test);
+  Test(procfs_test);
   
   printf("\33[1;32mALL TESTS PASSED\33[0m\n");
-  _halt(0);
 }

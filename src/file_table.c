@@ -22,7 +22,7 @@ void file_table_init() {
 
 int file_table_alloc(inode_t *inode, inode_manager_t *inode_manager,
                      int readable, int writable, file_ops_t *ops) {
-  Assert(inode != NULL && inode_manager != NULL && ops != NULL);
+  Assert(ops != NULL);
   kmt->spin_lock(&lock);
   for (int fd = 0; fd < NR_FD; ++fd)
     if (is_free[fd]) {

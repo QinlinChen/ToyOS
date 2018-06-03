@@ -1,4 +1,5 @@
 #include <kernel.h>
+#include <common.h>
 
 int main() {
   // AM initialization
@@ -11,6 +12,12 @@ int main() {
   if (kmt->init) kmt->init();
   if (vfs->init) vfs->init();
   
+#ifdef TEST
+  extern void test_run();
+  test_run();
+  _halt(0);
+#endif
+
   // call os->run()
   if (os->run) os->run();
 
