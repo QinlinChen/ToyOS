@@ -129,8 +129,6 @@ struct inode {
   struct inode *child;
   struct inode *next;
   struct inode *prev;
-  // string_t is thread safe.
-  // read, write, lseek and close handles only operate on data.
   string_t data;
 };
 
