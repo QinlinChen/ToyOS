@@ -261,51 +261,6 @@ void stackfence_test() {
 } 
 
 /*------------------------------------------
-              fs_manager test
-  ------------------------------------------*/
-
-int fs_manager_test() {
-  filesystem_t procfs, kvfs, devfs;
-  filesystem_ops_t dumb_ops = { NULL, NULL };
-  filesystem_init(&procfs, "procfs", &dumb_ops);
-  filesystem_init(&kvfs, "kvfs", &dumb_ops);
-  filesystem_init(&devfs, "devfs", &dumb_ops);
-
-  // fs_manager_init();
-  // sequence matters
-  Assert(fs_manager_add("/dev", &devfs) == 0);
-  Assert(fs_manager_add("/", &kvfs) == 0);
-  Assert(fs_manager_add("/proc/", &procfs) == 0);
-  Assert(fs_manager_remove("/dev") == &devfs);
-
-  char subpath[MAXPATHLEN];
-  filesystem_t *fs;
-  Assert((fs = fs_manager_get("/proc/123/stat", subpath)) != NULL);
-  Assert(strcmp(fs->name, "procfs") == 0);
-  Assert(strcmp(subpath, "/123/stat") == 0);
-  
-  Assert((fs = fs_manager_get("/proc/", subpath)) != NULL);
-  Assert(strcmp(fs->name, "procfs") == 0);
-  Assert(strcmp(subpath, "/") == 0);
-
-  Assert((fs = fs_manager_get("/proc", subpath)) != NULL);
-  Assert(strcmp(fs->name, "procfs") == 0);
-  Assert(strcmp(subpath, "/") == 0);
-
-  Assert((fs = fs_manager_get("/", subpath)) != NULL);
-  Assert(strcmp(fs->name, "kvfs") == 0);
-  Assert(strcmp(subpath, "/") == 0);
-
-  Assert((fs = fs_manager_get("/pro", subpath)) != NULL);
-  Assert(strcmp(fs->name, "kvfs") == 0);
-  Assert(strcmp(subpath, "/pro") == 0);
-
-  Assert(fs_manager_remove("/proc") == &procfs);
-  Assert(fs_manager_remove("/") == &kvfs);
-  return 1;
-}
-
-/*------------------------------------------
               inode_manager test
   ------------------------------------------*/
 
@@ -364,6 +319,51 @@ int string_test() {
   string_read(&s, 3, buf, 9);
   buf[9] = '\0';
   Assert(strcmp(buf, "lo, worla") == 0);
+  return 1;
+}
+
+/*------------------------------------------
+              fs_manager test
+  ------------------------------------------*/
+
+int fs_manager_test() {
+  filesystem_t procfs, kvfs, devfs;
+  filesystem_ops_t dumb_ops = { NULL, NULL };
+  filesystem_init(&procfs, "procfs", &dumb_ops);
+  filesystem_init(&kvfs, "kvfs", &dumb_ops);
+  filesystem_init(&devfs, "devfs", &dumb_ops);
+
+  // fs_manager_init();
+  // sequence matters
+  Assert(fs_manager_add("/dev", &devfs) == 0);
+  Assert(fs_manager_add("/", &kvfs) == 0);
+  Assert(fs_manager_add("/proc/", &procfs) == 0);
+  Assert(fs_manager_remove("/dev") == &devfs);
+
+  char subpath[MAXPATHLEN];
+  filesystem_t *fs;
+  Assert((fs = fs_manager_get("/proc/123/stat", subpath)) != NULL);
+  Assert(strcmp(fs->name, "procfs") == 0);
+  Assert(strcmp(subpath, "/123/stat") == 0);
+  
+  Assert((fs = fs_manager_get("/proc/", subpath)) != NULL);
+  Assert(strcmp(fs->name, "procfs") == 0);
+  Assert(strcmp(subpath, "/") == 0);
+
+  Assert((fs = fs_manager_get("/proc", subpath)) != NULL);
+  Assert(strcmp(fs->name, "procfs") == 0);
+  Assert(strcmp(subpath, "/") == 0);
+
+  Assert((fs = fs_manager_get("/", subpath)) != NULL);
+  Assert(strcmp(fs->name, "kvfs") == 0);
+  Assert(strcmp(subpath, "/") == 0);
+
+  Assert((fs = fs_manager_get("/pro", subpath)) != NULL);
+  Assert(strcmp(fs->name, "kvfs") == 0);
+  Assert(strcmp(subpath, "/pro") == 0);
+
+  Assert(fs_manager_remove("/proc") == &procfs);
+  Assert(fs_manager_remove("/") == &kvfs);
   return 1;
 }
 
@@ -537,9 +537,9 @@ int procfs_test() {
   ------------------------------------------*/
 
 void test_run() {
-  Test(fs_manager_test);
   Test(inode_manager_test);
   Test(string_test);
+  Test(fs_manager_test);
   Test(file_table_test);
   Test(kvfs_test);
   Test(devfs_test);
