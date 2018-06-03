@@ -59,7 +59,9 @@ static _RegSet *os_interrupt(_Event ev, _RegSet *regs) {
 
   switch (ev.event) {
     case _EVENT_IRQ_TIMER: 
-      Log("TimeInterrupt! cur_thread thread (tid %d)", cur_thread->tid); 
+#ifdef DEBUG_SCHEDULE
+      Log("TimeInterrupt! cur_thread thread (tid %d)", cur_thread->tid);
+#endif
       return switch_thread(regs);
     case _EVENT_YIELD: 
       Log("Yield! cur_thread thread (tid %d)", cur_thread->tid);

@@ -400,10 +400,10 @@ int kvfs_test() {
   Assert(vfs->access("/lib/libc.so", R_OK) == 0);
 
   Assert(vfs->open("/lib/libc.so", O_RDONLY) == -1);
-  Assert(vfs->open("/usr/cql/minilab", O_RDWR) == -1);
+  Assert(vfs->open("/usr/cql/minilabs", O_RDWR) == -1);
   int fd = vfs->open("/usr/cql/oslab", O_RDWR);
   Assert(fd != -1);
-  file_t *file = fd_table_get(&cur_thread->fd_table, fd);
+  file_t *file = file_table_get(fd);
   Assert(file->readable);
   Assert(file->writable);
   Assert(file->ref_count == 1);
@@ -422,22 +422,23 @@ int kvfs_test() {
   Assert(vfs->read(fd, &d2, sizeof(d2)) == sizeof(d2));
   Assert(d2 == d);
   Assert(file->offset == sizeof(n) + sizeof(d));
+
   char buf[10];
   Assert(vfs->read(fd, buf, 10) == 0);
   Assert(vfs->lseek(fd, -sizeof(d), SEEK_CUR) == sizeof(n));
   Assert(vfs->lseek(fd, 0, SEEK_END) == sizeof(n) + sizeof(d));
   Assert(vfs->lseek(fd, 0, SEEK_SET) == 0);
+  Assert(vfs->lseek(fd, -1, SEEK_SET) == -1);
   Assert(vfs->read(fd, buf, 100) == sizeof(n) + sizeof(d));
   Assert(file->offset == sizeof(n) + sizeof(d));
-
+  
   Assert(vfs->close(fd) == 0);
-
   fd = vfs->open("/usr/cql/minilab", O_RDONLY);
   Assert(fd != -1);
   Assert(vfs->write(fd, &n, sizeof(n) == -1));
   Assert(vfs->close(fd) == 0);
-
   Assert(vfs->close(fd + 1) == -1);
+
   return 1;
 }
 
@@ -498,6 +499,8 @@ int procfs_test() {
   strcat(path, name);
   strcat(path, "/hello");
 
+  Assert(vfs->open("/proc/vgainfo", O_CREAT) == -1);
+
   int fd;
   size_t size;
   fd = vfs->open(path, O_RDONLY);
@@ -529,18 +532,12 @@ int procfs_test() {
   ------------------------------------------*/
 
 void test_run(void *arg) {
-  // debug_test();
-  // schedule_test();
-  // lock_test();
-  // sem_test(3);
-  // hello_test();
-  // stackfence_test();
-  TEST(fs_manager_test);
-  TEST(inode_manager_test);
-  TEST(string_test);
-  TEST(kvfs_test);
-  TEST(devfs_test);
-  TEST(procfs_test);
+  Test(inode_manager_test);
+  Test(string_test);
+  Test(fs_manager_test);
+  Test(kvfs_test);
+  Test(devfs_test);
+  Test(procfs_test);
 
   char buf[10];
   size_t nread = vfs->read(STDIN_FILENO, buf, 10);

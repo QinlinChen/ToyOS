@@ -212,7 +212,9 @@ static thread_t *kmt_schedule() {
     for (scan = threadlist->next; ; scan = scan->next) {
       Assert(scan != NULL);
       if (scan->stat == RUNNABLE) {
+#ifdef DEBUG_SCHEDULE
         Log("Next thread (tid %d)", scan->tid);
+#endif 
         kmt->spin_unlock(&threadlist_lock);
         return scan;
       }
@@ -236,7 +238,9 @@ static thread_t *kmt_schedule() {
   for (scan = cur_thread->next; ; scan = scan->next) {
     Assert(scan != NULL);
     if (scan->stat == RUNNABLE) {
+#ifdef DEBUG_SCHEDULE
       Log("Next thread (tid %d)", scan->tid);
+#endif
       kmt->spin_unlock(&threadlist_lock);
       return scan;
     }
