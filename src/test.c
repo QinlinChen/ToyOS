@@ -554,7 +554,7 @@ void test_run() {
   
   thread_t a, b;
   kmt->create(&a, print_a, "hello world!!!!!!!!!\n");
-  kmt->create(&a, print_a, "fuck you!!!!!!!!!\n");
+  kmt->create(&b, print_a, "fuck you!!!!!!!!!\n");
 
   printf("\33[1;32mALL TESTS PASSED\33[0m\n");
 }
