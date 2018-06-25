@@ -7,10 +7,11 @@
 #define LOG
 #define DEBUG
 #define TEST
+#define GAME
 // #define DEBUG_MEM
 // #define DEBUG_LOCK
 // #define DEBUG_SCHEDULE
-#define TRACE
+// #define TRACE
 
 // Log
 #ifdef LOG
