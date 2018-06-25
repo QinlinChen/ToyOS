@@ -19,6 +19,8 @@ int main() {
   kmt->create(&test_thread, test_run, NULL);
 #endif
 
+  extern void jmp_game();
+  jmp_game();
   // call os->run()
   if (os->run) os->run();
 
