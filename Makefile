@@ -9,8 +9,6 @@ DEPS = $(addprefix build/, $(addsuffix .d, $(basename $(SRCS))))
 
 .PHONY: run clean count
 
-$(shell bash git-commit.sh $(MAKECMDGOALS))
-
 build/os.img: build/kernel
 	cat am/mbr $< > $@
 
