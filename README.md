@@ -24,7 +24,7 @@ However, you are welcome to discuss with me and refer to my code.
             void (*free)(void *ptr);
         } MOD_NAME(pmm);
 
-* `kmt`: kernel multi-thread functions
+* `kmt`: kernel multi-thread library
 
         typedef struct thread thread_t;
         typedef struct spinlock spinlock_t;
@@ -60,11 +60,11 @@ However, you are welcome to discuss with me and refer to my code.
 Use `make` to compile the kernel and `make run` to run.
 
 Some macros are defined in debug.h:
-* `TEST`: If defined, you will enter test mode and
+* `TEST`: If defined, you will enter the test mode and
 the kernel will exit after test.
 
 * `GAME`: If defined, you will play a game before kernel's running.
 
 ## TODO
 
-* Implement user mode, enable syscall and multiprocess.
+* Implement the user mode, enable syscall and multiprocess.
